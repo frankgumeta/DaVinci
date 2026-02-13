@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  test:
+    name: Test
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+      
+    - name: Select Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+        
+    - name: Build and Test
+      run: |
+        xcodebuild test \
+          -scheme DaVinci-Package \
+          -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+          -enableCodeCoverage YES \
+          -derivedDataPath .build
+        
+    - name: Generate Code Coverage Report
+      run: |
+        xcrun xccov view --report .build/Logs/Test/*.xcresult > coverage.txt || echo "Coverage report generation skipped"
+        
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        files: ./coverage.txt
+        flags: unittests
+        name: codecov-umbrella
+        token: ${{ secrets.CODECOV_TOKEN }}
+        
+    - name: Run SwiftLint
+      run: |
+        if command -v swiftlint >/dev/null 2>&1; then
+          swiftlint
+        else
+          echo "SwiftLint not installed, skipping..."
+        fi
+
+  build-ios:
+    name: Build (iOS)
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+      
+    - name: Select Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+        
+    - name: Build iOS Package
+      run: |
+        xcodebuild build \
+          -scheme DaVinci-Package \
+          -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+          -derivedDataPath .build
+
