@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   release:
     name: Create Release
@@ -12,7 +15,7 @@ jobs:
     
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       
     - name: Select Xcode
       uses: maxim-lobanov/setup-xcode@v1
@@ -20,39 +23,30 @@ jobs:
         xcode-version: latest-stable
         
     - name: Run Tests
-      run: swift test
-      
-    - name: Build
-      run: swift build
-      
-    - name: Generate Documentation
       run: |
-        swift package generate-documentation
+        xcodebuild test \
+          -scheme DaVinci-Package \
+          -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+          -derivedDataPath .build
+      
+    - name: Build Package
+      run: |
+        xcodebuild build \
+          -scheme DaVinci-Package \
+          -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+          -derivedDataPath .build
         
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          .build/docs/**
           LICENSE
           CHANGELOG.md
+          README.md
+          CONTRIBUTING.md
+          ACCESSIBILITY.md
         generate_release_notes: true
         draft: false
         prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
-    - name: Update Package.swift Version
-      run: |
-        # Extract version from tag
-        VERSION=${GITHUB_REF#refs/tags/v}
-        echo "Version: $VERSION"
-        
-        # Update Package.swift (if needed)
-        # This would require manual version bumping in Package.swift
-        
-    - name: Notify Swift Package Index
-      run: |
-        # Trigger SPI update (if published there)
-        curl -X POST "https://index.swift-package-registry.com/api/packages/refresh" \
-          -H "Authorization: token ${{ secrets.SPI_TOKEN }}" || true
