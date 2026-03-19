@@ -96,14 +96,14 @@ public struct DSText: View {
             .modifier(AccessibilityLabelModifier(label: accessibilityLabel))
             .modifier(AccessibilityTraitsModifier(traits: resolvedAccessibilityTraits))
     }
-    
+
     // MARK: - Accessibility
-    
+
     private var resolvedAccessibilityTraits: AccessibilityTraits? {
         if let accessibilityTraits = accessibilityTraits {
             return accessibilityTraits
         }
-        
+
         // Auto-apply header trait for title and headline roles
         switch role {
         case .display, .title, .headline:
@@ -151,10 +151,10 @@ public struct DSText: View {
     VStack(alignment: .leading, spacing: 16) {
         DSText("Page Title", role: .title)
         // Automatically marked as .isHeader
-        
+
         DSText("Section Heading", role: .headline)
         // Automatically marked as .isHeader
-        
+
         DSText(
             "Important Notice",
             role: .body,
@@ -162,7 +162,7 @@ public struct DSText: View {
             accessibilityLabel: "Alert: Important Notice",
             accessibilityTraits: .isStaticText
         )
-        
+
         DSText("Regular body text", role: .body)
         // Default static text, no special traits
     }
@@ -173,7 +173,7 @@ public struct DSText: View {
 
 private struct AccessibilityLabelModifier: ViewModifier {
     let label: String?
-    
+
     func body(content: Content) -> some View {
         if let label = label {
             content.accessibilityLabel(label)
@@ -185,7 +185,7 @@ private struct AccessibilityLabelModifier: ViewModifier {
 
 private struct AccessibilityTraitsModifier: ViewModifier {
     let traits: AccessibilityTraits?
-    
+
     func body(content: Content) -> some View {
         if let traits = traits {
             content.accessibilityAddTraits(traits)

@@ -19,7 +19,7 @@ let package = Package(
         .library(
             name: "DaVinciGallery",
             targets: ["DaVinciGallery"]
-        ),
+        )
     ],
     targets: [
         // MARK: - Tokens
@@ -54,6 +54,6 @@ let package = Package(
             name: "DaVinciComponentsTests",
             dependencies: ["DaVinciComponents", "DaVinciTokens"],
             resources: [.copy("__Snapshots__")]
-        ),
+        )
     ]
 )

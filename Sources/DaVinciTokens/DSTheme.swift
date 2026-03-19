@@ -22,7 +22,7 @@ import SwiftUI
 /// ```swift
 /// struct MyView: View {
 ///     @Environment(\.dsTheme) private var theme
-///     
+///
 ///     var body: some View {
 ///         Text("Hello")
 ///             .foregroundColor(theme.colors.semantic.textPrimary)
@@ -151,6 +151,10 @@ private struct DSThemeKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
+    /// The current theme applied to the view hierarchy.
+    ///
+    /// Access this value from within a view using `@Environment(\.dsTheme)`.
+    /// Set it at the root of your view hierarchy using `.dsTheme(_:)`.
     public var dsTheme: DSTheme {
         get { self[DSThemeKey.self] }
         set { self[DSThemeKey.self] = newValue }

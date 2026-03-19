@@ -62,17 +62,20 @@ public struct DSTextField: View {
         .clipShape(RoundedRectangle(cornerRadius: RadiusTokens.small))
         .overlay(
             RoundedRectangle(cornerRadius: RadiusTokens.small)
-                .stroke(error != nil ? theme.colors.feedback.error : theme.colors.semantic.stroke, lineWidth: StrokeTokens.hairline)
+                .stroke(
+                    error != nil ? theme.colors.feedback.error : theme.colors.semantic.stroke,
+                    lineWidth: StrokeTokens.hairline
+                )
         )
         .accessibilityLabel(resolvedAccessibilityLabel)
         .modifier(AccessibilityHintModifier(hint: accessibilityHint))
         .accessibilityValue(resolvedAccessibilityValue)
     }
-    
+
     private var resolvedAccessibilityLabel: String {
         accessibilityLabel ?? label
     }
-    
+
     private var resolvedAccessibilityValue: String {
         if let error = error {
             return "Error: \(error)"
@@ -108,7 +111,7 @@ public struct DSTextField: View {
 
 private struct AccessibilityHintModifier: ViewModifier {
     let hint: String?
-    
+
     func body(content: Content) -> some View {
         if let hint = hint {
             content.accessibilityHint(hint)

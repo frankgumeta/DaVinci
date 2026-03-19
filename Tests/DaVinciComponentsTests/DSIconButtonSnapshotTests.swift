@@ -6,11 +6,11 @@ import Testing
 @Suite("DSIconButton Snapshot Tests")
 @MainActor
 struct DSIconButtonSnapshotTests {
-    
+
     let recordMode = isRecordingSnapshots
-    
+
     // MARK: - Size Variants
-    
+
     @Test func smallIconButton_light() throws {
         let button = DSIconButton(
             systemName: "heart.fill",
@@ -26,7 +26,7 @@ struct DSIconButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func mediumIconButton_light() throws {
         let button = DSIconButton(
             systemName: "heart.fill",
@@ -42,7 +42,7 @@ struct DSIconButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func largeIconButton_light() throws {
         let button = DSIconButton(
             systemName: "heart.fill",
@@ -58,9 +58,9 @@ struct DSIconButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     // MARK: - Variant Styles
-    
+
     @Test func primaryIconButton_dark() throws {
         let button = DSIconButton(
             systemName: "star.fill",
@@ -76,7 +76,7 @@ struct DSIconButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func secondaryIconButton_light() throws {
         let button = DSIconButton(
             systemName: "gearshape",
@@ -92,7 +92,7 @@ struct DSIconButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func outlineIconButton_light() throws {
         let button = DSIconButton(
             systemName: "pencil",
@@ -108,7 +108,7 @@ struct DSIconButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func accentIconButton_light() throws {
         let button = DSIconButton(
             systemName: "bell.fill",
@@ -124,9 +124,9 @@ struct DSIconButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     // MARK: - States
-    
+
     @Test func disabledIconButton_light() throws {
         let button = DSIconButton(
             systemName: "trash",
@@ -143,7 +143,7 @@ struct DSIconButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func loadingIconButton_light() throws {
         let button = DSIconButton(
             systemName: "arrow.clockwise",

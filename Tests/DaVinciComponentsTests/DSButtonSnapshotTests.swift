@@ -6,11 +6,11 @@ import Testing
 @Suite("DSButton Snapshot Tests")
 @MainActor
 struct DSButtonSnapshotTests {
-    
+
     let recordMode = isRecordingSnapshots
-    
+
     // MARK: - Primary Variant
-    
+
     @Test func primaryButton_light() throws {
         let button = DSButton("Submit", variant: .primary) {}
         try SnapshotTester.assertSnapshot(
@@ -21,7 +21,7 @@ struct DSButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func primaryButton_dark() throws {
         let button = DSButton("Submit", variant: .primary) {}
         try SnapshotTester.assertSnapshot(
@@ -32,9 +32,9 @@ struct DSButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     // MARK: - Secondary Variant
-    
+
     @Test func secondaryButton_light() throws {
         let button = DSButton("Cancel", variant: .secondary) {}
         try SnapshotTester.assertSnapshot(
@@ -45,7 +45,7 @@ struct DSButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func secondaryButton_dark() throws {
         let button = DSButton("Cancel", variant: .secondary) {}
         try SnapshotTester.assertSnapshot(
@@ -56,9 +56,9 @@ struct DSButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     // MARK: - Outline Variant
-    
+
     @Test func outlineButton_light() throws {
         let button = DSButton("Details", variant: .outline) {}
         try SnapshotTester.assertSnapshot(
@@ -69,7 +69,7 @@ struct DSButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func outlineButton_dark() throws {
         let button = DSButton("Details", variant: .outline) {}
         try SnapshotTester.assertSnapshot(
@@ -80,9 +80,9 @@ struct DSButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     // MARK: - Disabled State
-    
+
     @Test func disabledButton_light() throws {
         let button = DSButton("Submit", variant: .primary, isDisabled: true) {}
         try SnapshotTester.assertSnapshot(
@@ -93,7 +93,7 @@ struct DSButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func disabledButton_dark() throws {
         let button = DSButton("Submit", variant: .primary, isDisabled: true) {}
         try SnapshotTester.assertSnapshot(
@@ -104,9 +104,9 @@ struct DSButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     // MARK: - Loading State
-    
+
     @Test func loadingButton_light() throws {
         let button = DSButton("Submit", variant: .primary, isLoading: true) {}
         try SnapshotTester.assertSnapshot(
@@ -117,7 +117,7 @@ struct DSButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func loadingButton_dark() throws {
         let button = DSButton("Submit", variant: .primary, isLoading: true) {}
         try SnapshotTester.assertSnapshot(
@@ -128,9 +128,9 @@ struct DSButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     // MARK: - With Icons
-    
+
     @Test func buttonWithLeadingIcon_light() throws {
         let button = DSButton(
             "Download",
@@ -145,7 +145,7 @@ struct DSButtonSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func buttonWithTrailingIcon_light() throws {
         let button = DSButton(
             "Next",

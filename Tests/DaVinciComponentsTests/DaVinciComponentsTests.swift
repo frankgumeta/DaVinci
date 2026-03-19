@@ -62,7 +62,7 @@ struct DSButtonTests {
             (false, true),
             (true, true)
         ]
-        
+
         for variant in variants {
             for state in states {
                 let button = DSButton(
@@ -127,7 +127,7 @@ struct DSIconButtonTests {
     @Test @MainActor func allCombinationsCreate() {
         let variants: [DSIconButton.Variant] = [.primary, .secondary, .outline, .accent]
         let sizes: [DSIconButton.Size] = [.small, .medium, .large]
-        
+
         for variant in variants {
             for size in sizes {
                 let button = DSIconButton(
@@ -149,7 +149,7 @@ struct DSTextTests {
 
     @Test @MainActor func textWithAllRoles() {
         let roles: [DSText.Role] = [
-            .display, .title, .headline, .body, .callout, .caption, .overline,
+            .display, .title, .headline, .body, .callout, .caption, .overline
         ]
         for role in roles {
             let text = DSText("Sample", role: role)
@@ -169,10 +169,10 @@ struct DSTextTests {
 
     @Test @MainActor func allRolesWithCustomColors() {
         let roles: [DSText.Role] = [
-            .display, .title, .headline, .body, .callout, .caption, .overline,
+            .display, .title, .headline, .body, .callout, .caption, .overline
         ]
         let colors: [Color] = [.red, .blue, .green, .purple]
-        
+
         for role in roles {
             for color in colors {
                 let text = DSText("Test", role: role, color: color)
@@ -226,33 +226,34 @@ struct DSCardTests {
                 }
             }
         }
+        // swiftlint:disable:next large_tuple
         #expect(type(of: card) == DSCard<VStack<TupleView<(Text, Text, HStack<TupleView<(Text, Spacer)>>)>>>.self)
     }
-    
+
     @Test @MainActor func cardWithEmptyContent() {
         let card = DSCard {
             EmptyView()
         }
         #expect(type(of: card) == DSCard<EmptyView>.self)
     }
-    
+
     @Test @MainActor func cardWithImage() {
         let card = DSCard {
             Image(systemName: "star.fill")
         }
         #expect(type(of: card) == DSCard<Image>.self)
     }
-    
+
     @Test @MainActor func cardWithDSTextComponent() {
         let card = DSCard {
             DSText("Card with DS component", role: .headline)
         }
         #expect(type(of: card) == DSCard<DSText>.self)
     }
-    
+
     @Test @MainActor func allCardStylesCreate() {
         let styles: [DSCardStyle] = [.compact, .standard, .prominent]
-        
+
         for style in styles {
             let card = DSCard(style: style) {
                 Text("Test")
@@ -276,12 +277,12 @@ struct DSTextFieldTests {
         let field = DSTextField("Email", text: .constant(""), prompt: "Enter your email")
         #expect(type(of: field) == DSTextField.self)
     }
-    
+
     @Test @MainActor func textFieldWithoutLabelShown() {
         let field = DSTextField("Hidden Label", text: .constant(""), showsLabel: false)
         #expect(type(of: field) == DSTextField.self)
     }
-    
+
     @Test @MainActor func textFieldWithAllParameters() {
         let field = DSTextField(
             "Username",
@@ -291,17 +292,17 @@ struct DSTextFieldTests {
         )
         #expect(type(of: field) == DSTextField.self)
     }
-    
+
     @Test @MainActor func textFieldWorksWithBinding() {
         let field = DSTextField("Test", text: .constant("Initial value"))
         #expect(type(of: field) == DSTextField.self)
     }
-    
+
     @Test @MainActor func textFieldAcceptsEmptyString() {
         let field = DSTextField("", text: .constant(""))
         #expect(type(of: field) == DSTextField.self)
     }
-    
+
     @Test @MainActor func textFieldWithLongLabel() {
         let longLabel = "This is a very long label that should still work correctly"
         let field = DSTextField(longLabel, text: .constant(""))
@@ -474,11 +475,11 @@ struct ThemeIntegrationTests {
 
     @Test @MainActor func componentsWorkWithDefaultTheme() {
         let theme = DSTheme.defaultTheme
-        
+
         let button = DSButton("Test", variant: .primary) {}
         let text = DSText("Test", role: .body)
         let card = DSCard { Text("Content") }
-        
+
         #expect(theme.name == "default")
         #expect(type(of: button) == DSButton.self)
         #expect(type(of: text) == DSText.self)
@@ -492,11 +493,11 @@ struct ThemeIntegrationTests {
                 brand: BrandColors(primary: .purple)
             )
         )
-        
+
         #expect(customTheme.name == "custom")
         #expect(customTheme.colors.brand.primary == .purple)
     }
-    
+
     @Test @MainActor func componentsNestCorrectly() {
         let card = DSCard {
             VStack {
@@ -505,20 +506,20 @@ struct ThemeIntegrationTests {
                 DSButton("Action", variant: .primary) {}
             }
         }
-        
+
         #expect(String(describing: type(of: card)).contains("DSCard"))
     }
-    
+
     @Test @MainActor func multipleButtonVariantsInSameView() {
         let buttons = VStack {
             DSButton("Primary", variant: .primary) {}
             DSButton("Secondary", variant: .secondary) {}
             DSButton("Outline", variant: .outline) {}
         }
-        
+
         #expect(String(describing: type(of: buttons)).contains("VStack"))
     }
-    
+
     @Test @MainActor func mixedComponentsInCard() {
         let card = DSCard(style: .standard) {
             VStack(spacing: 12) {
@@ -535,33 +536,33 @@ struct ThemeIntegrationTests {
                 }
             }
         }
-        
+
         #expect(String(describing: type(of: card)).contains("DSCard"))
     }
-    
+
     @Test @MainActor func skeletonComponentsInList() {
         let list = VStack {
             DSSkeletonRow()
             DSSkeletonRow(showLeading: true)
             DSSkeletonRow(showLeading: true, showTrailing: true)
         }
-        
+
         #expect(String(describing: type(of: list)).contains("VStack"))
     }
-    
+
     @Test @MainActor func customThemeWithCustomTypography() {
         let customTypography = DSTypography(
             family: FontFamily(brand: "Helvetica")
         )
         let theme = DSTheme(name: "custom", typography: customTypography)
-        
+
         #expect(theme.typography.family.brand == "Helvetica")
     }
-    
+
     @Test @MainActor func customThemeWithCustomMotion() {
         let customMotion = DSMotion(fast: 0.1, normal: 0.2, slow: 0.4)
         let theme = DSTheme(name: "custom", motion: customMotion)
-        
+
         #expect(theme.motion.fast == 0.1)
         #expect(theme.motion.normal == 0.2)
         #expect(theme.motion.slow == 0.4)

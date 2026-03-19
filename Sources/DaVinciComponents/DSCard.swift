@@ -149,7 +149,7 @@ public struct DSCard<Content: View>: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        
+
         DSCard(
             style: .standard,
             accessibilityLabel: "Settings card",
@@ -170,7 +170,7 @@ public struct DSCard<Content: View>: View {
 
 private struct AccessibilityLabelModifier: ViewModifier {
     let label: String?
-    
+
     func body(content: Content) -> some View {
         if let label = label {
             content.accessibilityLabel(label)
@@ -182,7 +182,7 @@ private struct AccessibilityLabelModifier: ViewModifier {
 
 private struct AccessibilityHintModifier: ViewModifier {
     let hint: String?
-    
+
     func body(content: Content) -> some View {
         if let hint = hint {
             content.accessibilityHint(hint)
@@ -194,7 +194,7 @@ private struct AccessibilityHintModifier: ViewModifier {
 
 private struct AccessibilityTraitsModifier: ViewModifier {
     let traits: AccessibilityTraits?
-    
+
     func body(content: Content) -> some View {
         if let traits = traits {
             content.accessibilityAddTraits(traits)
