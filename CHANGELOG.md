@@ -7,16 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Merge conflict validation job in CI workflow
+- Git pre-commit hook instructions for automatic SwiftLint enforcement
+- Comprehensive SwiftLint setup documentation for Swift Packages in CONTRIBUTING.md
+
 ### Fixed
 - Corrected iOS version inconsistency between README (iOS 18+) and Package.swift (iOS 26+)
 - Updated repository URLs from placeholder to actual GitHub repository
+- Fixed SwiftLint configuration (removed invalid rules, resolved conflicts)
+- Fixed all SwiftLint violations (11 violations → 0)
 
 ### Changed
 - CI now installs and runs SwiftLint as mandatory step
+- SwiftLint file_length limits adjusted to 650/800 for comprehensive test files
 
 ### Documentation
 - Added explanation for iOS 26+ requirement in README
 - Improved snapshot testing troubleshooting documentation
+- Added SwiftLint Xcode integration guide
 
 ---
 

@@ -10,6 +10,27 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
+  validate-merge:
+    name: Validate Merge
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout PR
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+        
+    - name: Check for merge conflicts
+      run: |
+        git fetch origin ${{ github.base_ref }}
+        if ! git merge-tree $(git merge-base HEAD origin/${{ github.base_ref }}) HEAD origin/${{ github.base_ref }} | grep -q '<<<<<<<'; then
+          echo "✅ No merge conflicts detected"
+        else
+          echo "❌ Merge conflicts detected"
+          exit 1
+        fi
+
   test:
     name: Test
     runs-on: macos-latest
