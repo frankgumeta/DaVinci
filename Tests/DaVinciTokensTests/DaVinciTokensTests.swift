@@ -275,7 +275,7 @@ struct SpacingTokensTests {
             SpacingTokens.space5,
             SpacingTokens.space6,
             SpacingTokens.space7,
-            SpacingTokens.space8,
+            SpacingTokens.space8
         ]
         for i in 0..<scale.count - 1 {
             #expect(scale[i] < scale[i + 1])
@@ -304,7 +304,7 @@ struct RadiusTokensTests {
             RadiusTokens.extraSmall,
             RadiusTokens.small,
             RadiusTokens.medium,
-            RadiusTokens.large,
+            RadiusTokens.large
         ]
         for i in 0..<scale.count - 1 {
             #expect(scale[i] < scale[i + 1])
@@ -567,7 +567,7 @@ struct DSTypographyTests {
             typo.body.size,
             typo.headline.size,
             typo.title.size,
-            typo.display.size,
+            typo.display.size
         ]
         for i in 0..<sizes.count - 1 {
             #expect(sizes[i] < sizes[i + 1])
@@ -584,41 +584,41 @@ struct DSTypographyTests {
         let family = FontFamily(brand: "Avenir")
         #expect(family.resolved == "Avenir")
     }
-    
+
     @Test func allowedWeightMapsToFontWeight() {
         #expect(AllowedWeight.regular.fontWeight == Font.Weight.regular)
         #expect(AllowedWeight.medium.fontWeight == Font.Weight.medium)
         #expect(AllowedWeight.semibold.fontWeight == Font.Weight.semibold)
         #expect(AllowedWeight.bold.fontWeight == Font.Weight.bold)
     }
-    
+
     @Test func textStyleFontWithSystemFamily() {
         let style = DSTextStyle(size: 16, lineHeight: 24, weight: .regular)
         let systemFamily = FontFamily()
         let font = style.font(family: systemFamily)
-        
+
         #expect(font == Font.system(size: 16, weight: .regular))
     }
-    
+
     @Test func textStyleFontWithBrandFamily() {
         let style = DSTextStyle(size: 18, lineHeight: 28, weight: .bold)
         let brandFamily = FontFamily(brand: "Helvetica")
         let font = style.font(family: brandFamily)
-        
+
         #expect(font == Font.custom("Helvetica", size: 18))
     }
-    
+
     @Test func textStyleFontRespectsSize() {
         let style = DSTextStyle(size: 24, lineHeight: 32, weight: .medium)
         let font = style.font(family: FontFamily())
-        
+
         #expect(font == Font.system(size: 24, weight: .medium))
     }
-    
+
     @Test func allTypographyStylesGenerateFont() {
         let typo = DSTypography()
         let family = FontFamily()
-        
+
         let displayFont = typo.display.font(family: family)
         let titleFont = typo.title.font(family: family)
         let headlineFont = typo.headline.font(family: family)
@@ -626,7 +626,7 @@ struct DSTypographyTests {
         let calloutFont = typo.callout.font(family: family)
         let captionFont = typo.caption.font(family: family)
         let overlineFont = typo.overline.font(family: family)
-        
+
         #expect(displayFont == Font.system(size: typo.display.size, weight: typo.display.weight))
         #expect(titleFont == Font.system(size: typo.title.size, weight: typo.title.weight))
         #expect(headlineFont == Font.system(size: typo.headline.size, weight: typo.headline.weight))

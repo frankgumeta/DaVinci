@@ -6,11 +6,11 @@ import Testing
 @Suite("DSTextField Snapshot Tests")
 @MainActor
 struct DSTextFieldSnapshotTests {
-    
+
     let recordMode = isRecordingSnapshots
-    
+
     // MARK: - Default State
-    
+
     @Test func textField_withLabel_light() throws {
         let field = DSTextField("Email", text: .constant(""), prompt: "you@example.com")
         try SnapshotTester.assertSnapshot(
@@ -21,7 +21,7 @@ struct DSTextFieldSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func textField_withLabel_dark() throws {
         let field = DSTextField("Email", text: .constant(""), prompt: "you@example.com")
         try SnapshotTester.assertSnapshot(
@@ -32,7 +32,7 @@ struct DSTextFieldSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func textField_withoutLabel_light() throws {
         let field = DSTextField("Search", text: .constant(""), prompt: "Search…", showsLabel: false)
         try SnapshotTester.assertSnapshot(
@@ -43,9 +43,9 @@ struct DSTextFieldSnapshotTests {
             record: recordMode
         )
     }
-    
+
     // MARK: - With Content
-    
+
     @Test func textField_withContent_light() throws {
         let field = DSTextField("Name", text: .constant("John Doe"))
         try SnapshotTester.assertSnapshot(
@@ -56,9 +56,9 @@ struct DSTextFieldSnapshotTests {
             record: recordMode
         )
     }
-    
+
     // MARK: - Error State
-    
+
     @Test func textField_withError_light() throws {
         let field = DSTextField(
             "Email",
@@ -73,7 +73,7 @@ struct DSTextFieldSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func textField_withError_dark() throws {
         let field = DSTextField(
             "Email",

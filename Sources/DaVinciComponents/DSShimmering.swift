@@ -59,7 +59,7 @@ private struct DSShimmeringModifier: ViewModifier {
                     .onAppear {
                         withAnimation(
                             .linear(duration: theme.motion.shimmerDuration)
-                            .repeatForever(autoreverses: false)
+                                .repeatForever(autoreverses: false)
                         ) {
                             phase = 1
                         }

@@ -6,11 +6,11 @@ import Testing
 @Suite("DSCard Snapshot Tests")
 @MainActor
 struct DSCardSnapshotTests {
-    
+
     let recordMode = isRecordingSnapshots
-    
+
     // MARK: - Compact Style
-    
+
     @Test func compactCard_light() throws {
         let card = DSCard(style: .compact) {
             VStack(alignment: .leading, spacing: 4) {
@@ -27,7 +27,7 @@ struct DSCardSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func compactCard_dark() throws {
         let card = DSCard(style: .compact) {
             VStack(alignment: .leading, spacing: 4) {
@@ -44,9 +44,9 @@ struct DSCardSnapshotTests {
             record: recordMode
         )
     }
-    
+
     // MARK: - Standard Style
-    
+
     @Test func standardCard_light() throws {
         let card = DSCard(style: .standard) {
             VStack(alignment: .leading, spacing: 4) {
@@ -63,7 +63,7 @@ struct DSCardSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func standardCard_dark() throws {
         let card = DSCard(style: .standard) {
             VStack(alignment: .leading, spacing: 4) {
@@ -80,9 +80,9 @@ struct DSCardSnapshotTests {
             record: recordMode
         )
     }
-    
+
     // MARK: - Prominent Style
-    
+
     @Test func prominentCard_light() throws {
         let card = DSCard(style: .prominent) {
             VStack(alignment: .leading, spacing: 4) {
@@ -99,7 +99,7 @@ struct DSCardSnapshotTests {
             record: recordMode
         )
     }
-    
+
     @Test func prominentCard_dark() throws {
         let card = DSCard(style: .prominent) {
             VStack(alignment: .leading, spacing: 4) {
@@ -116,9 +116,9 @@ struct DSCardSnapshotTests {
             record: recordMode
         )
     }
-    
+
     // MARK: - Complex Content
-    
+
     @Test func cardWithComplexContent_light() throws {
         let card = DSCard(style: .standard) {
             VStack(alignment: .leading, spacing: 8) {

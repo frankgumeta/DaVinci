@@ -150,7 +150,7 @@ public struct DSButton: View {
         .modifier(AccessibilityHintModifier(hint: accessibilityHint))
         .accessibilityAddTraits(.isButton)
     }
-    
+
     private var resolvedAccessibilityLabel: String {
         if isLoading {
             return accessibilityLabel ?? "\(title) - Loading"
@@ -260,7 +260,7 @@ public struct DSButton: View {
 
 private struct AccessibilityHintModifier: ViewModifier {
     let hint: String?
-    
+
     func body(content: Content) -> some View {
         if let hint = hint {
             content.accessibilityHint(hint)
