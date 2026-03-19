@@ -1,0 +1,58 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="160" y1="120" x2="864" y2="904" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#1E3A8A"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="332" y1="250" x2="700" y2="760" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60A5FA"/>
+      <stop offset="1" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="400" y1="230" x2="660" y2="780" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F8D48A"/>
+      <stop offset="1" stop-color="#F59E0B"/>
+    </linearGradient>
+    <filter id="shadow" x="240" y="180" width="544" height="650" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="20" stdDeviation="28" flood-color="#020617" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <rect x="72" y="72" width="880" height="880" rx="220" fill="url(#bg)"/>
+
+  <!-- subtle drafting grid -->
+  <g opacity="0.12" stroke="#E2E8F0" stroke-width="10">
+    <circle cx="512" cy="512" r="274"/>
+    <circle cx="512" cy="512" r="188"/>
+    <line x1="512" y1="220" x2="512" y2="804"/>
+    <line x1="220" y1="512" x2="804" y2="512"/>
+  </g>
+
+  <!-- stylized Vitruvian halo -->
+  <circle cx="512" cy="512" r="330" stroke="#93C5FD" stroke-opacity="0.22" stroke-width="18"/>
+
+  <!-- DF monogram shaped like compass + wing -->
+  <g filter="url(#shadow)">
+    <!-- D frame -->
+    <path d="M332 252H502C640.071 252 752 363.929 752 502C752 640.071 640.071 752 502 752H332V252Z" fill="#F8FAFC" fill-opacity="0.06" stroke="url(#accent)" stroke-width="28" stroke-linejoin="round"/>
+
+    <!-- D inner cut -->
+    <path d="M410 330H498C592.441 330 669 406.559 669 501C669 595.441 592.441 672 498 672H410V330Z" fill="url(#bg)"/>
+
+    <!-- central quill / compass spine -->
+    <path d="M512 238L610 522L512 786L414 522L512 238Z" fill="url(#gold)"/>
+
+    <!-- quill slit -->
+    <path d="M512 286L553 522L512 694L471 522L512 286Z" fill="#FFF7E6" fill-opacity="0.78"/>
+
+    <!-- modern F crossbar -->
+    <path d="M470 402H678" stroke="url(#accent)" stroke-width="30" stroke-linecap="round"/>
+    <path d="M448 526H628" stroke="url(#accent)" stroke-width="24" stroke-linecap="round" opacity="0.92"/>
+  </g>
+
+  <!-- subtle orbit accents for creativity / invention -->
+  <g opacity="0.9">
+    <circle cx="736" cy="350" r="14" fill="#BAE6FD"/>
+    <circle cx="278" cy="676" r="10" fill="#FCD34D"/>
+    <circle cx="690" cy="734" r="8" fill="#7DD3FC"/>
+  </g>
+</svg>

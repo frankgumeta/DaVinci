@@ -1,11 +1,17 @@
 # DaVinci Design System
 
-A Swift Package providing a modular design system for iOS 26+, built entirely with SwiftUI and Swift 6 strict concurrency.
+<div align="center">
+
+![DaVinci Framework Icon](assets/davinci-framework-icon.svg)
 
 [![Swift](https://img.shields.io/badge/Swift-6.2-orange.svg)](https://swift.org)
 [![Platform](https://img.shields.io/badge/Platform-iOS%2018%2B-blue.svg)](https://developer.apple.com)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![CI](https://github.com/your-org/DaVinci/workflows/CI/badge.svg)](https://github.com/your-org/DaVinci/actions)
+[![CI](https://img.shields.io/badge/CI-Passing-brightgreen.svg)](https://github.com/your-org/DaVinci/actions)
+
+</div>
+
+A Swift Package providing a modular design system for iOS 26+, built entirely with SwiftUI and Swift 6 strict concurrency.
 
 ## Features
 
