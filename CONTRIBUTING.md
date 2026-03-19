@@ -26,7 +26,7 @@ Be respectful, inclusive, and collaborative. We aim to maintain a welcoming envi
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-org/DaVinci.git
+git clone https://github.com/frankgumeta/DaVinci.git
 cd DaVinci
 ```
 
@@ -191,6 +191,31 @@ xcodebuild test \
 - Use iPhone 17 Simulator for consistency with CI
 - Never commit `*-FAILURE.png` files (these are diff artifacts)
 - Ensure snapshots render consistently on iPhone 17 Simulator
+
+#### Snapshot Testing Troubleshooting
+
+**Snapshots failing after intentional UI changes?**
+```bash
+# Re-record snapshots with your changes
+RECORD_SNAPSHOTS=1 xcodebuild test \
+  -scheme DaVinci-Package \
+  -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest'
+```
+
+**Snapshots differ slightly between machines?**
+- Ensure you're using iPhone 17 Simulator (matches CI)
+- Check Xcode version matches CI (latest-stable)
+- Verify simulator is clean: `xcrun simctl erase all`
+- Font rendering can vary - ensure system fonts are up to date
+
+**Snapshot test passes locally but fails in CI?**
+- CI uses `iPhone 17, OS=latest` - match this exactly
+- Check if your snapshot was recorded on a different device
+- Verify `__Snapshots__/` directory is committed to git
+
+**Need to update a single snapshot?**
+- Delete the specific reference snapshot file
+- Run tests with `RECORD_SNAPSHOTS=1` to regenerate only missing snapshots
 
 ## Documentation
 

@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Corrected iOS version inconsistency between README (iOS 18+) and Package.swift (iOS 26+)
+- Updated repository URLs from placeholder to actual GitHub repository
+
+### Changed
+- CI now installs and runs SwiftLint as mandatory step
+
+### Documentation
+- Added explanation for iOS 26+ requirement in README
+- Improved snapshot testing troubleshooting documentation
+
+---
+
+## [1.0.0] - 2025-03-19
+
 ### Added
 - Initial design system implementation
 - DaVinciTokens: Complete token system with colors, typography, spacing, radius, elevation, motion, opacity, control heights, and stroke tokens

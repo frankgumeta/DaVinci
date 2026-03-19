@@ -43,13 +43,13 @@ jobs:
         name: codecov-umbrella
         token: ${{ secrets.CODECOV_TOKEN }}
         
+    - name: Install SwiftLint
+      run: |
+        brew install swiftlint
+        
     - name: Run SwiftLint
       run: |
-        if command -v swiftlint >/dev/null 2>&1; then
-          swiftlint
-        else
-          echo "SwiftLint not installed, skipping..."
-        fi
+        swiftlint
 
   build-ios:
     name: Build (iOS)

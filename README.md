@@ -5,13 +5,15 @@
 ![DaVinci Framework Icon](assets/davinci-framework-icon.svg)
 
 [![Swift](https://img.shields.io/badge/Swift-6.2-orange.svg)](https://swift.org)
-[![Platform](https://img.shields.io/badge/Platform-iOS%2018%2B-blue.svg)](https://developer.apple.com)
+[![Platform](https://img.shields.io/badge/Platform-iOS%2026%2B-blue.svg)](https://developer.apple.com)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![CI](https://img.shields.io/badge/CI-Passing-brightgreen.svg)](https://github.com/your-org/DaVinci/actions)
+[![CI](https://img.shields.io/badge/CI-Passing-brightgreen.svg)](https://github.com/frankgumeta/DaVinci/actions)
 
 </div>
 
 A Swift Package providing a modular design system for iOS 26+, built entirely with SwiftUI and Swift 6 strict concurrency.
+
+> **Why iOS 26+?** DaVinci requires iOS 26 to leverage Swift 6 strict concurrency features, ensuring thread-safe design tokens and components. This enables modern, safe concurrent code without data races.
 
 ## Features
 
@@ -41,7 +43,7 @@ Or add it to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/your-org/DaVinci.git", from: "1.0.0")
+    .package(url: "https://github.com/frankgumeta/DaVinci.git", from: "1.0.0")
 ],
 targets: [
     .target(
