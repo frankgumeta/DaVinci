@@ -27,7 +27,7 @@ public struct GalleryHomeScreen: View {
                 }
 
                 Section("Components") {
-                    NavigationLink("Components") { ComponentsGalleryScreen() }
+                    NavigationLink("Components") { ComponentsListScreen() }
                     NavigationLink("Skeletons") { SkeletonGalleryScreen() }
                 }
 

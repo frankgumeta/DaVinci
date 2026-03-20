@@ -35,4 +35,13 @@ public struct DSMotion: Sendable {
         self.snappy = snappy
         self.shimmerDuration = shimmerDuration
     }
+
+    /// `easeInOut` explicitly bound to `normal` duration.
+    /// Preferred over the bare `easeInOut` for component transitions where
+    /// a predictable, theme-consistent duration matters (e.g. progress bars).
+    public var easeInOutNormal: Animation { .easeInOut(duration: normal) }
+
+    /// Short `easeInOut` bound to `fast` duration.
+    /// Designed for immediate press/tap feedback on interactive controls.
+    public var press: Animation { .easeInOut(duration: fast) }
 }

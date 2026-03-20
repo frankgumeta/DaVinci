@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [1.1.0] - 2026-03-20
+
+### Added
+- **DSSwitch**: Themed toggle switch component with label support, disabled state, and accessibility
+- **DSProgressBar**: Linear progress bar with determinate and indeterminate states, size variants, and reduce motion support
+- **DSDivider**: Horizontal and vertical divider with regular and hairline styles
+- **DSBadge**: Badge component with multiple variants (brand, success, warning, error, neutral) and sizes (small, medium, large)
+- **DSSegmentedControl**: Segmented picker with support for text labels and SF Symbol icons
+- **DSRemoteImage**: Async image loader with skeleton loading, placeholder support, and automatic caching
+- **DSSkeleton**: Skeleton loading components (DSSkeletonBlock, DSSkeletonRow, DSSkeletonCard, DSSkeletonList) with shimmer animation
+- **DSShimmering**: View modifier for shimmer loading effects with reduce motion support
+- All new components added to DaVinciGallery for visual verification
+- **Comprehensive test coverage**: >95% code coverage across all targets
+  - DaVinciTokens: 100% coverage
+  - DaVinciComponents: >92% coverage
+- **Behavioral tests**: 180+ tests covering component logic, state management, accessibility, and theme integration
+- **Snapshot tests**: 80+ visual regression tests covering all component variants in light and dark modes
+- Internal static helper methods for testable pure functions (DSBadge color mapping, DSText style mapping)
+
+### Changed
+- **Test infrastructure improvements**: Eliminated Environment access warnings by extracting pure mapping logic to internal static helpers
+- Auto-record missing snapshots on first run (no manual RECORD_SNAPSHOTS flag needed for initial recording)
+- Improved snapshot test reliability with deterministic rendering
+
+### Removed
+- **Breaking**: Removed deprecated `DSBadge.Variant.default` (use `.brand` instead)
+
+---
+
+## [1.0.1] - 2025-03-19
+
 ### Added
 - Merge conflict validation job in CI workflow
 - Git pre-commit hook instructions for automatic SwiftLint enforcement

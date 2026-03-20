@@ -81,8 +81,10 @@ struct SnapshotTester {
         let filename = "\(name)-\(schemeStr).png"
         let fileURL = snapshotsDirectory.appendingPathComponent(filename)
 
-        if record {
-            // Record mode: save the snapshot
+        let shouldRecord = record || !FileManager.default.fileExists(atPath: fileURL.path)
+
+        if shouldRecord {
+            // Record mode (explicit or auto-record when reference is missing)
             try imageData.write(to: fileURL)
             print("📸 Recorded snapshot: \(filename)")
         } else {

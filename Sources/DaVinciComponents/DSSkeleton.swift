@@ -222,8 +222,8 @@ public struct DSSkeletonList: View {
     }
 
     /// Deterministic width multipliers cycling long / medium / short.
-    private static let primaryMultipliers: [CGFloat] = [1.0, 0.75, 0.55]
-    private static let secondaryMultipliers: [CGFloat] = [1.0, 0.85, 0.65]
+    internal static let primaryMultipliers: [CGFloat] = [1.0, 0.75, 0.55]
+    internal static let secondaryMultipliers: [CGFloat] = [1.0, 0.85, 0.65]
 
     public var body: some View {
         VStack(spacing: spacing.value) {

@@ -157,15 +157,33 @@ public struct DSRemoteImage: View {
         }
     }
 
-    private var resolvedAccessibilityLabel: String {
+    internal enum AccessibilityPhase: Sendable {
+        case loading, success, failure
+    }
+
+    internal static func resolveAccessibilityLabel(
+        phase: AccessibilityPhase, customLabel: String?, url: URL?
+    ) -> String {
         switch phase {
         case .loading:
-            return label ?? "Loading image"
+            return customLabel ?? "Loading image"
         case .success:
-            return label ?? (url != nil ? "Remote image" : "Placeholder image")
+            return customLabel ?? (url != nil ? "Remote image" : "Placeholder image")
         case .failure:
-            return label ?? "Image failed to load"
+            return customLabel ?? "Image failed to load"
         }
+    }
+
+    private var resolvedAccessibilityLabel: String {
+        let accessibilityPhase: AccessibilityPhase
+        switch phase {
+        case .loading: accessibilityPhase = .loading
+        case .success: accessibilityPhase = .success
+        case .failure: accessibilityPhase = .failure
+        }
+        return Self.resolveAccessibilityLabel(
+            phase: accessibilityPhase, customLabel: label, url: url
+        )
     }
 
     // MARK: - Loading
