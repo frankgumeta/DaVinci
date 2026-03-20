@@ -12,6 +12,7 @@ excluded:
   - .build
   - Sources/DaVinciDemo
   - Sources/DaVinciGallery
+  - Tests/DaVinciComponentsTests/DaVinciComponentsTests.swift
 
 # Custom rules for design system
 line_length:

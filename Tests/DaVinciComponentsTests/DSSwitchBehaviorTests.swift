@@ -98,26 +98,33 @@ struct DSSwitchBehaviorTests {
     // MARK: - Init Parameter Combinations
 
     @Test @MainActor func allStateCombinationsResolveLabels() {
-        let states: [(Bool, Bool, String?, String?)] = [
-            (true, false, "Label", nil),
-            (false, false, "Label", nil),
-            (true, true, nil, nil),
-            (false, true, nil, "Custom"),
-            (true, false, "Label", "Custom"),
+        struct TestState {
+            let isOn: Bool
+            let isDisabled: Bool
+            let label: String?
+            let a11yLabel: String?
+        }
+
+        let states: [TestState] = [
+            TestState(isOn: true, isDisabled: false, label: "Label", a11yLabel: nil),
+            TestState(isOn: false, isDisabled: false, label: "Label", a11yLabel: nil),
+            TestState(isOn: true, isDisabled: true, label: nil, a11yLabel: nil),
+            TestState(isOn: false, isDisabled: true, label: nil, a11yLabel: "Custom"),
+            TestState(isOn: true, isDisabled: false, label: "Label", a11yLabel: "Custom")
         ]
 
-        for (isOn, isDisabled, label, a11yLabel) in states {
+        for state in states {
             let toggle = DSSwitch(
-                isOn: .constant(isOn),
-                label: label,
-                isDisabled: isDisabled,
-                accessibilityLabel: a11yLabel
+                isOn: .constant(state.isOn),
+                label: state.label,
+                isDisabled: state.isDisabled,
+                accessibilityLabel: state.a11yLabel
             )
             let resolved = toggle.resolvedAccessibilityLabel
 
-            if let a11yLabel {
+            if let a11yLabel = state.a11yLabel {
                 #expect(resolved == a11yLabel)
-            } else if let label {
+            } else if let label = state.label {
                 #expect(resolved == label)
             } else {
                 #expect(resolved == "Toggle")
