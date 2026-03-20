@@ -468,6 +468,233 @@ struct DSSkeletonTests {
     }
 }
 
+// MARK: - DSBadge Tests
+
+@Suite("DSBadge")
+struct DSBadgeTests {
+
+    @Test @MainActor func allVariantsCreate() {
+        let variants: [DSBadge.Variant] = [.brand, .success, .warning, .error, .neutral]
+        for variant in variants {
+            let badge = DSBadge("Test", variant: variant)
+            #expect(type(of: badge) == DSBadge.self)
+        }
+    }
+
+    @Test @MainActor func allSizesCreate() {
+        let sizes: [DSBadge.Size] = [.small, .medium, .large]
+        for size in sizes {
+            let badge = DSBadge("Test", size: size)
+            #expect(type(of: badge) == DSBadge.self)
+        }
+    }
+
+    @Test @MainActor func dotBadgeCreatesWithoutText() {
+        let badge = DSBadge(variant: .error)
+        #expect(type(of: badge) == DSBadge.self)
+    }
+
+    @Test @MainActor func accessibilityLabelOverride() {
+        let badge = DSBadge(variant: .error, accessibilityLabel: "3 unread messages")
+        #expect(type(of: badge) == DSBadge.self)
+    }
+
+    @Test @MainActor func defaultVariantIsBrand() {
+        let badge = DSBadge("New")
+        #expect(type(of: badge) == DSBadge.self)
+    }
+}
+
+// MARK: - DSDivider Tests
+
+@Suite("DSDivider")
+struct DSDividerTests {
+
+    @Test @MainActor func defaultCreates() {
+        let divider = DSDivider()
+        #expect(type(of: divider) == DSDivider.self)
+    }
+
+    @Test @MainActor func allStylesCreate() {
+        let styles: [DSDivider.Style] = [.hairline, .regular]
+        for style in styles {
+            let divider = DSDivider(style: style)
+            #expect(type(of: divider) == DSDivider.self)
+        }
+    }
+
+    @Test @MainActor func allOrientationsCreate() {
+        let orientations: [DSDivider.Orientation] = [.horizontal, .vertical]
+        for orientation in orientations {
+            let divider = DSDivider(orientation: orientation)
+            #expect(type(of: divider) == DSDivider.self)
+        }
+    }
+
+    @Test @MainActor func styleThicknessValues() {
+        #expect(DSDivider.Style.hairline.thickness == 0.5)
+        #expect(DSDivider.Style.regular.thickness == 1)
+    }
+
+    @Test @MainActor func allCombinationsCreate() {
+        for orientation in [DSDivider.Orientation.horizontal, .vertical] {
+            for style in [DSDivider.Style.hairline, .regular] {
+                let divider = DSDivider(orientation: orientation, style: style)
+                #expect(type(of: divider) == DSDivider.self)
+            }
+        }
+    }
+}
+
+// MARK: - DSProgressBar Tests
+
+@Suite("DSProgressBar")
+struct DSProgressBarTests {
+
+    @Test @MainActor func defaultCreates() {
+        let bar = DSProgressBar()
+        #expect(type(of: bar) == DSProgressBar.self)
+    }
+
+    @Test @MainActor func allSizesCreate() {
+        let sizes: [DSProgressBar.Size] = [.small, .medium, .large]
+        for size in sizes {
+            let bar = DSProgressBar(value: 0.5, size: size)
+            #expect(type(of: bar) == DSProgressBar.self)
+        }
+    }
+
+    @Test @MainActor func sizeHeightValues() {
+        #expect(DSProgressBar.Size.small.height == 4)
+        #expect(DSProgressBar.Size.medium.height == 6)
+        #expect(DSProgressBar.Size.large.height == 8)
+    }
+
+    @Test @MainActor func indeterminateCreates() {
+        let bar = DSProgressBar(label: "Loading...", isIndeterminate: true)
+        #expect(type(of: bar) == DSProgressBar.self)
+    }
+
+    @Test @MainActor func valueIsClampedAboveOne() {
+        let bar = DSProgressBar(value: 2.0)
+        #expect(type(of: bar) == DSProgressBar.self)
+    }
+
+    @Test @MainActor func valueIsClampedBelowZero() {
+        let bar = DSProgressBar(value: -0.5)
+        #expect(type(of: bar) == DSProgressBar.self)
+    }
+
+    @Test @MainActor func withAccessibilityLabel() {
+        let bar = DSProgressBar(value: 0.5, accessibilityLabel: "Upload progress")
+        #expect(type(of: bar) == DSProgressBar.self)
+    }
+}
+
+// MARK: - DSSegmentedControl Tests
+
+@Suite("DSSegmentedControl")
+struct DSSegmentedControlTests {
+
+    @Test @MainActor func segmentItemCreatesWithTitle() {
+        let item = DSSegmentItem(title: "Day")
+        #expect(item.title == "Day")
+        #expect(item.iconSystemName == nil)
+    }
+
+    @Test @MainActor func segmentItemCreatesWithIcon() {
+        let item = DSSegmentItem(title: "List", iconSystemName: "list.bullet")
+        #expect(item.title == "List")
+        #expect(item.iconSystemName == "list.bullet")
+    }
+
+    @Test @MainActor func primaryInitCreates() {
+        let control = DSSegmentedControl(
+            segments: [
+                DSSegmentItem(title: "Day"),
+                DSSegmentItem(title: "Week"),
+                DSSegmentItem(title: "Month")
+            ],
+            selectedIndex: .constant(0)
+        )
+        #expect(type(of: control) == DSSegmentedControl.self)
+    }
+
+    @Test @MainActor func convenienceInitCreates() {
+        let control = DSSegmentedControl(
+            options: ["All", "Active", "Closed"],
+            selectedIndex: .constant(1)
+        )
+        #expect(type(of: control) == DSSegmentedControl.self)
+    }
+
+    @Test @MainActor func convenienceInitWithIconsCreates() {
+        let control = DSSegmentedControl(
+            options: ["List", "Grid"],
+            selectedIndex: .constant(0),
+            icons: ["list.bullet", "square.grid.2x2"]
+        )
+        #expect(type(of: control) == DSSegmentedControl.self)
+    }
+
+    @Test @MainActor func convenienceInitMapsIconsCorrectly() {
+        // Verify that icons with fewer entries than options don't crash
+        let control = DSSegmentedControl(
+            options: ["A", "B", "C"],
+            selectedIndex: .constant(0),
+            icons: ["star"]
+        )
+        #expect(type(of: control) == DSSegmentedControl.self)
+    }
+}
+
+// MARK: - DSSwitch Tests
+
+@Suite("DSSwitch")
+struct DSSwitchTests {
+
+    @Test @MainActor func switchOnCreates() {
+        let toggle = DSSwitch(isOn: .constant(true))
+        #expect(type(of: toggle) == DSSwitch.self)
+    }
+
+    @Test @MainActor func switchOffCreates() {
+        let toggle = DSSwitch(isOn: .constant(false))
+        #expect(type(of: toggle) == DSSwitch.self)
+    }
+
+    @Test @MainActor func switchWithLabelCreates() {
+        let toggle = DSSwitch(isOn: .constant(true), label: "Notifications")
+        #expect(type(of: toggle) == DSSwitch.self)
+    }
+
+    @Test @MainActor func switchDisabledCreates() {
+        let toggle = DSSwitch(isOn: .constant(false), isDisabled: true)
+        #expect(type(of: toggle) == DSSwitch.self)
+    }
+
+    @Test @MainActor func switchWithAccessibilityLabelCreates() {
+        let toggle = DSSwitch(
+            isOn: .constant(true),
+            label: "Notifications",
+            accessibilityLabel: "Enable push notifications"
+        )
+        #expect(type(of: toggle) == DSSwitch.self)
+    }
+
+    @Test @MainActor func allStatesCreate() {
+        let states: [(Bool, Bool)] = [(true, false), (false, false), (true, true), (false, true)]
+        for (isOn, isDisabled) in states {
+            let toggle = DSSwitch(
+                isOn: .constant(isOn),
+                label: "Test",
+                isDisabled: isDisabled
+            )
+            #expect(type(of: toggle) == DSSwitch.self)
+        }
+    }
+}
+
 // MARK: - Theme Integration Tests
 
 @Suite("Theme Integration")

@@ -99,7 +99,7 @@ public struct DSText: View {
 
     // MARK: - Accessibility
 
-    private var resolvedAccessibilityTraits: AccessibilityTraits? {
+    internal var resolvedAccessibilityTraits: AccessibilityTraits? {
         if let accessibilityTraits = accessibilityTraits {
             return accessibilityTraits
         }
@@ -115,7 +115,11 @@ public struct DSText: View {
 
     // MARK: - Private
 
-    private var textStyle: DSTextStyle {
+    internal var textStyle: DSTextStyle {
+        Self.textStyle(for: role, theme: theme)
+    }
+
+    internal static func textStyle(for role: Role, theme: DSTheme) -> DSTextStyle {
         switch role {
         case .display:  theme.typography.display
         case .title:    theme.typography.title
