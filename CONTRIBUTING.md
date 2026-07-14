@@ -198,7 +198,7 @@ Tests/
 ### Required Tests
 1. **Token Tests**: Validate all token values and scales (432+ test cases)
 2. **Component Tests**: Test instantiation, states, and behavior
-3. **Snapshot Tests**: Visual regression tests for UI consistency (34 tests)
+3. **Snapshot Tests**: Pixel-based visual regression tests for UI consistency
 4. **Integration Tests**: Test component composition
 5. **Accessibility Tests**: Validate VoiceOver support and WCAG compliance
 
@@ -238,10 +238,26 @@ xcodebuild test \
 ### Snapshot Testing Guidelines
 - Snapshots are stored in `Tests/DaVinciComponentsTests/__Snapshots__/`
 - Each component has snapshots for light and dark modes
+- A missing reference is a test failure; snapshots are never recorded implicitly
 - When intentionally changing UI, run with `RECORD_SNAPSHOTS=1` to update references
+- Recording mode rewrites every snapshot exercised by the selected test run
+- Review the changed PNG files visually before committing them
 - Use iPhone 17 Simulator for consistency with CI
-- Never commit `*-FAILURE.png` files (these are diff artifacts)
+- Failure artifacts are written under `.build/snapshot-failures/`, which is ignored by Git
+- CI uploads failure artifacts for 14 days as `snapshot-failures`
 - Ensure snapshots render consistently on iPhone 17 Simulator
+
+The in-repository comparator normalizes images to RGBA8. Per-channel differences up
+to `2/255` are treated as antialiasing noise. A comparison passes only when no more
+than 0.5% of pixels exceed that threshold and the normalized mean channel difference
+is no more than 0.1%. These thresholds allow small renderer variance while detecting
+localized and broad visual changes. A failure produces expected, received, and diff
+PNGs; changed pixels are highlighted in the diff.
+
+For deterministic output, the helper fixes 2x scale, `en_US_POSIX`, UTC,
+left-to-right layout, Dynamic Type `.large`, the theme, and color scheme. Device and
+SDK rendering still matter, so baseline approval must use the same simulator and
+Xcode configuration as CI.
 
 #### Snapshot Testing Troubleshooting
 
@@ -253,6 +269,10 @@ RECORD_SNAPSHOTS=1 xcodebuild test \
   -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest'
 ```
 
+After recording, inspect `git diff --stat` and every changed PNG. A green test run in
+recording mode means the files were written successfully; it does not approve their
+visual result.
+
 **Snapshots differ slightly between machines?**
 - Ensure you're using iPhone 17 Simulator (matches CI)
 - Check Xcode version matches CI (latest-stable)
@@ -263,10 +283,11 @@ RECORD_SNAPSHOTS=1 xcodebuild test \
 - CI uses `iPhone 17, OS=latest` - match this exactly
 - Check if your snapshot was recorded on a different device
 - Verify `__Snapshots__/` directory is committed to git
+- Download the `snapshot-failures` artifact and compare expected, received, and diff
 
 **Need to update a single snapshot?**
-- Delete the specific reference snapshot file
-- Run tests with `RECORD_SNAPSHOTS=1` to regenerate only missing snapshots
+- Run only the owning snapshot test from Xcode with `RECORD_SNAPSHOTS=1`
+- Do not delete the reference first; missing references intentionally fail outside recording mode
 
 ## Documentation
 

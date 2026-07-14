@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Pixel-level RGBA snapshot comparison with explicit, documented tolerances
+- Expected, received, and visual diff artifacts for snapshot failures
+- CI upload of snapshot failure artifacts
+- Unit tests covering the snapshot comparator and missing-reference contract
+
+### Changed
+- Missing snapshot references now fail unless `RECORD_SNAPSHOTS=1` is explicitly set
+- Snapshot rendering now fixes locale, time zone, layout direction, Dynamic Type size, and scale
+
 ---
 
 ## [1.1.0] - 2026-03-20

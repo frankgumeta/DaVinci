@@ -311,7 +311,8 @@ DaVinci maintains **>95% code coverage** across all targets with comprehensive b
 
 ### Snapshot Testing
 
-Visual regression tests ensure UI consistency:
+Visual regression tests normalize reference and received images to RGBA8 and compare
+their pixels. Missing references fail by default; recording is always explicit.
 
 ```bash
 # Record new snapshots
@@ -326,6 +327,16 @@ xcodebuild test \
 ```
 
 Snapshots are stored in `Tests/DaVinciComponentsTests/__Snapshots__/` and cover all component variants in light and dark modes.
+
+The comparator treats channel deltas up to `2/255` as rendering noise and accepts at
+most 0.5% differing pixels with a 0.1% normalized mean channel difference. When a
+comparison fails, expected, received, and visual diff images are written to
+`.build/snapshot-failures/`. CI uploads that directory as the `snapshot-failures`
+artifact on failed runs.
+
+Snapshot rendering fixes the canvas size, 2x scale, `en_US_POSIX` locale, UTC time
+zone, left-to-right layout, Dynamic Type `.large`, theme, and color scheme. Use the
+same iPhone 17 / latest stable Xcode configuration as CI when approving baselines.
 
 ## Best Practices
 
