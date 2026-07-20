@@ -38,7 +38,7 @@ public struct DSTextField: View {
         if showsLabel {
             VStack(alignment: .leading, spacing: SpacingTokens.space1) {
                 Text(label)
-                    .font(theme.typography.caption.font(family: theme.typography.family))
+                    .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                     .foregroundStyle(theme.colors.semantic.textSecondary)
 
                 textField
@@ -54,7 +54,7 @@ public struct DSTextField: View {
             text: $text,
             prompt: prompt.map { Text($0).foregroundStyle(theme.colors.semantic.textTertiary) }
         )
-        .font(theme.typography.body.font(family: theme.typography.family))
+        .dsTextStyle(theme.typography.body, family: theme.typography.family)
         .foregroundStyle(theme.colors.semantic.textPrimary)
         .padding(.horizontal, SpacingTokens.space3)
         .frame(minHeight: ControlHeightTokens.medium)

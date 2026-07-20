@@ -40,11 +40,11 @@ struct EffectsGalleryScreen: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(name)
-                    .font(theme.typography.body.font(family: theme.typography.family))
+                    .dsTextStyle(theme.typography.body, family: theme.typography.family)
                     .foregroundStyle(theme.colors.semantic.textPrimary)
 
                 Text("radius \(Int(elevation.radius))  ·  y \(Int(elevation.y))")
-                    .font(theme.typography.caption.font(family: theme.typography.family))
+                    .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                     .foregroundStyle(theme.colors.semantic.textTertiary)
             }
 
@@ -63,7 +63,7 @@ struct EffectsGalleryScreen: View {
 
             VStack(alignment: .leading, spacing: SpacingTokens.space3) {
                 Text("Tap to animate")
-                    .font(theme.typography.caption.font(family: theme.typography.family))
+                    .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                     .foregroundStyle(theme.colors.semantic.textSecondary)
 
                 HStack(spacing: SpacingTokens.space4) {
@@ -81,13 +81,13 @@ struct EffectsGalleryScreen: View {
     private func motionRow(_ name: String, duration: Double) -> some View {
         HStack {
             Text(name)
-                .font(theme.typography.body.font(family: theme.typography.family))
+                .dsTextStyle(theme.typography.body, family: theme.typography.family)
                 .foregroundStyle(theme.colors.semantic.textPrimary)
 
             Spacer()
 
             Text("\(duration, specifier: "%.2f")s")
-                .font(theme.typography.caption.font(family: theme.typography.family))
+                .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                 .foregroundStyle(theme.colors.semantic.textTertiary)
         }
     }
@@ -101,7 +101,7 @@ struct EffectsGalleryScreen: View {
                 .animation(animation.speed(1.0 / theme.motion.normal), value: motionToggle)
 
             Text(name)
-                .font(theme.typography.caption.font(family: theme.typography.family))
+                .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                 .foregroundStyle(theme.colors.semantic.textSecondary)
         }
         .frame(height: 80)

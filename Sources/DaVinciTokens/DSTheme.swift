@@ -26,7 +26,7 @@ import SwiftUI
 ///     var body: some View {
 ///         Text("Hello")
 ///             .foregroundColor(theme.colors.semantic.textPrimary)
-///             .font(theme.typography.body.font(family: theme.typography.family))
+///             .dsTextStyle(theme.typography.body, family: theme.typography.family)
 ///     }
 /// }
 /// ```

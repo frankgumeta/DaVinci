@@ -91,7 +91,7 @@ public struct DSText: View {
 
     public var body: some View {
         Text(content)
-            .font(resolvedFont)
+            .dsTextStyle(textStyle, family: theme.typography.family)
             .foregroundStyle(color ?? theme.colors.semantic.textPrimary)
             .modifier(AccessibilityLabelModifier(label: accessibilityLabel))
             .modifier(AccessibilityTraitsModifier(traits: resolvedAccessibilityTraits))
@@ -131,9 +131,6 @@ public struct DSText: View {
         }
     }
 
-    private var resolvedFont: Font {
-        textStyle.font(family: theme.typography.family)
-    }
 }
 
 // MARK: - Previews

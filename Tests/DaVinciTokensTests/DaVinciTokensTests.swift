@@ -597,42 +597,47 @@ struct DSTypographyTests {
         let systemFamily = FontFamily()
         let font = style.font(family: systemFamily)
 
-        #expect(font == Font.system(size: 16, weight: .regular))
+        #expect(
+            font == Font.custom(systemFamily.resolved, size: 16, relativeTo: .body)
+                .weight(.regular)
+        )
     }
 
     @Test func textStyleFontWithBrandFamily() {
-        let style = DSTextStyle(size: 18, lineHeight: 28, weight: .bold)
+        let style = DSTextStyle(size: 18, lineHeight: 28, weight: .bold, relativeTo: .headline)
         let brandFamily = FontFamily(brand: "Helvetica")
         let font = style.font(family: brandFamily)
 
-        #expect(font == Font.custom("Helvetica", size: 18))
+        #expect(
+            font == Font.custom("Helvetica", size: 18, relativeTo: .headline)
+                .weight(.bold)
+        )
     }
 
     @Test func textStyleFontRespectsSize() {
         let style = DSTextStyle(size: 24, lineHeight: 32, weight: .medium)
         let font = style.font(family: FontFamily())
 
-        #expect(font == Font.system(size: 24, weight: .medium))
+        #expect(
+            font == Font.custom(Font.systemFontFamilyName, size: 24, relativeTo: .body)
+                .weight(.medium)
+        )
     }
 
-    @Test func allTypographyStylesGenerateFont() {
+    @Test func defaultStylesMapToSemanticTextStyles() {
         let typo = DSTypography()
-        let family = FontFamily()
 
-        let displayFont = typo.display.font(family: family)
-        let titleFont = typo.title.font(family: family)
-        let headlineFont = typo.headline.font(family: family)
-        let bodyFont = typo.body.font(family: family)
-        let calloutFont = typo.callout.font(family: family)
-        let captionFont = typo.caption.font(family: family)
-        let overlineFont = typo.overline.font(family: family)
+        #expect(typo.display.relativeTo == .largeTitle)
+        #expect(typo.title.relativeTo == .title)
+        #expect(typo.headline.relativeTo == .headline)
+        #expect(typo.body.relativeTo == .body)
+        #expect(typo.callout.relativeTo == .callout)
+        #expect(typo.caption.relativeTo == .caption)
+        #expect(typo.overline.relativeTo == .caption2)
+    }
 
-        #expect(displayFont == Font.system(size: typo.display.size, weight: typo.display.weight))
-        #expect(titleFont == Font.system(size: typo.title.size, weight: typo.title.weight))
-        #expect(headlineFont == Font.system(size: typo.headline.size, weight: typo.headline.weight))
-        #expect(bodyFont == Font.system(size: typo.body.size, weight: typo.body.weight))
-        #expect(calloutFont == Font.system(size: typo.callout.size, weight: typo.callout.weight))
-        #expect(captionFont == Font.system(size: typo.caption.size, weight: typo.caption.weight))
-        #expect(overlineFont == Font.system(size: typo.overline.size, weight: typo.overline.weight))
+    @Test func lineSpacingUsesLineHeightDifferenceAndNeverGoesNegative() {
+        #expect(DSTextStyle(size: 16, lineHeight: 24, weight: .regular).lineSpacing == 8)
+        #expect(DSTextStyle(size: 16, lineHeight: 12, weight: .regular).lineSpacing == 0)
     }
 }

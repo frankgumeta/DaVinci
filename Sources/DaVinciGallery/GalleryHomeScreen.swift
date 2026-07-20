@@ -48,7 +48,7 @@ public struct GalleryHomeScreen: View {
     private var themePicker: some View {
         VStack(alignment: .leading, spacing: SpacingTokens.space2) {
             Text("Active Theme")
-                .font(theme.typography.caption.font(family: theme.typography.family))
+                .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                 .foregroundStyle(theme.colors.semantic.textSecondary)
 
             HStack(spacing: SpacingTokens.space3) {
@@ -67,7 +67,7 @@ public struct GalleryHomeScreen: View {
             }
         } label: {
             Text(label)
-                .font(theme.typography.callout.font(family: theme.typography.family))
+                .dsTextStyle(theme.typography.callout, family: theme.typography.family)
                 .foregroundStyle(isSelected ? .white : theme.colors.semantic.textPrimary)
                 .padding(.horizontal, SpacingTokens.space3)
                 .padding(.vertical, SpacingTokens.space2)
@@ -82,7 +82,7 @@ public struct GalleryHomeScreen: View {
     private var appearancePicker: some View {
         VStack(alignment: .leading, spacing: SpacingTokens.space2) {
             Text("Color Scheme")
-                .font(theme.typography.caption.font(family: theme.typography.family))
+                .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                 .foregroundStyle(theme.colors.semantic.textSecondary)
 
             Picker("Appearance", selection: $colorSchemeOverride) {

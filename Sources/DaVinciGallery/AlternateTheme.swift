@@ -20,13 +20,13 @@ private let alternateFeedback = FeedbackColors(
 
 private let alternateTypography = DSTypography(
     family: FontFamily(brand: "Georgia"),
-    display: DSTextStyle(size: 36, lineHeight: 44, weight: .bold),
-    title: DSTextStyle(size: 26, lineHeight: 32, weight: .bold),
-    headline: DSTextStyle(size: 20, lineHeight: 26, weight: .semibold),
-    body: DSTextStyle(size: 16, lineHeight: 24, weight: .regular),
-    callout: DSTextStyle(size: 14, lineHeight: 20, weight: .regular),
-    caption: DSTextStyle(size: 12, lineHeight: 16, weight: .regular),
-    overline: DSTextStyle(size: 11, lineHeight: 14, weight: .medium)
+    display: DSTextStyle(size: 36, lineHeight: 44, weight: .bold, relativeTo: .largeTitle),
+    title: DSTextStyle(size: 26, lineHeight: 32, weight: .bold, relativeTo: .title),
+    headline: DSTextStyle(size: 20, lineHeight: 26, weight: .semibold, relativeTo: .headline),
+    body: DSTextStyle(size: 16, lineHeight: 24, weight: .regular, relativeTo: .body),
+    callout: DSTextStyle(size: 14, lineHeight: 20, weight: .regular, relativeTo: .callout),
+    caption: DSTextStyle(size: 12, lineHeight: 16, weight: .regular, relativeTo: .caption),
+    overline: DSTextStyle(size: 11, lineHeight: 14, weight: .medium, relativeTo: .caption2)
 )
 
 extension DSTheme {

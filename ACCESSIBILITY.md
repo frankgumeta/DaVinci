@@ -117,6 +117,11 @@ DSRemoteImage(
 
 All text components automatically support Dynamic Type scaling.
 
+Each typography token stores its semantic `Font.TextStyle`. DaVinci scales both
+the font and the extra spacing derived from `lineHeight - size`; custom font
+families retain the token's weight. `DSButton`, `DSBadge`, `DSTextField`, and
+`DSSegmentedControl` use flexible vertical layouts so accessibility sizes can wrap.
+
 ### Typography Scale with Dynamic Type
 
 | Role | Default Size | Scales With |
@@ -127,7 +132,7 @@ All text components automatically support Dynamic Type scaling.
 | Body | 16pt | Body |
 | Callout | 14pt | Callout |
 | Caption | 12pt | Caption |
-| Overline | 11pt | Caption |
+| Overline | 11pt | Caption 2 |
 
 ### Testing Dynamic Type
 
@@ -138,9 +143,11 @@ Test your UI with different text sizes:
 3. Ensure content doesn't truncate or overlap
 
 **Recommendations:**
-- Use `.fixedSize()` sparingly
+- Apply custom typography with
+  `.dsTextStyle(style, family: theme.typography.family)` so line height is preserved
+- Use `.fixedSize(horizontal: false, vertical: true)` when a control label may wrap
 - Prefer flexible layouts with `VStack` and `HStack`
-- Test with Dynamic Type enabled in previews
+- Test regular and accessibility categories; the Typography gallery includes an AX3 example
 
 ## VoiceOver Testing Checklist
 

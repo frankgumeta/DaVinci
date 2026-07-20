@@ -38,13 +38,13 @@ struct LayoutGalleryScreen: View {
                 .frame(width: value, height: 20)
 
             Text(name)
-                .font(theme.typography.body.font(family: theme.typography.family))
+                .dsTextStyle(theme.typography.body, family: theme.typography.family)
                 .foregroundStyle(theme.colors.semantic.textPrimary)
 
             Spacer()
 
             Text("\(Int(value))pt")
-                .font(theme.typography.caption.font(family: theme.typography.family))
+                .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                 .foregroundStyle(theme.colors.semantic.textTertiary)
         }
     }
@@ -71,13 +71,13 @@ struct LayoutGalleryScreen: View {
                 .frame(width: 44, height: 44)
 
             Text(name)
-                .font(theme.typography.body.font(family: theme.typography.family))
+                .dsTextStyle(theme.typography.body, family: theme.typography.family)
                 .foregroundStyle(theme.colors.semantic.textPrimary)
 
             Spacer()
 
             Text("\(Int(value))pt")
-                .font(theme.typography.caption.font(family: theme.typography.family))
+                .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                 .foregroundStyle(theme.colors.semantic.textTertiary)
         }
     }
@@ -98,13 +98,13 @@ struct LayoutGalleryScreen: View {
                 .frame(width: 44, height: value)
 
             Text(name)
-                .font(theme.typography.body.font(family: theme.typography.family))
+                .dsTextStyle(theme.typography.body, family: theme.typography.family)
                 .foregroundStyle(theme.colors.semantic.textPrimary)
 
             Spacer()
 
             Text("\(Int(value))pt")
-                .font(theme.typography.caption.font(family: theme.typography.family))
+                .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                 .foregroundStyle(theme.colors.semantic.textTertiary)
         }
     }
@@ -130,13 +130,13 @@ struct LayoutGalleryScreen: View {
                 .frame(width: 80, height: value)
 
             Text(name)
-                .font(theme.typography.body.font(family: theme.typography.family))
+                .dsTextStyle(theme.typography.body, family: theme.typography.family)
                 .foregroundStyle(theme.colors.semantic.textPrimary)
 
             Spacer()
 
             Text("\(Int(value))pt")
-                .font(theme.typography.caption.font(family: theme.typography.family))
+                .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                 .foregroundStyle(theme.colors.semantic.textTertiary)
         }
     }
