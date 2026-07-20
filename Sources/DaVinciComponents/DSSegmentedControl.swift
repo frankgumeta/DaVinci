@@ -95,16 +95,13 @@ public struct DSSegmentedControl: View, Sendable {
                     HStack(spacing: SpacingTokens.space2) {
                         if let icon = segment.iconSystemName {
                             Image(systemName: icon)
-                                .font(
-                                    theme.typography.callout.font(family: theme.typography.family)
-                                )
                         }
 
                         Text(segment.title)
-                            .font(
-                                theme.typography.callout.font(family: theme.typography.family)
-                            )
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
+                    .dsTextStyle(theme.typography.callout, family: theme.typography.family)
                     .foregroundStyle(
                         selectedIndex == index
                             ? theme.colors.semantic.textOnBrand

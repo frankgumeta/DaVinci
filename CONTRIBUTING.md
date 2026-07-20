@@ -273,6 +273,12 @@ After recording, inspect `git diff --stat` and every changed PNG. A green test r
 recording mode means the files were written successfully; it does not approve their
 visual result.
 
+Some Xcode/simulator combinations do not propagate the shell's
+`RECORD_SNAPSHOTS` variable to XCTest. Confirm that the output contains
+`Recorded snapshot:` lines. If it does not, temporarily pass `record: true` only
+in the owning snapshot suite, run that suite, and revert the flag before the final
+comparison run. Never commit a hard-coded recording flag.
+
 **Snapshots differ slightly between machines?**
 - Ensure you're using iPhone 17 Simulator (matches CI)
 - Check Xcode version matches CI (latest-stable)

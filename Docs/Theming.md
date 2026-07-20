@@ -165,8 +165,8 @@ let myBrandPalette = DSPalette(
 let myTheme = DSTheme(
     name: "MyBrandTheme",
     palette: myBrandPalette,
-    typography: .defaultTypography,  // Use default or customize
-    motion: .defaultMotion            // Use default or customize
+    typography: DSTypography(),  // Use default or customize
+    motion: DSMotion()            // Use default or customize
 )
 ```
 
@@ -240,23 +240,35 @@ Test your palette with contrast checkers before deploying.
 
 ```swift
 let customTypography = DSTypography(
-    family: FontFamily(brand: "Poppins", fallback: "SF Pro"),
-    display: DSTextStyle(size: 34, lineHeight: 41, weight: .bold),
-    title: DSTextStyle(size: 24, lineHeight: 30, weight: .bold),
-    headline: DSTextStyle(size: 20, lineHeight: 25, weight: .semibold),
-    body: DSTextStyle(size: 16, lineHeight: 24, weight: .regular),
-    callout: DSTextStyle(size: 14, lineHeight: 20, weight: .regular),
-    caption: DSTextStyle(size: 12, lineHeight: 16, weight: .regular),
-    overline: DSTextStyle(size: 11, lineHeight: 16, weight: .semibold)
+    family: FontFamily(brand: "Poppins"),
+    display: DSTextStyle(size: 34, lineHeight: 41, weight: .bold, relativeTo: .largeTitle),
+    title: DSTextStyle(size: 24, lineHeight: 30, weight: .bold, relativeTo: .title),
+    headline: DSTextStyle(size: 20, lineHeight: 25, weight: .semibold, relativeTo: .headline),
+    body: DSTextStyle(size: 16, lineHeight: 24, weight: .regular, relativeTo: .body),
+    callout: DSTextStyle(size: 14, lineHeight: 20, weight: .regular, relativeTo: .callout),
+    caption: DSTextStyle(size: 12, lineHeight: 16, weight: .regular, relativeTo: .caption),
+    overline: DSTextStyle(size: 11, lineHeight: 16, weight: .semibold, relativeTo: .caption2)
 )
 
 let myTheme = DSTheme(
     name: "CustomFontTheme",
-    palette: .defaultPalette,
+    palette: .default,
     typography: customTypography,
-    motion: .defaultMotion
+    motion: DSMotion()
 )
 ```
+
+`relativeTo` selects the Dynamic Type curve for the role. `lineHeight` is applied
+as scaled line spacing by DaVinci components and by the public modifier below:
+
+```swift
+Text("Custom themed text")
+    .dsTextStyle(customTypography.body, family: customTypography.family)
+```
+
+If the brand font is unavailable, omit `brand`; `FontFamily()` resolves to the
+platform system family. Font size, semantic scaling, and weight are preserved in
+both cases.
 
 ### Typography Best Practices
 
@@ -282,8 +294,8 @@ let customMotion = DSMotion(
 
 let myTheme = DSTheme(
     name: "CustomMotionTheme",
-    palette: .defaultPalette,
-    typography: .defaultTypography,
+    palette: .default,
+    typography: DSTypography(),
     motion: customMotion
 )
 ```
@@ -416,10 +428,10 @@ let acmeTheme = DSTheme(
     name: "AcmeTheme",
     palette: acmePalette,
     typography: DSTypography(
-        family: FontFamily(brand: "Inter", fallback: "SF Pro"),
+        family: FontFamily(brand: "Inter"),
         /* ... sizes ... */
     ),
-    motion: .defaultMotion
+    motion: DSMotion()
 )
 
 // 3. Apply globally

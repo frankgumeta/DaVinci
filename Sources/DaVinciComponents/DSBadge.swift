@@ -125,8 +125,9 @@ public struct DSBadge: View, Sendable {
             if let text {
                 let textStyle = theme.typography[keyPath: size.textStyle]
                 Text(text)
-                    .lineLimit(1)
-                    .font(textStyle.font(family: theme.typography.family))
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .dsTextStyle(textStyle, family: theme.typography.family)
                     .foregroundStyle(foregroundColor)
                     .padding(.horizontal, size.horizontalPadding)
                     .padding(.vertical, size.verticalPadding)

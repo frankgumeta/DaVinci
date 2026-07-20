@@ -64,7 +64,7 @@ struct ColorGalleryScreen: View {
         Section("Surface Stack") {
             VStack(alignment: .leading, spacing: SpacingTokens.space2) {
                 Text("Background → Surface → Elevated")
-                    .font(theme.typography.caption.font(family: theme.typography.family))
+                    .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                     .foregroundStyle(theme.colors.semantic.textSecondary)
 
                 ZStack(alignment: .topLeading) {
@@ -74,7 +74,7 @@ struct ColorGalleryScreen: View {
                         .frame(height: 140)
                         .overlay(alignment: .topLeading) {
                             Text("bgPrimary")
-                                .font(theme.typography.caption.font(family: theme.typography.family))
+                                .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                                 .foregroundStyle(theme.colors.semantic.textSecondary)
                                 .padding(SpacingTokens.space2)
                         }
@@ -85,7 +85,7 @@ struct ColorGalleryScreen: View {
                         .frame(width: 220, height: 100)
                         .overlay(alignment: .topLeading) {
                             Text("surfacePrimary")
-                                .font(theme.typography.caption.font(family: theme.typography.family))
+                                .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                                 .foregroundStyle(theme.colors.semantic.textSecondary)
                                 .padding(SpacingTokens.space2)
                         }
@@ -102,7 +102,7 @@ struct ColorGalleryScreen: View {
                         .frame(width: 160, height: 60)
                         .overlay(alignment: .topLeading) {
                             Text("surfaceElevated")
-                                .font(theme.typography.caption.font(family: theme.typography.family))
+                                .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                                 .foregroundStyle(theme.colors.semantic.textPrimary)
                                 .padding(SpacingTokens.space2)
                         }
@@ -122,14 +122,14 @@ struct ColorGalleryScreen: View {
 
             VStack(alignment: .leading, spacing: SpacingTokens.space2) {
                 Text("Accent bgAccent fill")
-                    .font(theme.typography.caption.font(family: theme.typography.family))
+                    .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                     .foregroundStyle(theme.colors.semantic.textSecondary)
                 RoundedRectangle(cornerRadius: RadiusTokens.medium)
                     .fill(theme.colors.accent.bgAccent)
                     .frame(height: 44)
                     .overlay(alignment: .leading) {
                         Text("bgAccent")
-                            .font(theme.typography.caption.font(family: theme.typography.family))
+                            .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                             .foregroundStyle(theme.colors.semantic.textPrimary)
                             .padding(.leading, SpacingTokens.space3)
                     }
@@ -152,7 +152,7 @@ struct ColorGalleryScreen: View {
                         .stroke(theme.colors.semantic.stroke, lineWidth: StrokeTokens.hairline)
                 )
             Text(label)
-                .font(theme.typography.caption.font(family: theme.typography.family))
+                .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                 .foregroundStyle(theme.colors.semantic.textSecondary)
         }
     }
@@ -176,7 +176,7 @@ struct ColorGalleryScreen: View {
 
             VStack(alignment: .leading, spacing: SpacingTokens.space2) {
                 Text("bgAccent fill")
-                    .font(theme.typography.caption.font(family: theme.typography.family))
+                    .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                     .foregroundStyle(theme.colors.semantic.textSecondary)
                 RoundedRectangle(cornerRadius: RadiusTokens.medium)
                     .fill(theme.colors.accent.bgAccent)
@@ -185,7 +185,7 @@ struct ColorGalleryScreen: View {
 
             VStack(alignment: .leading, spacing: SpacingTokens.space2) {
                 Text("strokeAccent border")
-                    .font(theme.typography.caption.font(family: theme.typography.family))
+                    .dsTextStyle(theme.typography.caption, family: theme.typography.family)
                     .foregroundStyle(theme.colors.semantic.textSecondary)
                 RoundedRectangle(cornerRadius: RadiusTokens.medium)
                     .fill(theme.colors.semantic.surfacePrimary)
@@ -237,11 +237,7 @@ struct ColorGalleryScreen: View {
                 )
 
             Text(name)
-                .font(
-                    theme.typography.body.font(
-                        family: theme.typography.family
-                    )
-                )
+                .dsTextStyle(theme.typography.body, family: theme.typography.family)
                 .foregroundStyle(
                     theme.colors.semantic.textPrimary
                 )

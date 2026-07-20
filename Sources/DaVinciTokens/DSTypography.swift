@@ -47,19 +47,57 @@ public struct DSTextStyle: Sendable, Equatable {
     public let size: CGFloat
     public let lineHeight: CGFloat
     public let weight: Font.Weight
+    public let relativeTo: Font.TextStyle
 
-    public init(size: CGFloat, lineHeight: CGFloat, weight: Font.Weight) {
+    public init(
+        size: CGFloat,
+        lineHeight: CGFloat,
+        weight: Font.Weight,
+        relativeTo: Font.TextStyle = .body
+    ) {
         self.size = size
         self.lineHeight = lineHeight
         self.weight = weight
+        self.relativeTo = relativeTo
     }
 
-    /// Build a `Font` from this style using the given family.
+    /// The additional spacing needed to achieve the token's line height.
+    public var lineSpacing: CGFloat { max(0, lineHeight - size) }
+
+    /// Build a Dynamic Type-aware `Font` from this style using the given family.
     public func font(family: FontFamily) -> Font {
-        if let brand = family.brand {
-            return Font.custom(brand, size: size)
-        }
-        return Font.system(size: size, weight: weight)
+        Font.custom(family.resolved, size: size, relativeTo: relativeTo)
+            .weight(weight)
+    }
+}
+
+// MARK: - Typography View Modifier
+
+public extension View {
+    /// Applies a typography token, including Dynamic Type and scaled line spacing.
+    func dsTextStyle(_ style: DSTextStyle, family: FontFamily) -> some View {
+        modifier(DSTextStyleModifier(style: style, family: family))
+    }
+}
+
+private struct DSTextStyleModifier: ViewModifier {
+    let style: DSTextStyle
+    let family: FontFamily
+    @ScaledMetric private var scaledLineSpacing: CGFloat
+
+    init(style: DSTextStyle, family: FontFamily) {
+        self.style = style
+        self.family = family
+        _scaledLineSpacing = ScaledMetric(
+            wrappedValue: style.lineSpacing,
+            relativeTo: style.relativeTo
+        )
+    }
+
+    func body(content: Content) -> some View {
+        content
+            .font(style.font(family: family))
+            .lineSpacing(scaledLineSpacing)
     }
 }
 
@@ -79,13 +117,13 @@ public struct DSTypography: Sendable, Equatable {
 
     public init(
         family: FontFamily = FontFamily(),
-        display: DSTextStyle = DSTextStyle(size: 34, lineHeight: 40, weight: .bold),
-        title: DSTextStyle = DSTextStyle(size: 24, lineHeight: 30, weight: .bold),
-        headline: DSTextStyle = DSTextStyle(size: 20, lineHeight: 26, weight: .semibold),
-        body: DSTextStyle = DSTextStyle(size: 16, lineHeight: 22, weight: .regular),
-        callout: DSTextStyle = DSTextStyle(size: 14, lineHeight: 20, weight: .regular),
-        caption: DSTextStyle = DSTextStyle(size: 12, lineHeight: 16, weight: .regular),
-        overline: DSTextStyle = DSTextStyle(size: 11, lineHeight: 14, weight: .semibold)
+        display: DSTextStyle = DSTextStyle(size: 34, lineHeight: 40, weight: .bold, relativeTo: .largeTitle),
+        title: DSTextStyle = DSTextStyle(size: 24, lineHeight: 30, weight: .bold, relativeTo: .title),
+        headline: DSTextStyle = DSTextStyle(size: 20, lineHeight: 26, weight: .semibold, relativeTo: .headline),
+        body: DSTextStyle = DSTextStyle(size: 16, lineHeight: 22, weight: .regular, relativeTo: .body),
+        callout: DSTextStyle = DSTextStyle(size: 14, lineHeight: 20, weight: .regular, relativeTo: .callout),
+        caption: DSTextStyle = DSTextStyle(size: 12, lineHeight: 16, weight: .regular, relativeTo: .caption),
+        overline: DSTextStyle = DSTextStyle(size: 11, lineHeight: 14, weight: .semibold, relativeTo: .caption2)
     ) {
         self.family = family
         self.display = display

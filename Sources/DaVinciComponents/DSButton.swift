@@ -158,26 +158,32 @@ public struct DSButton: View {
         return accessibilityLabel ?? title
     }
 
-    /// Icon size matched to the headline text style for visual alignment.
-    private var iconSize: CGFloat {
-        theme.typography.headline.size
-    }
-
     private var buttonContent: some View {
         HStack(spacing: SpacingTokens.space2) {
             if case .leading(let name) = icon {
                 Image(systemName: name)
-                    .font(.system(size: iconSize, weight: .medium))
+                    .dsTextStyle(iconTextStyle, family: theme.typography.family)
             }
 
             Text(title)
-                .font(theme.typography.headline.font(family: theme.typography.family))
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
 
             if case .trailing(let name) = icon {
                 Image(systemName: name)
-                    .font(.system(size: iconSize, weight: .medium))
+                    .dsTextStyle(iconTextStyle, family: theme.typography.family)
             }
         }
+        .dsTextStyle(theme.typography.headline, family: theme.typography.family)
+    }
+
+    private var iconTextStyle: DSTextStyle {
+        DSTextStyle(
+            size: theme.typography.headline.size,
+            lineHeight: theme.typography.headline.lineHeight,
+            weight: .medium,
+            relativeTo: theme.typography.headline.relativeTo
+        )
     }
 
     // MARK: - Private

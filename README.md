@@ -190,7 +190,7 @@ DSSkeletonCard(showFooter: true)
 VStack(spacing: SpacingTokens.space4) {
     Text("Custom View")
         .foregroundColor(theme.colors.semantic.textPrimary)
-        .font(theme.typography.headline.font(family: theme.typography.family))
+        .dsTextStyle(theme.typography.headline, family: theme.typography.family)
 }
 .padding(SpacingTokens.space5)
 .background(theme.colors.semantic.surfacePrimary)
@@ -206,7 +206,7 @@ The foundational layer of the design system. Contains **immutable, value-driven,
 | File | Purpose |
 |---|---|
 | `DSColors` | GrayScale primitives, SemanticColors, BrandColors, AccentColors, FeedbackColors, TextEmphasisColors, DSColors |
-| `DSTypography` | FontFamily, DSTextStyle, DSTypography — type scale, sizes, weights, and `Font` builders |
+| `DSTypography` | Semantic Dynamic Type roles, font families, weights, and scaled line-height support |
 | `DSSpacing` | Consistent spacing scale from 2pt to 64pt |
 | `DSRadius` | Corner radius scale (`extraSmall` through `large`) |
 | `DSElevation` | Shadow parameters (`none`, `small`, `medium`) |
