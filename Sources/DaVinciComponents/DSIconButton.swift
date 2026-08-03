@@ -87,17 +87,28 @@ public struct DSIconButton: View {
             }
         }
         .buttonStyle(DSPressableButtonStyle(duration: theme.motion.fast))
-        .disabled(isDisabled || isLoading)
+        .disabled(!accessibilityDescriptor.isEnabled)
         .opacity(isDisabled ? OpacityTokens.disabled : 1.0)
-        .accessibilityLabel(accessibilityTitle)
-        .modifier(AccessibilityHintModifier(hint: accessibilityHint))
-        .accessibilityAddTraits(.isButton)
+        .frame(minWidth: minimumHitDimension, minHeight: minimumHitDimension)
+        .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
     }
 
     // MARK: - Private
 
     /// Icon font size derived from the button dimension (~40% of control height).
     private static let iconSizeRatio: CGFloat = 0.4
+
+    internal var minimumHitDimension: CGFloat { 44 }
+
+    internal var accessibilityDescriptor: DSAccessibilityDescriptor {
+        DSAccessibilityDescriptor(
+            label: accessibilityTitle,
+            value: isLoading ? "Loading" : nil,
+            hint: accessibilityHint,
+            traits: isLoading ? [.isButton, .updatesFrequently] : .isButton,
+            isEnabled: !isDisabled && !isLoading
+        )
+    }
 
     private var iconFontSize: CGFloat {
         size.dimension * Self.iconSizeRatio
@@ -189,18 +200,4 @@ public struct DSIconButton: View {
     .padding()
     .dsTheme(.defaultTheme)
     .preferredColorScheme(.dark)
-}
-
-// MARK: - Accessibility Modifiers
-
-private struct AccessibilityHintModifier: ViewModifier {
-    let hint: String?
-
-    func body(content: Content) -> some View {
-        if let hint = hint {
-            content.accessibilityHint(hint)
-        } else {
-            content
-        }
-    }
 }

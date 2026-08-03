@@ -14,6 +14,13 @@ public struct DSSegmentItem: Sendable {
         self.title = title
         self.iconSystemName = iconSystemName
     }
+
+    internal func accessibilityDescriptor(isSelected: Bool) -> DSAccessibilityDescriptor {
+        DSAccessibilityDescriptor(
+            label: title,
+            traits: isSelected ? [.isButton, .isSelected] : .isButton
+        )
+    }
 }
 
 // MARK: - DSSegmentedControl
@@ -55,6 +62,7 @@ public struct DSSegmentItem: Sendable {
 /// itself as a segmented control.
 public struct DSSegmentedControl: View, Sendable {
     @Environment(\.dsTheme) private var theme
+    @Environment(\.colorScheme) private var colorScheme
     @Binding private var selectedIndex: Int
     @Namespace private var animation
 
@@ -104,11 +112,12 @@ public struct DSSegmentedControl: View, Sendable {
                     .dsTextStyle(theme.typography.callout, family: theme.typography.family)
                     .foregroundStyle(
                         selectedIndex == index
-                            ? theme.colors.semantic.textOnBrand
+                            ? selectedForegroundColor
                             : theme.colors.semantic.textSecondary
                     )
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, SpacingTokens.space2)
+                    .frame(minHeight: minimumSegmentHitHeight)
                     .background {
                         if selectedIndex == index {
                             RoundedRectangle(cornerRadius: RadiusTokens.small)
@@ -117,15 +126,35 @@ public struct DSSegmentedControl: View, Sendable {
                         }
                     }
                 }
-                .accessibilityAddTraits(selectedIndex == index ? [.isButton, .isSelected] : .isButton)
-                .accessibilityLabel(segment.title)
+                .modifier(
+                    DSAccessibilityModifier(
+                        descriptor: segment.accessibilityDescriptor(isSelected: selectedIndex == index)
+                    )
+                )
             }
         }
         .padding(SpacingTokens.space1)
         .background(theme.colors.semantic.bgSecondary)
         .clipShape(RoundedRectangle(cornerRadius: RadiusTokens.medium))
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Segmented control")
+        .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
+    }
+
+    internal var minimumSegmentHitHeight: CGFloat { 44 }
+
+    internal var accessibilityDescriptor: DSAccessibilityDescriptor {
+        DSAccessibilityDescriptor(label: "Segmented control", children: .contain)
+    }
+
+    private var selectedForegroundColor: Color {
+        DSColorContrast.preferredForeground(
+            on: theme.colors.brand.primary,
+            candidates: [
+                theme.colors.semantic.textPrimary,
+                theme.colors.semantic.textOnBrand,
+                theme.colors.semantic.textInverse
+            ],
+            colorScheme: colorScheme
+        )
     }
 }
 

@@ -87,11 +87,10 @@ public struct DSSwitch: View, Sendable {
             }
         }
         .buttonStyle(DSSwitchButtonStyle(pressAnimation: theme.motion.press))
-        .disabled(isDisabled)
+        .frame(minHeight: minimumHitHeight)
+        .disabled(!accessibilityDescriptor.isEnabled)
         .opacity(isDisabled ? OpacityTokens.disabled : 1)
-        .accessibilityLabel(resolvedAccessibilityLabel)
-        .accessibilityValue(isOn ? "On" : "Off")
-        .accessibilityAddTraits(.isToggle)
+        .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
     }
 
     private var trackView: some View {
@@ -100,8 +99,8 @@ public struct DSSwitch: View, Sendable {
                 .fill(isOn ? theme.colors.brand.primary : theme.colors.semantic.bgTertiary)
                 .overlay(
                     Capsule()
-                        .stroke(theme.colors.semantic.stroke, lineWidth: 0.5)
-                        .opacity(isOn ? 0 : 0.5)
+                        .stroke(theme.colors.semantic.textTertiary, lineWidth: StrokeTokens.hairline)
+                        .opacity(isOn ? 0 : 1)
                 )
                 .frame(width: Metrics.trackWidth, height: Metrics.trackHeight)
 
@@ -114,8 +113,19 @@ public struct DSSwitch: View, Sendable {
         .animation(theme.motion.snappy, value: isOn)
     }
 
+    internal var minimumHitHeight: CGFloat { 44 }
+
+    internal var accessibilityDescriptor: DSAccessibilityDescriptor {
+        DSAccessibilityDescriptor(
+            label: accessibilityLabel ?? label ?? "Toggle",
+            value: isOn ? "On" : "Off",
+            traits: .isToggle,
+            isEnabled: !isDisabled
+        )
+    }
+
     internal var resolvedAccessibilityLabel: String {
-        accessibilityLabel ?? label ?? "Toggle"
+        accessibilityDescriptor.label ?? "Toggle"
     }
 }
 

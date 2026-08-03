@@ -63,24 +63,31 @@ public struct DSTextField: View {
         .overlay(
             RoundedRectangle(cornerRadius: RadiusTokens.small)
                 .stroke(
-                    error != nil ? theme.colors.feedback.error : theme.colors.semantic.stroke,
+                    error != nil ? theme.colors.feedback.error : theme.colors.semantic.textTertiary,
                     lineWidth: StrokeTokens.hairline
                 )
         )
-        .accessibilityLabel(resolvedAccessibilityLabel)
-        .modifier(AccessibilityHintModifier(hint: accessibilityHint))
-        .accessibilityValue(resolvedAccessibilityValue)
+        .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
     }
 
     private var resolvedAccessibilityLabel: String {
         accessibilityLabel ?? label
     }
 
-    private var resolvedAccessibilityValue: String {
+    internal var resolvedAccessibilityValue: String {
+        let enteredValue = text.isEmpty ? (prompt ?? "Empty") : text
         if let error = error {
-            return "Error: \(error)"
+            return "\(enteredValue). Error: \(error)"
         }
-        return text.isEmpty ? (prompt ?? "Empty") : text
+        return enteredValue
+    }
+
+    internal var accessibilityDescriptor: DSAccessibilityDescriptor {
+        DSAccessibilityDescriptor(
+            label: resolvedAccessibilityLabel,
+            value: resolvedAccessibilityValue,
+            hint: accessibilityHint
+        )
     }
 }
 
@@ -105,18 +112,4 @@ public struct DSTextField: View {
     .padding()
     .dsTheme(.defaultTheme)
     .preferredColorScheme(.dark)
-}
-
-// MARK: - AccessibilityHintModifier
-
-private struct AccessibilityHintModifier: ViewModifier {
-    let hint: String?
-
-    func body(content: Content) -> some View {
-        if let hint = hint {
-            content.accessibilityHint(hint)
-        } else {
-            content
-        }
-    }
 }

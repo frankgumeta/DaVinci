@@ -44,12 +44,17 @@ public struct DSRemoteImage: View {
     private let showsShimmer: Bool
     private let placeholderSystemImage: String?
     private let label: String?
+    private let isDecorative: Bool
 
     @State private var phase: LoadPhase = .loading
     @State private var decodedImage: Image?
 
     // MARK: - Init
 
+    /// Creates a remotely loaded image with an explicit frame.
+    ///
+    /// Set `isDecorative` to `true` only when the image communicates no
+    /// information; decorative images are hidden from assistive technologies.
     public init(
         url: URL?,
         width: CGFloat,
@@ -58,7 +63,8 @@ public struct DSRemoteImage: View {
         contentMode: ContentMode = .fill,
         showsShimmer: Bool = true,
         placeholderSystemImage: String? = nil,
-        accessibilityLabel: String? = nil
+        accessibilityLabel: String? = nil,
+        isDecorative: Bool = false
     ) {
         self.url = url
         self.width = width
@@ -68,9 +74,13 @@ public struct DSRemoteImage: View {
         self.showsShimmer = showsShimmer
         self.placeholderSystemImage = placeholderSystemImage
         self.label = accessibilityLabel
+        self.isDecorative = isDecorative
     }
 
     /// Convenience initializer accepting a `CGSize`.
+    ///
+    /// Set `isDecorative` to `true` only when the image communicates no
+    /// information; decorative images are hidden from assistive technologies.
     public init(
         url: URL?,
         size: CGSize,
@@ -78,7 +88,8 @@ public struct DSRemoteImage: View {
         contentMode: ContentMode = .fill,
         showsShimmer: Bool = true,
         placeholderSystemImage: String? = nil,
-        accessibilityLabel: String? = nil
+        accessibilityLabel: String? = nil,
+        isDecorative: Bool = false
     ) {
         self.init(
             url: url,
@@ -88,7 +99,8 @@ public struct DSRemoteImage: View {
             contentMode: contentMode,
             showsShimmer: showsShimmer,
             placeholderSystemImage: placeholderSystemImage,
-            accessibilityLabel: accessibilityLabel
+            accessibilityLabel: accessibilityLabel,
+            isDecorative: isDecorative
         )
     }
 
@@ -98,8 +110,7 @@ public struct DSRemoteImage: View {
         content
             .frame(width: width, height: height)
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-            .accessibilityLabel(resolvedAccessibilityLabel)
-            .accessibilityAddTraits(phase == .loading ? .updatesFrequently : [])
+            .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
             .task(id: url) {
                 await load(url)
             }
@@ -174,15 +185,47 @@ public struct DSRemoteImage: View {
         }
     }
 
-    private var resolvedAccessibilityLabel: String {
-        let accessibilityPhase: AccessibilityPhase
+    internal static func accessibilityDescriptor(
+        phase: AccessibilityPhase,
+        customLabel: String?,
+        url: URL?,
+        isDecorative: Bool
+    ) -> DSAccessibilityDescriptor {
+        let value: String?
+        let traits: AccessibilityTraits
         switch phase {
-        case .loading: accessibilityPhase = .loading
-        case .success: accessibilityPhase = .success
-        case .failure: accessibilityPhase = .failure
+        case .loading:
+            value = "Loading"
+            traits = .updatesFrequently
+        case .success:
+            value = nil
+            traits = .isImage
+        case .failure:
+            value = "Failed to load"
+            traits = .isImage
         }
-        return Self.resolveAccessibilityLabel(
-            phase: accessibilityPhase, customLabel: label, url: url
+        return DSAccessibilityDescriptor(
+            label: resolveAccessibilityLabel(phase: phase, customLabel: customLabel, url: url),
+            value: value,
+            traits: traits,
+            isHidden: isDecorative
+        )
+    }
+
+    private var accessibilityPhase: AccessibilityPhase {
+        switch phase {
+        case .loading: .loading
+        case .success: .success
+        case .failure: .failure
+        }
+    }
+
+    internal var accessibilityDescriptor: DSAccessibilityDescriptor {
+        Self.accessibilityDescriptor(
+            phase: accessibilityPhase,
+            customLabel: label,
+            url: url,
+            isDecorative: isDecorative
         )
     }
 

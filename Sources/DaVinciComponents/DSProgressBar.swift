@@ -122,9 +122,7 @@ public struct DSProgressBar: View, Sendable {
             }
             .frame(height: size.height)
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(resolvedAccessibilityLabel)
-        .accessibilityValue(resolvedAccessibilityValue)
+        .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
     }
 
     internal var resolvedAccessibilityLabel: String {
@@ -134,6 +132,15 @@ public struct DSProgressBar: View, Sendable {
 
     internal var resolvedAccessibilityValue: String {
         isIndeterminate ? "Loading" : "\(Int(value * 100))%"
+    }
+
+    internal var accessibilityDescriptor: DSAccessibilityDescriptor {
+        DSAccessibilityDescriptor(
+            label: resolvedAccessibilityLabel,
+            value: resolvedAccessibilityValue,
+            traits: isIndeterminate ? .updatesFrequently : [],
+            children: .combine
+        )
     }
 }
 

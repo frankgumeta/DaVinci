@@ -71,10 +71,16 @@ public struct DSCard<Content: View>: View {
             .background(theme.colors.semantic.surfacePrimary)
             .clipShape(RoundedRectangle(cornerRadius: style.cornerRadius))
             .shadow(color: elevation.color, radius: elevation.radius, x: elevation.x, y: elevation.y)
-            .accessibilityElement(children: .combine)
-            .modifier(AccessibilityLabelModifier(label: accessibilityLabel))
-            .modifier(AccessibilityHintModifier(hint: accessibilityHint))
-            .modifier(AccessibilityTraitsModifier(traits: accessibilityTraits))
+            .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
+    }
+
+    internal var accessibilityDescriptor: DSAccessibilityDescriptor {
+        DSAccessibilityDescriptor(
+            label: accessibilityLabel,
+            hint: accessibilityHint,
+            traits: accessibilityTraits ?? [],
+            children: .combine
+        )
     }
 }
 
@@ -164,42 +170,4 @@ public struct DSCard<Content: View>: View {
         }
     }
     .padding()
-}
-
-// MARK: - Accessibility Modifiers
-
-private struct AccessibilityLabelModifier: ViewModifier {
-    let label: String?
-
-    func body(content: Content) -> some View {
-        if let label = label {
-            content.accessibilityLabel(label)
-        } else {
-            content
-        }
-    }
-}
-
-private struct AccessibilityHintModifier: ViewModifier {
-    let hint: String?
-
-    func body(content: Content) -> some View {
-        if let hint = hint {
-            content.accessibilityHint(hint)
-        } else {
-            content
-        }
-    }
-}
-
-private struct AccessibilityTraitsModifier: ViewModifier {
-    let traits: AccessibilityTraits?
-
-    func body(content: Content) -> some View {
-        if let traits = traits {
-            content.accessibilityAddTraits(traits)
-        } else {
-            content
-        }
-    }
 }

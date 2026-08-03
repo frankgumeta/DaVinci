@@ -52,7 +52,7 @@ let package = Package(
         ),
         .testTarget(
             name: "DaVinciComponentsTests",
-            dependencies: ["DaVinciComponents", "DaVinciTokens"],
+            dependencies: ["DaVinciComponents", "DaVinciTokens", "DaVinciGallery"],
             resources: [.copy("__Snapshots__")]
         )
     ]

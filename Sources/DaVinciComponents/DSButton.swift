@@ -87,6 +87,7 @@ public struct DSButton: View {
     }
 
     @Environment(\.dsTheme) private var theme
+    @Environment(\.colorScheme) private var colorScheme
 
     private let title: String
     private let variant: Variant
@@ -144,18 +145,19 @@ public struct DSButton: View {
             }
         }
         .buttonStyle(DSPressableButtonStyle(duration: theme.motion.fast))
-        .disabled(isDisabled || isLoading)
+        .disabled(!accessibilityDescriptor.isEnabled)
         .opacity(isDisabled ? OpacityTokens.disabled : 1.0)
-        .accessibilityLabel(resolvedAccessibilityLabel)
-        .modifier(AccessibilityHintModifier(hint: accessibilityHint))
-        .accessibilityAddTraits(.isButton)
+        .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
     }
 
-    private var resolvedAccessibilityLabel: String {
-        if isLoading {
-            return accessibilityLabel ?? "\(title) - Loading"
-        }
-        return accessibilityLabel ?? title
+    internal var accessibilityDescriptor: DSAccessibilityDescriptor {
+        DSAccessibilityDescriptor(
+            label: accessibilityLabel ?? title,
+            value: isLoading ? "Loading" : nil,
+            hint: accessibilityHint,
+            traits: isLoading ? [.isButton, .updatesFrequently] : .isButton,
+            isEnabled: !isDisabled && !isLoading
+        )
     }
 
     private var buttonContent: some View {
@@ -191,7 +193,15 @@ public struct DSButton: View {
     private var foregroundColor: Color {
         switch variant {
         case .primary:
-            theme.colors.semantic.textOnBrand
+            DSColorContrast.preferredForeground(
+                on: theme.colors.brand.primary,
+                candidates: [
+                    theme.colors.semantic.textPrimary,
+                    theme.colors.semantic.textOnBrand,
+                    theme.colors.semantic.textInverse
+                ],
+                colorScheme: colorScheme
+            )
         case .secondary:
             theme.colors.semantic.textPrimary
         case .outline:
@@ -260,18 +270,4 @@ public struct DSButton: View {
     .padding()
     .dsTheme(.defaultTheme)
     .preferredColorScheme(.dark)
-}
-
-// MARK: - Accessibility Modifiers
-
-private struct AccessibilityHintModifier: ViewModifier {
-    let hint: String?
-
-    func body(content: Content) -> some View {
-        if let hint = hint {
-            content.accessibilityHint(hint)
-        } else {
-            content
-        }
-    }
 }

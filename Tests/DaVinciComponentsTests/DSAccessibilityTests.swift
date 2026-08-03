@@ -1,211 +1,237 @@
-import Testing
 import SwiftUI
+import Testing
 @testable import DaVinciComponents
 @testable import DaVinciTokens
 
-// MARK: - DSButton Accessibility Tests
-
-@Suite("DSButton Accessibility")
-struct DSButtonAccessibilityTests {
-
-    @Test @MainActor func buttonHasDefaultAccessibilityLabel() {
-        let button = DSButton("Submit", variant: .primary) {}
-
-        #expect(String(describing: type(of: button)).contains("DSButton"))
-    }
-
-    @Test @MainActor func buttonWithCustomAccessibilityLabel() {
-        let button = DSButton(
+@MainActor
+@Suite("Verifiable Accessibility Contracts")
+struct DSAccessibilityTests {
+    @Test func buttonExposesLabelHintAndButtonTrait() {
+        let descriptor = DSButton(
             "Submit",
-            variant: .primary,
-            accessibilityLabel: "Submit form"
-        ) {}
+            accessibilityLabel: "Submit form",
+            accessibilityHint: "Sends the form"
+        ) {}.accessibilityDescriptor
 
-        #expect(String(describing: type(of: button)).contains("DSButton"))
+        #expect(descriptor.label == "Submit form")
+        #expect(descriptor.hint == "Sends the form")
+        #expect(descriptor.value == nil)
+        #expect(descriptor.traits.contains(.isButton))
+        #expect(descriptor.isEnabled)
     }
 
-    @Test @MainActor func loadingButtonAnnouncesState() {
-        let button = DSButton("Save", variant: .primary, isLoading: true) {}
+    @Test func loadingButtonExposesStateAndIsNotActionable() {
+        let descriptor = DSButton("Save", isLoading: true) {}.accessibilityDescriptor
 
-        #expect(String(describing: type(of: button)).contains("DSButton"))
+        #expect(descriptor.label == "Save")
+        #expect(descriptor.value == "Loading")
+        #expect(descriptor.traits.contains(.updatesFrequently))
+        #expect(!descriptor.isEnabled)
     }
 
-    @Test @MainActor func disabledButtonMaintainsAccessibility() {
-        let button = DSButton("Delete", variant: .secondary, isDisabled: true) {}
+    @Test func disabledButtonRetainsLabelAndIsNotActionable() {
+        let descriptor = DSButton("Delete", isDisabled: true) {}.accessibilityDescriptor
 
-        #expect(String(describing: type(of: button)).contains("DSButton"))
-    }
-}
-
-// MARK: - DSTextField Accessibility Tests
-
-@Suite("DSTextField Accessibility")
-struct DSTextFieldAccessibilityTests {
-
-    @Test @MainActor func textFieldHasDefaultAccessibilityLabel() {
-        let textField = DSTextField("Email", text: .constant(""))
-
-        #expect(String(describing: type(of: textField)).contains("DSTextField"))
+        #expect(descriptor.label == "Delete")
+        #expect(!descriptor.isEnabled)
     }
 
-    @Test @MainActor func textFieldWithCustomAccessibilityLabel() {
-        let textField = DSTextField(
-            "Password",
-            text: .constant(""),
-            accessibilityLabel: "Password field",
-            accessibilityHint: "Enter your secure password"
-        )
-
-        #expect(String(describing: type(of: textField)).contains("DSTextField"))
-    }
-
-    @Test @MainActor func textFieldWithErrorState() {
-        let textField = DSTextField(
-            "Email",
-            text: .constant(""),
-            error: "Invalid email format"
-        )
-
-        #expect(String(describing: type(of: textField)).contains("DSTextField"))
-    }
-
-    @Test @MainActor func textFieldWithoutLabelMaintainsAccessibility() {
-        let textField = DSTextField("Search", text: .constant(""), showsLabel: false)
-
-        #expect(String(describing: type(of: textField)).contains("DSTextField"))
-    }
-}
-
-// MARK: - DSRemoteImage Accessibility Tests
-
-@Suite("DSRemoteImage Accessibility")
-struct DSRemoteImageAccessibilityTests {
-
-    @Test @MainActor func remoteImageWithCustomAccessibilityLabel() {
-        let image = DSRemoteImage(
-            url: URL(string: "https://example.com/avatar.jpg"),
-            width: 80,
-            height: 80,
-            accessibilityLabel: "User profile picture"
-        )
-
-        #expect(String(describing: type(of: image)).contains("DSRemoteImage"))
-    }
-
-    @Test @MainActor func remoteImageAnnouncesLoadingState() {
-        let image = DSRemoteImage(
-            url: URL(string: "https://example.com/photo.jpg"),
-            width: 200,
-            height: 200,
-            showsShimmer: true
-        )
-
-        #expect(String(describing: type(of: image)).contains("DSRemoteImage"))
-    }
-
-    @Test @MainActor func placeholderImageHasAccessibilityLabel() {
-        let image = DSRemoteImage(
-            url: nil,
-            width: 100,
-            height: 100,
-            placeholderSystemImage: "person.crop.circle"
-        )
-
-        #expect(String(describing: type(of: image)).contains("DSRemoteImage"))
-    }
-}
-
-// MARK: - DSIconButton Accessibility Tests
-
-@Suite("DSIconButton Accessibility")
-struct DSIconButtonAccessibilityTests {
-
-    @Test @MainActor func iconButtonHasAccessibilityLabel() {
-        let button = DSIconButton(
-            systemName: "heart.fill",
+    @Test func iconButtonExposesRequiredLabelHintAndLoadingState() {
+        let normal = DSIconButton(
+            systemName: "heart",
             titleForAccessibility: "Like",
-            variant: .primary,
-            size: .medium
-        ) {}
+            accessibilityHint: "Adds to favorites"
+        ) {}.accessibilityDescriptor
+        let loading = DSIconButton(
+            systemName: "heart",
+            titleForAccessibility: "Like",
+            isLoading: true
+        ) {}.accessibilityDescriptor
 
-        #expect(String(describing: type(of: button)).contains("DSIconButton"))
+        #expect(normal.label == "Like")
+        #expect(normal.hint == "Adds to favorites")
+        #expect(normal.traits.contains(.isButton))
+        #expect(loading.value == "Loading")
+        #expect(loading.traits.contains(.updatesFrequently))
+        #expect(!loading.isEnabled)
     }
 
-    @Test @MainActor func loadingIconButtonAnnouncesState() {
-        let button = DSIconButton(
+    @Test func disabledIconButtonIsNotActionable() {
+        let descriptor = DSIconButton(
             systemName: "trash",
             titleForAccessibility: "Delete",
-            variant: .secondary,
-            size: .medium,
-            isLoading: true
-        ) {}
-
-        #expect(String(describing: type(of: button)).contains("DSIconButton"))
-    }
-
-    @Test @MainActor func disabledIconButtonMaintainsAccessibility() {
-        let button = DSIconButton(
-            systemName: "share",
-            titleForAccessibility: "Share",
-            variant: .outline,
-            size: .medium,
             isDisabled: true
-        ) {}
+        ) {}.accessibilityDescriptor
 
-        #expect(String(describing: type(of: button)).contains("DSIconButton"))
-    }
-}
-
-// MARK: - Accessibility Integration Tests
-
-@Suite("Accessibility Integration")
-struct AccessibilityIntegrationTests {
-
-    @Test @MainActor func accessibleFormComponentsWorkTogether() {
-        let form = VStack(spacing: 16) {
-            DSTextField(
-                "Email",
-                text: .constant(""),
-                accessibilityLabel: "Email address",
-                accessibilityHint: "Enter your email for login"
-            )
-
-            DSTextField(
-                "Password",
-                text: .constant(""),
-                accessibilityLabel: "Password",
-                accessibilityHint: "Enter your secure password"
-            )
-
-            DSButton(
-                "Sign In",
-                variant: .primary,
-                accessibilityLabel: "Sign in to your account"
-            ) {}
-        }
-
-        #expect(String(describing: type(of: form)).contains("VStack"))
+        #expect(descriptor.label == "Delete")
+        #expect(!descriptor.isEnabled)
     }
 
-    @Test @MainActor func accessibleCardWithContent() {
-        let card = VStack(spacing: 12) {
-            DSRemoteImage(
-                url: URL(string: "https://example.com/product.jpg"),
-                width: 60,
-                height: 60,
-                accessibilityLabel: "Product image"
-            )
+    @Test func switchExposesLabelValueToggleTraitAndDisabledState() {
+        let on = DSSwitch(isOn: .constant(true), label: "Wi-Fi").accessibilityDescriptor
+        let off = DSSwitch(
+            isOn: .constant(false),
+            label: "Wi-Fi",
+            isDisabled: true
+        ).accessibilityDescriptor
 
-            DSText("Product Title", role: .headline)
-            DSText("Product description goes here", role: .body)
+        #expect(on.label == "Wi-Fi")
+        #expect(on.value == "On")
+        #expect(on.traits.contains(.isToggle))
+        #expect(on.isEnabled)
+        #expect(off.value == "Off")
+        #expect(!off.isEnabled)
+    }
 
-            DSButton(
-                "Add to Cart",
-                variant: .primary,
-                accessibilityLabel: "Add product to shopping cart"
+    @Test func unlabeledSwitchUsesExplicitFallback() {
+        let descriptor = DSSwitch(isOn: .constant(false)).accessibilityDescriptor
+
+        #expect(descriptor.label == "Toggle")
+        #expect(descriptor.value == "Off")
+    }
+
+    @Test func segmentedControlExposesContainerAndSelectionSemantics() {
+        let selected = DSSegmentItem(title: "Week").accessibilityDescriptor(isSelected: true)
+        let unselected = DSSegmentItem(title: "Month").accessibilityDescriptor(isSelected: false)
+        let control = DSSegmentedControl(
+            options: ["Week", "Month"],
+            selectedIndex: .constant(0)
+        ).accessibilityDescriptor
+
+        #expect(control.label == "Segmented control")
+        #expect(control.children == .contain)
+        #expect(selected.label == "Week")
+        #expect(selected.traits.contains(.isButton))
+        #expect(selected.traits.contains(.isSelected))
+        #expect(!unselected.traits.contains(.isSelected))
+    }
+
+    @Test func textFieldExposesPromptEnteredValueHintAndError() {
+        let empty = DSTextField(
+            "Email",
+            text: .constant(""),
+            prompt: "you@example.com",
+            accessibilityHint: "Enter your account email"
+        ).accessibilityDescriptor
+        let entered = DSTextField(
+            "Email",
+            text: .constant("invalid"),
+            error: "Invalid email format"
+        ).accessibilityDescriptor
+
+        #expect(empty.label == "Email")
+        #expect(empty.value == "you@example.com")
+        #expect(empty.hint == "Enter your account email")
+        #expect(entered.value == "invalid. Error: Invalid email format")
+    }
+
+    @Test func hiddenTextFieldLabelRetainsAccessibleLabel() {
+        let descriptor = DSTextField(
+            "Search",
+            text: .constant(""),
+            showsLabel: false
+        ).accessibilityDescriptor
+
+        #expect(descriptor.label == "Search")
+        #expect(descriptor.value == "Empty")
+    }
+
+    @Test func progressExposesDeterminateAndIndeterminateState() {
+        let determinate = DSProgressBar(value: 0.75, label: "Upload").accessibilityDescriptor
+        let indeterminate = DSProgressBar(
+            label: "Upload",
+            isIndeterminate: true
+        ).accessibilityDescriptor
+
+        #expect(determinate.label == "Upload")
+        #expect(determinate.value == "75%")
+        #expect(determinate.children == .combine)
+        #expect(indeterminate.value == "Loading")
+        #expect(indeterminate.traits.contains(.updatesFrequently))
+    }
+
+    @Test func remoteImageExposesEveryPhaseAndDecorativeState() {
+        let url = URL(string: "https://example.com/avatar.jpg")
+        let loading = DSRemoteImage.accessibilityDescriptor(
+            phase: .loading,
+            customLabel: "Profile photo",
+            url: url,
+            isDecorative: false
+        )
+        let success = DSRemoteImage.accessibilityDescriptor(
+            phase: .success,
+            customLabel: "Profile photo",
+            url: url,
+            isDecorative: false
+        )
+        let failure = DSRemoteImage.accessibilityDescriptor(
+            phase: .failure,
+            customLabel: "Profile photo",
+            url: url,
+            isDecorative: false
+        )
+        let decorative = DSRemoteImage.accessibilityDescriptor(
+            phase: .success,
+            customLabel: nil,
+            url: url,
+            isDecorative: true
+        )
+
+        #expect(loading.label == "Profile photo")
+        #expect(loading.value == "Loading")
+        #expect(loading.traits.contains(.updatesFrequently))
+        #expect(success.value == nil)
+        #expect(success.traits.contains(.isImage))
+        #expect(failure.value == "Failed to load")
+        #expect(decorative.isHidden)
+    }
+
+    @Test func badgeCardAndTextExposeGroupingAndTraits() {
+        let badge = DSBadge("New").accessibilityDescriptor
+        let card = DSCard(
+            accessibilityLabel: "Product card",
+            accessibilityHint: "Opens product details",
+            accessibilityTraits: .isButton
+        ) { Text("Product") }.accessibilityDescriptor
+        let heading = DSText("Title", role: .headline).accessibilityDescriptor
+        let body = DSText("Body", role: .body).accessibilityDescriptor
+
+        #expect(badge.label == "New")
+        #expect(badge.traits.contains(.isStaticText))
+        #expect(badge.children == .ignore)
+        #expect(card.label == "Product card")
+        #expect(card.hint == "Opens product details")
+        #expect(card.traits.contains(.isButton))
+        #expect(card.children == .combine)
+        #expect(heading.traits.contains(.isHeader))
+        #expect(!body.traits.contains(.isHeader))
+    }
+
+    @Test func primaryControlsRenderAtLeastFortyFourPointsTall() throws {
+        let iconButton = try renderedSize(
+            DSIconButton(
+                systemName: "heart",
+                titleForAccessibility: "Like",
+                size: .small
             ) {}
-        }
+        )
+        let toggle = try renderedSize(DSSwitch(isOn: .constant(false)))
+        let segments = try renderedSize(
+            DSSegmentedControl(options: ["Day", "Week"], selectedIndex: .constant(0))
+                .frame(width: 300)
+        )
+        let button = try renderedSize(DSButton("Continue") {}.frame(width: 300))
 
-        #expect(String(describing: type(of: card)).contains("VStack"))
+        #expect(iconButton.width >= 44)
+        #expect(iconButton.height >= 44)
+        #expect(toggle.height >= 44)
+        #expect(segments.height >= 44)
+        #expect(button.height >= 44)
+    }
+
+    private func renderedSize<V: View>(_ view: V) throws -> CGSize {
+        let renderer = ImageRenderer(content: view.fixedSize())
+        renderer.scale = 1
+        return try #require(renderer.uiImage).size
     }
 }

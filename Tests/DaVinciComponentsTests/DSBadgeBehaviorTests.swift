@@ -6,6 +6,7 @@ import SwiftUI
 // MARK: - DSBadge Behavior Tests
 
 @Suite("DSBadge Behavior")
+@MainActor
 struct DSBadgeBehaviorTests {
 
     // MARK: - Size Metrics
@@ -93,37 +94,24 @@ struct DSBadgeBehaviorTests {
 
     // MARK: - Variant Foreground Colors
 
-    @Test func brandAndErrorShareTextOnBrand() {
+    @Test func everyVariantMeetsNormalTextContrastInLightMode() throws {
         let theme = DSTheme.defaultTheme
-        let brandColor = DSBadge.foregroundColor(for: .brand, theme: theme)
-        let errorColor = DSBadge.foregroundColor(for: .error, theme: theme)
+        let variants: [DSBadge.Variant] = [.brand, .success, .warning, .error, .neutral]
 
-        #expect(brandColor == theme.colors.semantic.textOnBrand)
-        #expect(errorColor == theme.colors.semantic.textOnBrand)
-        #expect(brandColor == errorColor)
-    }
-
-    @Test func successWarningNeutralShareTextPrimary() {
-        let theme = DSTheme.defaultTheme
-        let successColor = DSBadge.foregroundColor(for: .success, theme: theme)
-        let warningColor = DSBadge.foregroundColor(for: .warning, theme: theme)
-        let neutralColor = DSBadge.foregroundColor(for: .neutral, theme: theme)
-
-        #expect(successColor == theme.colors.semantic.textPrimary)
-        #expect(warningColor == theme.colors.semantic.textPrimary)
-        #expect(neutralColor == theme.colors.semantic.textPrimary)
-    }
-
-    @Test func foregroundGroupsAreDifferent() {
-        let theme = DSTheme.defaultTheme
-        let brandColor = DSBadge.foregroundColor(for: .brand, theme: theme)
-        let successColor = DSBadge.foregroundColor(for: .success, theme: theme)
-
-        let onBrand = theme.colors.semantic.textOnBrand
-        let primary = theme.colors.semantic.textPrimary
-
-        #expect(brandColor == onBrand)
-        #expect(successColor == primary)
+        for variant in variants {
+            let background = DSBadge.backgroundColor(for: variant, theme: theme)
+            let foreground = DSBadge.foregroundColor(
+                for: variant,
+                theme: theme,
+                colorScheme: .light
+            )
+            let ratio = DSColorContrast.ratio(
+                foreground: foreground,
+                background: background,
+                colorScheme: .light
+            )
+            #expect(try #require(ratio) >= 4.5)
+        }
     }
 
     // MARK: - Accessibility Label Resolution

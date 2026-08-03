@@ -46,6 +46,7 @@ import DaVinciTokens
 /// ```
 public struct DSBadge: View, Sendable {
     @Environment(\.dsTheme) private var theme
+    @Environment(\.colorScheme) private var colorScheme
 
     private let text: String?
     private let variant: Variant
@@ -139,9 +140,15 @@ public struct DSBadge: View, Sendable {
                     .frame(width: size.dotSize, height: size.dotSize)
             }
         }
-        .accessibilityElement()
-        .accessibilityLabel(resolvedAccessibilityLabel)
-        .accessibilityAddTraits(.isStaticText)
+        .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
+    }
+
+    internal var accessibilityDescriptor: DSAccessibilityDescriptor {
+        DSAccessibilityDescriptor(
+            label: resolvedAccessibilityLabel,
+            traits: .isStaticText,
+            children: .ignore
+        )
     }
 
     internal var resolvedAccessibilityLabel: String {
@@ -165,16 +172,24 @@ public struct DSBadge: View, Sendable {
     }
 
     internal var foregroundColor: Color {
-        Self.foregroundColor(for: variant, theme: theme)
+        Self.foregroundColor(for: variant, theme: theme, colorScheme: colorScheme)
     }
 
-    internal static func foregroundColor(for variant: Variant, theme: DSTheme) -> Color {
-        switch variant {
-        case .brand, .error:
-            return theme.colors.semantic.textOnBrand
-        case .success, .warning, .neutral:
-            return theme.colors.semantic.textPrimary
-        }
+    @MainActor
+    internal static func foregroundColor(
+        for variant: Variant,
+        theme: DSTheme,
+        colorScheme: ColorScheme
+    ) -> Color {
+        DSColorContrast.preferredForeground(
+            on: backgroundColor(for: variant, theme: theme),
+            candidates: [
+                theme.colors.semantic.textPrimary,
+                theme.colors.semantic.textOnBrand,
+                theme.colors.semantic.textInverse
+            ],
+            colorScheme: colorScheme
+        )
     }
 }
 

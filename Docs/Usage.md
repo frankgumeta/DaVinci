@@ -384,7 +384,18 @@ DSRemoteImage(
     width: 300,
     height: 200,
     showsShimmer: true,
-    label: "Product photo"
+    accessibilityLabel: "Product photo"
+)
+```
+
+If an image conveys no information, remove it from the accessibility tree:
+
+```swift
+DSRemoteImage(
+    url: decorativeBackgroundURL,
+    width: 300,
+    height: 120,
+    isDecorative: true
 )
 ```
 

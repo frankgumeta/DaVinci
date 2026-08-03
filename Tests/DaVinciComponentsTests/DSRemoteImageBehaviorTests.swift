@@ -7,6 +7,7 @@ import Foundation
 // MARK: - DSRemoteImage Behavior Tests
 
 @Suite("DSRemoteImage Behavior")
+@MainActor
 struct DSRemoteImageBehaviorTests {
 
     // MARK: - Accessibility Label Resolution (Loading Phase)

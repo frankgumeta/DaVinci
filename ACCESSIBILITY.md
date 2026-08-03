@@ -1,36 +1,54 @@
 # Accessibility Guidelines
 
-DaVinci Design System is committed to providing accessible components that work well with assistive technologies and follow WCAG 2.1 Level AA guidelines.
+DaVinci components are designed with WCAG 2.1 Level AA criteria in mind and expose
+explicit SwiftUI accessibility semantics. This document states what is automated,
+what remains manual, and is not an accessibility certification for a host app.
+
+## Verification Scope
+
+Automated tests currently verify:
+
+- component labels, values, hints, traits, enabled state, and child grouping through
+  the same semantic descriptors consumed by production modifiers;
+- documented text/background pairs at 4.5:1 or greater;
+- documented interactive outlines at 3:1 or greater;
+- default and alternate themes in light and dark modes;
+- rendered minimum dimensions of primary controls at 44×44pt;
+- Dynamic Type growth and representative AX3 layouts.
+
+SwiftUI does not expose its synthesized accessibility tree to this package's unit-test
+target. Before release, validate the actual tree with Accessibility Inspector and
+VoiceOver using the manual matrix below. Focus order, spoken localization, Switch
+Control, and Full Keyboard Access depend on the host app and remain manual checks.
 
 ## Color Contrast
 
-All semantic colors are designed to meet WCAG AA contrast requirements (4.5:1 for normal text, 3:1 for large text).
+The following opaque pairs are calculated from sRGB values in automated tests.
 
 ### Light Mode Contrast Ratios
 
 | Color Pair | Contrast Ratio | WCAG Level |
 |------------|----------------|------------|
-| `textPrimary` (gray900) on `bgPrimary` (gray050) | ~19:1 | AAA ✅ |
-| `textSecondary` (gray600) on `bgPrimary` (gray050) | ~7.5:1 | AAA ✅ |
-| `textTertiary` (gray500) on `bgPrimary` (gray050) | ~5.4:1 | AA ✅ |
-| `textOnBrand` (gray050) on `brand.primary` (#2163F5) | ~4.8:1 | AA ✅ |
+| `textPrimary` (gray900) on `bgPrimary` (gray050) | ~17.6:1 | AAA |
+| `textSecondary` (gray600) on `bgPrimary` (gray050) | ~6.5:1 | AA |
+| `textTertiary` (gray500) on `bgPrimary` (gray050) | ~5.0:1 | AA |
+| Preferred text on default `brand.primary` | ~4.7:1 | AA |
 
 ### Dark Mode Contrast Ratios
 
 | Color Pair | Contrast Ratio | WCAG Level |
 |------------|----------------|------------|
-| `textPrimary` (gray050) on `bgPrimary` (gray900) | ~19:1 | AAA ✅ |
-| `textSecondary` (gray300) on `bgPrimary` (gray900) | ~9.5:1 | AAA ✅ |
-| `textTertiary` (gray400) on `bgPrimary` (gray900) | ~6.8:1 | AAA ✅ |
+| `textPrimary` (gray050) on `bgPrimary` (gray900) | ~17.6:1 | AAA |
+| `textSecondary` (gray300) on `bgPrimary` (gray900) | ~10.0:1 | AAA |
+| `textTertiary` (gray400) on `bgPrimary` (gray900) | ~6.6:1 | AA |
 
 ### Feedback Colors
 
-All feedback colors (success, warning, error, info) meet WCAG AA contrast requirements when used on their intended backgrounds:
-
-- **Success** (#33C759): 4.9:1 on white background
-- **Warning** (#FFCC00): 1.3:1 on white ⚠️ (use dark text instead)
-- **Error** (#F04545): 4.5:1 on white background
-- **Info** (#3399FF): 4.6:1 on white background
+Feedback and brand fills are not assumed to work with one fixed text color.
+`DSButton`, `DSBadge`, and `DSSegmentedControl` select the highest-contrast option
+from the theme's semantic foregrounds. Tests require at least 4.5:1 for badge and
+control text across default/alternate themes and both color schemes. Custom themes
+must run the same tests with their own palette.
 
 ## Component Accessibility Features
 
@@ -38,7 +56,7 @@ All feedback colors (success, warning, error, info) meet WCAG AA contrast requir
 
 - ✅ Automatic disabled state communication
 - ✅ Loading state announced to screen readers
-- ✅ Minimum touch target: 44pt height (exceeds 44×44pt recommendation)
+- ✅ Rendered minimum height of 44pt
 - ✅ Clear focus indicators via system default
 
 **Usage:**
@@ -53,7 +71,7 @@ DSButton("Submit Form", variant: .primary) {
 
 - ✅ **Required** accessibility label via `titleForAccessibility`
 - ✅ Screen readers announce icon purpose, not icon name
-- ✅ Minimum touch targets: Small (36pt), Medium (44pt), Large (52pt)
+- ✅ Visual sizes remain semantic; every interaction frame is at least 44×44pt
 
 **Usage:**
 ```swift
@@ -86,7 +104,8 @@ DSText("Body content", role: .body)       // Regular text
 
 - ✅ Configurable accessibility labels
 - ✅ Automatic fallback labels for missing images
-- ✅ Loading state announced
+- ✅ Loading/failure values and image traits
+- ✅ Decorative images can be removed from the accessibility tree
 
 **Usage:**
 ```swift
@@ -97,6 +116,8 @@ DSRemoteImage(
 )
 // VoiceOver: "Profile picture of John Doe, image"
 ```
+
+Use `isDecorative: true` only when the image communicates no information.
 
 **Default labels when not specified:**
 - With URL: "Remote image"
@@ -148,6 +169,23 @@ Test your UI with different text sizes:
 - Use `.fixedSize(horizontal: false, vertical: true)` when a control label may wrap
 - Prefer flexible layouts with `VStack` and `HStack`
 - Test regular and accessibility categories; the Typography gallery includes an AX3 example
+
+## Manual Assistive-Technology Matrix
+
+Run this matrix with Accessibility Inspector and VoiceOver on an iPhone simulator
+or device. Repeat keyboard checks on iPad when the host app supports it.
+
+| Component | Required states | Verify manually |
+|-----------|-----------------|-----------------|
+| `DSButton`, `DSIconButton` | normal, disabled, loading | label, hint, “dimmed”, loading value, focus order |
+| `DSSwitch` | on, off, disabled, no visible label | toggle trait, value, activation, fallback label |
+| `DSSegmentedControl` | every selection | container grouping, selected trait, change announcement |
+| `DSTextField` | empty, prompt, value, error, hidden label | label/value/error order, typing, focus retention |
+| `DSProgressBar` | determinate, indeterminate, Reduce Motion | percentage/loading value and update frequency |
+| `DSRemoteImage` | loading, success, failure, decorative | image trait, state value, decorative omission |
+| `DSBadge`, `DSCard`, `DSText` | representative content | grouping, reading order, heading/static traits |
+
+Also verify Full Keyboard Access traversal and activation for every interactive row.
 
 ## VoiceOver Testing Checklist
 

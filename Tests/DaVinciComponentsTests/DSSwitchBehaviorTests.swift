@@ -84,15 +84,11 @@ struct DSSwitchBehaviorTests {
     // MARK: - Accessibility Value
 
     @Test @MainActor func accessibilityValueReflectsOnState() {
-        // The body sets .accessibilityValue(isOn ? "On" : "Off")
-        // We verify the label resolution; the value is set inline in body
-        // and tested via the label fallback chain consistency
         let onSwitch = DSSwitch(isOn: .constant(true))
         let offSwitch = DSSwitch(isOn: .constant(false))
 
-        // Both should resolve labels correctly regardless of on/off state
-        #expect(onSwitch.resolvedAccessibilityLabel == "Toggle")
-        #expect(offSwitch.resolvedAccessibilityLabel == "Toggle")
+        #expect(onSwitch.accessibilityDescriptor.value == "On")
+        #expect(offSwitch.accessibilityDescriptor.value == "Off")
     }
 
     // MARK: - Init Parameter Combinations
