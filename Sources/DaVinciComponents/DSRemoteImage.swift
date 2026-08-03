@@ -7,7 +7,13 @@ import DaVinciTokens
 /// the remote image on success, or a placeholder on failure.
 ///
 /// Uses the `dsImageLoader` environment value for data fetching (testable)
-/// and an internal in-memory cache to avoid redundant downloads.
+/// and an internal, cost-limited pipeline to validate, deduplicate, decode,
+/// and cache images.
+///
+/// The default policy rejects payloads above 20 MB or 40 megapixels and keeps
+/// up to 50 MB of validated decoded images in a shared LRU cache. Failures are
+/// not retried automatically. Cancelling one consumer does not cancel shared
+/// work that another image view may still need.
 ///
 /// Lifecycle is managed via `.task(id:)` — changing the URL automatically
 /// cancels the previous load and starts a new one.
@@ -23,12 +29,16 @@ public struct DSRemoteImage: View {
 
     // MARK: - LoadPhase
 
-    /// Fully `Sendable` load phase — stores raw `Data`, not `Image`.
-    /// Decoding to `SwiftUI.Image` happens synchronously in the view body.
-    private enum LoadPhase: Sendable, Equatable {
+    private enum LoadPhase: Sendable {
         case loading
-        case success(Data)
+        case success
         case failure
+    }
+
+    internal enum LoadResult: Sendable {
+        case success(DSDecodedImage)
+        case failure
+        case cancelled
     }
 
     // MARK: - Properties
@@ -113,13 +123,6 @@ public struct DSRemoteImage: View {
             .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
             .task(id: url) {
                 await load(url)
-            }
-            .onChange(of: phase) { _, newPhase in
-                if case .success(let data) = newPhase {
-                    decodedImage = Self.decodeImage(from: data)
-                } else {
-                    decodedImage = nil
-                }
             }
     }
 
@@ -232,43 +235,43 @@ public struct DSRemoteImage: View {
     // MARK: - Loading
 
     private func load(_ url: URL?) async {
-        await MainActor.run { phase = .loading }
+        phase = .loading
+        decodedImage = nil
 
-        guard let url else {
-            await MainActor.run { phase = .failure }
-            return
-        }
+        let result = await Self.loadImage(from: url, using: loader)
+        guard !Task.isCancelled else { return }
 
-        // Check cache first
-        if let cached = await DSImageCache.shared.data(for: url) {
-            await MainActor.run { phase = .success(cached) }
-            return
-        }
-
-        // Fetch from network
-        do {
-            let data = try await loader.loadImageData(from: url)
-            guard !Task.isCancelled else { return }
-            await DSImageCache.shared.setData(data, for: url)
-            await MainActor.run { phase = .success(data) }
-        } catch {
-            guard !Task.isCancelled else { return }
-            await MainActor.run { phase = .failure }
+        switch result {
+        case .success(let decoded):
+            #if canImport(UIKit)
+            decodedImage = Image(uiImage: decoded.image)
+            #elseif canImport(AppKit)
+            decodedImage = Image(nsImage: decoded.image)
+            #endif
+            phase = .success
+        case .failure:
+            phase = .failure
+        case .cancelled:
+            break
         }
     }
 
-    // MARK: - Decoding
+    internal static func loadImage(
+        from url: URL?,
+        using loader: any DSImageLoading,
+        pipeline: DSImagePipeline = .shared
+    ) async -> LoadResult {
+        guard let url else { return .failure }
 
-    private static func decodeImage(from data: Data) -> Image? {
-        #if canImport(UIKit)
-        guard let uiImage = UIImage(data: data) else { return nil }
-        return Image(uiImage: uiImage)
-        #elseif canImport(AppKit)
-        guard let nsImage = NSImage(data: data) else { return nil }
-        return Image(nsImage: nsImage)
-        #else
-        return nil
-        #endif
+        do {
+            let image = try await pipeline.image(for: url, using: loader)
+            try Task.checkCancellation()
+            return .success(image)
+        } catch is CancellationError {
+            return .cancelled
+        } catch {
+            return .failure
+        }
     }
 }
 

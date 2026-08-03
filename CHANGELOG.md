@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Deduplicated `DSRemoteImage` pipeline with HTTP/MIME validation, off-main decoding, and payload limits
+- Cost-limited 50 MB LRU cache for validated decoded images
 - Shared, testable accessibility contracts for labels, values, hints, traits, enabled state, and grouping
 - Automated contrast coverage for default and alternate themes in light and dark modes
 - Rendered 44pt minimum-target checks for primary interactive controls
@@ -22,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unit tests covering the snapshot comparator and missing-reference contract
 
 ### Changed
+- `DSRemoteImage` reaches success and cache only after image decoding succeeds
+- Failed and cancelled image consumers no longer publish stale success states
 - Loading buttons and images now expose explicit accessibility values and traits
 - Text fields preserve entered content when announcing validation errors
 - Badges and brand-filled controls choose the highest-contrast semantic foreground
