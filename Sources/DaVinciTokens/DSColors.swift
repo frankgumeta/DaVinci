@@ -9,7 +9,7 @@ public enum GrayScale: Sendable {
     public static let gray800 = Color(white: 0.13)
     public static let gray700 = Color(white: 0.23)
     public static let gray600 = Color(white: 0.35)
-    public static let gray500 = Color(white: 0.46)
+    public static let gray500 = Color(white: 0.42)
     public static let gray400 = Color(white: 0.60)
     public static let gray300 = Color(white: 0.74)
     public static let gray200 = Color(white: 0.85)
@@ -53,7 +53,7 @@ public enum GrayScale: Sendable {
 /// - ``divider``: Subtle list separators
 /// - ``skeleton``: Skeleton loading placeholder fill
 ///
-/// - Note: All defaults are optimized for WCAG AA contrast ratios.
+/// - Note: Default text/background pairs are covered by automated contrast tests.
 public struct SemanticColors: Sendable {
     public let textPrimary: Color
     public let textSecondary: Color

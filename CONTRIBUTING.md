@@ -196,11 +196,11 @@ Tests/
 ## Testing Guidelines
 
 ### Required Tests
-1. **Token Tests**: Validate all token values and scales (432+ test cases)
+1. **Token Tests**: Validate token values, scales, and rendered typography behavior
 2. **Component Tests**: Test instantiation, states, and behavior
 3. **Snapshot Tests**: Pixel-based visual regression tests for UI consistency
 4. **Integration Tests**: Test component composition
-5. **Accessibility Tests**: Validate VoiceOver support and WCAG compliance
+5. **Accessibility Tests**: Validate semantic contracts, contrast, touch targets, and the manual assistive-technology matrix
 
 ### Test Structure
 ```swift

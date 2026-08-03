@@ -307,7 +307,7 @@ DaVinci maintains **>95% code coverage** across all targets with comprehensive b
 **DaVinciComponents** (>92% coverage):
 - **Behavioral tests**: Component logic, state management, accessibility label resolution, theme integration
 - **Snapshot tests**: Visual regression coverage for all component variants in light/dark modes
-- **Accessibility tests**: VoiceOver support, semantic labels, WCAG compliance
+- **Accessibility tests**: Semantic contracts, contrast pairs, touch targets, and manual VoiceOver checklist
 
 ### Snapshot Testing
 
@@ -384,7 +384,9 @@ VStack(spacing: SpacingTokens.space4) {
 
 ### Accessibility
 
-Components include comprehensive accessibility support following WCAG 2.1 Level AA guidelines.
+Components provide testable accessibility semantics and are designed with WCAG 2.1
+Level AA criteria in mind. This is not a certification; VoiceOver focus order,
+announcements, and keyboard navigation still require manual validation in the host app.
 
 ```swift
 // Icon buttons require accessibility labels
@@ -400,12 +402,19 @@ DSRemoteImage(
     size: CGSize(width: 80, height: 80),
     accessibilityLabel: "User profile picture"
 )
+
+// Decorative images are removed from the accessibility tree
+DSRemoteImage(
+    url: backgroundURL,
+    size: CGSize(width: 120, height: 80),
+    isDecorative: true
+)
 ```
 
 **Key Features:**
-- ✅ WCAG AA contrast ratios for all color combinations
+- ✅ Automated 4.5:1 text and 3:1 interactive-outline checks for documented pairs
 - ✅ Dynamic Type support
-- ✅ VoiceOver optimized
+- ✅ Labels, values, hints, traits, grouping, and loading/disabled contracts
 - ✅ Reduce Motion respected
 - ✅ Minimum 44pt touch targets
 
@@ -428,7 +437,7 @@ Cache is shared across all `DSRemoteImage` instances in the app.
 
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines, coding standards, and development workflow
 - **[CHANGELOG.md](CHANGELOG.md)** - Version history and release notes
-- **[ACCESSIBILITY.md](ACCESSIBILITY.md)** - Accessibility guidelines, WCAG compliance, and testing procedures
+- **[ACCESSIBILITY.md](ACCESSIBILITY.md)** - Accessibility guarantees, limitations, and testing procedures
 
 ## Contributing
 

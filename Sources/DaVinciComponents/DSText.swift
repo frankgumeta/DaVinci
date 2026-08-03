@@ -93,8 +93,7 @@ public struct DSText: View {
         Text(content)
             .dsTextStyle(textStyle, family: theme.typography.family)
             .foregroundStyle(color ?? theme.colors.semantic.textPrimary)
-            .modifier(AccessibilityLabelModifier(label: accessibilityLabel))
-            .modifier(AccessibilityTraitsModifier(traits: resolvedAccessibilityTraits))
+            .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
     }
 
     // MARK: - Accessibility
@@ -111,6 +110,13 @@ public struct DSText: View {
         default:
             return nil
         }
+    }
+
+    internal var accessibilityDescriptor: DSAccessibilityDescriptor {
+        DSAccessibilityDescriptor(
+            label: accessibilityLabel,
+            traits: resolvedAccessibilityTraits ?? []
+        )
     }
 
     // MARK: - Private
@@ -168,30 +174,4 @@ public struct DSText: View {
         // Default static text, no special traits
     }
     .padding()
-}
-
-// MARK: - Accessibility Modifiers
-
-private struct AccessibilityLabelModifier: ViewModifier {
-    let label: String?
-
-    func body(content: Content) -> some View {
-        if let label = label {
-            content.accessibilityLabel(label)
-        } else {
-            content
-        }
-    }
-}
-
-private struct AccessibilityTraitsModifier: ViewModifier {
-    let traits: AccessibilityTraits?
-
-    func body(content: Content) -> some View {
-        if let traits = traits {
-            content.accessibilityAddTraits(traits)
-        } else {
-            content
-        }
-    }
 }

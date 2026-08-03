@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Shared, testable accessibility contracts for labels, values, hints, traits, enabled state, and grouping
+- Automated contrast coverage for default and alternate themes in light and dark modes
+- Rendered 44pt minimum-target checks for primary interactive controls
+- Decorative-image support through `DSRemoteImage(isDecorative:)`
 - Semantic Dynamic Type mapping for every typography role
 - Scaled line-height support through the `dsTextStyle(_:family:)` modifier
 - AX3 typography and control examples in DaVinciGallery
@@ -18,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unit tests covering the snapshot comparator and missing-reference contract
 
 ### Changed
+- Loading buttons and images now expose explicit accessibility values and traits
+- Text fields preserve entered content when announcing validation errors
+- Badges and brand-filled controls choose the highest-contrast semantic foreground
+- Tertiary text and interactive outlines use stronger contrast
 - Text-bearing components now preserve custom font weights and wrap at accessibility sizes
 - Custom typography examples now declare their semantic `relativeTo` text style
 - Missing snapshot references now fail unless `RECORD_SNAPSHOTS=1` is explicitly set
