@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Reproducible per-product coverage reporting and CI thresholds for the core libraries
+- Explicit semantic-versioning and compatibility-change policy
 - Deduplicated `DSRemoteImage` pipeline with HTTP/MIME validation, off-main decoding, and payload limits
 - Cost-limited 50 MB LRU cache for validated decoded images
 - Shared, testable accessibility contracts for labels, values, hints, traits, enabled state, and grouping
@@ -24,10 +26,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unit tests covering the snapshot comparator and missing-reference contract
 
 ### Changed
+- README component and gallery inventories now match the current source tree
+- Coverage claims now exclude test bundles and disclose the ungated gallery target
+- Public DocC symbol links now match the current accessibility-aware initializers
+- CI now verifies that API documentation builds without DocC diagnostics
 - Reduced the supported deployment target from iOS 26 to the API-driven minimum, iOS 17
 - Set the supported toolchain to Xcode 26.6 and Swift tools 6.3 with explicit Swift 6 language mode
 - Swift 6 complete strict-concurrency checking is enforced without unsafe package flags
 - Immutable skeleton multiplier tables are explicitly nonisolated under Swift 6.3
+- Pure text-style mapping is explicitly nonisolated under Swift 6.3
 - CI now pins macOS 26 and Xcode 26.6, builds for iOS 17, and tests on the latest available iOS runtime
 - CI and release workflows dynamically create a compatible simulator instead of requiring a preinstalled device name
 - Documented the iOS-only SwiftPM workflow and compatibility matrix
@@ -41,6 +48,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Custom typography examples now declare their semantic `relativeTo` text style
 - Missing snapshot references now fail unless `RECORD_SNAPSHOTS=1` is explicitly set
 - Snapshot rendering now fixes locale, time zone, layout direction, Dynamic Type size, and scale
+
+### Removed
+- Unrelated template MCP notes server from the `github/` directory
 
 ---
 
@@ -56,7 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **DSSkeleton**: Skeleton loading components (DSSkeletonBlock, DSSkeletonRow, DSSkeletonCard, DSSkeletonList) with shimmer animation
 - **DSShimmering**: View modifier for shimmer loading effects with reduce motion support
 - All new components added to DaVinciGallery for visual verification
-- **Comprehensive test coverage**: >95% code coverage across all targets
+- **Core-library coverage measurements** (test targets excluded from the claim)
   - DaVinciTokens: 100% coverage
   - DaVinciComponents: >92% coverage
 - **Behavioral tests**: 180+ tests covering component logic, state management, accessibility, and theme integration

@@ -81,6 +81,42 @@ DSSkeletonList(count: 5)
 
 ---
 
+### Selection and Feedback
+
+| Component | When to Use | Example |
+|-----------|-------------|---------|
+| **DSSwitch** | Independent on/off preference | Notifications, privacy settings |
+| **DSSegmentedControl** | One choice from a small visible set | Day/week/month filters |
+| **DSProgressBar** | Determinate or indeterminate progress | Uploads, long-running work |
+| **DSBadge** | Compact status or count | New, warning, unread count |
+| **DSDivider** | Semantic separation without a container | Rows and adjacent sections |
+
+```swift
+DSSwitch(isOn: $notificationsEnabled, label: "Notifications")
+DSSegmentedControl(options: ["Day", "Week"], selectedIndex: $period)
+DSProgressBar(value: uploadProgress, label: "Uploading")
+DSBadge("New", variant: .brand)
+DSDivider()
+```
+
+### Remote Media
+
+Use `DSRemoteImage` when remote content needs validated HTTP/MIME handling,
+deduplicated requests, bounded caching, and explicit loading/failure semantics.
+Mark purely decorative content so it is omitted from the accessibility tree.
+
+```swift
+DSRemoteImage(
+    url: avatarURL,
+    width: 80,
+    height: 80,
+    cornerRadius: RadiusTokens.large,
+    accessibilityLabel: "Profile photo"
+)
+```
+
+---
+
 ## Common Patterns
 
 ### 1. Full-Width CTAs

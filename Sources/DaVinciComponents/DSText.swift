@@ -43,7 +43,7 @@ import DaVinciTokens
 /// ## Topics
 ///
 /// ### Creating Text
-/// - ``init(_:role:color:)``
+/// - ``init(_:role:color:accessibilityLabel:accessibilityTraits:)``
 ///
 /// ### Text Roles
 /// - ``Role``
@@ -125,7 +125,7 @@ public struct DSText: View {
         Self.textStyle(for: role, theme: theme)
     }
 
-    internal static func textStyle(for role: Role, theme: DSTheme) -> DSTextStyle {
+    nonisolated internal static func textStyle(for role: Role, theme: DSTheme) -> DSTextStyle {
         switch role {
         case .display:  theme.typography.display
         case .title:    theme.typography.title

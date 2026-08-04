@@ -39,7 +39,16 @@ jobs:
         xcodebuild test \
           -scheme DaVinci-Package \
           -destination 'platform=iOS Simulator,id=${{ steps.simulator.outputs.udid }}' \
+          -enableCodeCoverage YES \
+          -resultBundlePath .build/TestResults.xcresult \
           -derivedDataPath .build
+
+    - name: Enforce Product Code Coverage
+      run: |
+        python3 .github/scripts/check-code-coverage.py \
+          .build/TestResults.xcresult \
+          --minimum DaVinciTokens=100 \
+          --minimum DaVinciComponents=95
       
     - name: Build Package
       run: |

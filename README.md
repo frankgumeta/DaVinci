@@ -7,7 +7,7 @@
 [![Swift](https://img.shields.io/badge/Swift-6.3-orange.svg)](https://swift.org)
 [![Platform](https://img.shields.io/badge/Platform-iOS%2017%2B-blue.svg)](https://developer.apple.com)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![CI](https://img.shields.io/badge/CI-Passing-brightgreen.svg)](https://github.com/frankgumeta/DaVinci/actions)
+[![CI](https://github.com/frankgumeta/DaVinci/actions/workflows/ci.yml/badge.svg)](https://github.com/frankgumeta/DaVinci/actions/workflows/ci.yml)
 
 </div>
 
@@ -26,7 +26,7 @@ strategy.
 - 🌓 **Dark Mode Native**: Optimized palettes for light and dark themes
 - 🔒 **Type-Safe**: Swift 6 strict concurrency with `Sendable` types
 - 🎭 **Themeable**: Custom themes via SwiftUI environment
-- ✅ **Tested**: Comprehensive test coverage with >95% code coverage across all targets
+- ✅ **Tested**: CI-gated core-library coverage plus behavioral, snapshot, and accessibility contracts
 - 📱 **Live Preview**: Interactive gallery for visual verification
 
 ## Installation
@@ -233,6 +233,14 @@ Reusable SwiftUI components that consume tokens from `DaVinciTokens`.
 | `DSText` | Semantic text component mapping roles (`.display`, `.title`, `.headline`, `.body`, `.callout`, `.caption`, `.overline`) to typography tokens |
 | `DSCard` | Container view with surface styling, padding, radius, and elevation shadow |
 | `DSTextField` | Themed text field with label and prompt |
+| `DSSwitch` | Themed toggle with label, disabled state, and accessibility value |
+| `DSSegmentedControl` | Text or icon segments with animated selection |
+| `DSProgressBar` | Determinate and indeterminate progress in three sizes |
+| `DSBadge` | Text and dot badges with semantic variants and sizes |
+| `DSDivider` | Horizontal or vertical semantic divider |
+| `DSRemoteImage` | Validated remote loading, deduplication, decoding, and bounded cache |
+| `DSSkeletonBlock`, `DSSkeletonRow`, `DSSkeletonCard`, `DSSkeletonList` | Loading placeholders with optional shimmer |
+| `dsShimmering(_:)` | Reduce-Motion-aware shimmer modifier |
 | `DSPressableButtonStyle` | Shared `ButtonStyle` applying `OpacityTokens.pressed` with configurable duration |
 
 **Import:** `import DaVinciComponents`
@@ -250,7 +258,8 @@ Interactive gallery screens for visual verification of all tokens and components
 | `TypographyGalleryScreen` | Type scale preview |
 | `LayoutGalleryScreen` | Spacing and radius demos |
 | `EffectsGalleryScreen` | Elevation shadow demos |
-| `ComponentsGalleryScreen` | All component variants, states, and sizes |
+| `ComponentsListScreen` | Navigation to text, controls, feedback, and structure galleries |
+| `SkeletonGalleryScreen` | Skeleton block, row, card, and list examples |
 
 **Import:** `import DaVinciGallery`
 
@@ -312,9 +321,19 @@ xcodebuild build \
 
 ### Test Coverage
 
-DaVinci maintains **>95% code coverage** across all targets with comprehensive behavioral and visual regression tests.
+Coverage is reported only for production targets; test bundles are deliberately
+excluded from the metric. With Xcode 26.6, the current reproducible line coverage is:
 
-**DaVinciTokens** (100% coverage):
+| Product target | Covered lines | Executable lines | Coverage | CI policy |
+|---|---:|---:|---:|---|
+| `DaVinciTokens` | 232 | 232 | 100.00% | Minimum 100% |
+| `DaVinciComponents` | 1902 | 2002 | 95.00% | Minimum 95% |
+| `DaVinciGallery` | 0 | 4531 | 0.00% | Reported, not currently gated |
+
+There is no aggregate “overall” claim: including test targets would inflate it,
+while including the currently unexercised gallery would conceal the actual gap.
+
+**DaVinciTokens** coverage includes:
 - Token scale ordering (spacing, radius, font sizes, control heights are ascending)
 - Token value correctness (semantic defaults, opacity, motion, stroke)
 - Semantic color default mappings
@@ -322,10 +341,29 @@ DaVinci maintains **>95% code coverage** across all targets with comprehensive b
 - Theme override propagation
 - Dark mode palette resolution
 
-**DaVinciComponents** (>92% coverage):
+**DaVinciComponents** coverage includes:
 - **Behavioral tests**: Component logic, state management, accessibility label resolution, theme integration
 - **Snapshot tests**: Visual regression coverage for all component variants in light/dark modes
 - **Accessibility tests**: Semantic contracts, contrast pairs, touch targets, and manual VoiceOver checklist
+
+To reproduce the CI coverage run and enforce the same thresholds:
+
+```bash
+RESULT_BUNDLE=".build/TestResults-$(date +%s).xcresult"
+
+xcodebuild test \
+  -scheme DaVinci-Package \
+  -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
+  -enableCodeCoverage YES \
+  -resultBundlePath "$RESULT_BUNDLE" \
+  -derivedDataPath .build
+
+python3 .github/scripts/check-code-coverage.py \
+  "$RESULT_BUNDLE" \
+  --minimum DaVinciTokens=100 \
+  --minimum DaVinciComponents=95 \
+  --output coverage.md
+```
 
 ### Snapshot Testing
 
@@ -354,7 +392,7 @@ artifact on failed runs.
 
 Snapshot rendering fixes the canvas size, 2x scale, `en_US_POSIX` locale, UTC time
 zone, left-to-right layout, Dynamic Type `.large`, theme, and color scheme. Use the
-repository simulator helper and latest stable Xcode, matching CI, when approving
+repository simulator helper and Xcode 26.6, matching CI, when approving
 baselines.
 
 ## Best Practices
@@ -462,6 +500,10 @@ view or changing its URL can retry them.
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines, coding standards, and development workflow
 - **[CHANGELOG.md](CHANGELOG.md)** - Version history and release notes
 - **[ACCESSIBILITY.md](ACCESSIBILITY.md)** - Accessibility guarantees, limitations, and testing procedures
+- **[Docs/Compatibility.md](Docs/Compatibility.md)** - Supported toolchain, platform, and CI matrix
+- **[Docs/Usage.md](Docs/Usage.md)** - Component composition and usage patterns
+- **[Docs/Theming.md](Docs/Theming.md)** - Theme and token customization
+- **[Docs/Versioning.md](Docs/Versioning.md)** - Compatibility and semantic-versioning policy
 
 ## Contributing
 

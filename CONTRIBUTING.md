@@ -248,6 +248,30 @@ xcodebuild test \
   -verbose
 ```
 
+### Product Coverage
+
+CI measures production targets only and does not combine test-bundle lines into an
+aggregate percentage. `DaVinciTokens` must remain at 100% and
+`DaVinciComponents` at or above 95%. `DaVinciGallery` is reported transparently
+but is not yet gated.
+
+```bash
+RESULT_BUNDLE=".build/TestResults-$(date +%s).xcresult"
+
+xcodebuild test \
+  -scheme DaVinci-Package \
+  -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
+  -enableCodeCoverage YES \
+  -resultBundlePath "$RESULT_BUNDLE" \
+  -derivedDataPath .build
+
+python3 .github/scripts/check-code-coverage.py \
+  "$RESULT_BUNDLE" \
+  --minimum DaVinciTokens=100 \
+  --minimum DaVinciComponents=95 \
+  --output coverage.md
+```
+
 ### Snapshot Testing Guidelines
 - Snapshots are stored in `Tests/DaVinciComponentsTests/__Snapshots__/`
 - Each component has snapshots for light and dark modes
@@ -255,7 +279,7 @@ xcodebuild test \
 - When intentionally changing UI, run with `RECORD_SNAPSHOTS=1` to update references
 - Recording mode rewrites every snapshot exercised by the selected test run
 - Review the changed PNG files visually before committing them
-- Use the repository simulator helper with latest stable Xcode, matching CI
+- Use the repository simulator helper with Xcode 26.6, matching CI
 - Failure artifacts are written under `.build/snapshot-failures/`, which is ignored by Git
 - CI uploads failure artifacts for 14 days as `snapshot-failures`
 - Ensure snapshots render consistently on the helper-created simulator
@@ -294,7 +318,7 @@ comparison run. Never commit a hard-coded recording flag.
 
 **Snapshots differ slightly between machines?**
 - Create the simulator with `.github/scripts/create-ios-simulator.sh`, as CI does
-- Check Xcode version matches CI (latest-stable)
+- Check Xcode version matches CI (26.6)
 - Verify simulator is clean: `xcrun simctl erase all`
 - Font rendering can vary - ensure system fonts are up to date
 
@@ -326,7 +350,7 @@ All public APIs must have documentation comments:
 ///
 /// ## Topics
 /// ### Creating Buttons
-/// - ``init(_:variant:icon:isLoading:isDisabled:action:)``
+/// - ``init(_:variant:icon:isLoading:isDisabled:accessibilityLabel:accessibilityHint:action:)``
 ///
 /// ### Variants
 /// - ``Variant``
@@ -336,6 +360,14 @@ All public APIs must have documentation comments:
 ///   - variant: Visual style (`.primary`, `.secondary`, `.outline`)
 ///   - action: Closure to execute when tapped
 public struct DSButton: View { ... }
+```
+
+Validate symbol links and generated API documentation before opening a PR:
+
+```bash
+xcodebuild docbuild \
+  -scheme DaVinci-Package \
+  -destination 'generic/platform=iOS Simulator'
 ```
 
 ### Preview Requirements
