@@ -388,6 +388,14 @@ DSRemoteImage(
 )
 ```
 
+The default loading path validates HTTP status and image MIME type, rejects corrupt
+or oversized payloads before success, and decodes away from the main actor. Requests
+for the same URL are deduplicated, and validated decoded images share a 50 MB LRU
+cache. There is no automatic retry loop; changing the URL or recreating the view
+starts a new attempt after a failure. Cancelling one view prevents stale UI updates
+but does not cancel shared work that another view may still need; that work may
+finish and populate the cache.
+
 If an image conveys no information, remove it from the accessibility tree:
 
 ```swift

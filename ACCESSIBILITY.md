@@ -106,6 +106,7 @@ DSText("Body content", role: .body)       // Regular text
 - ✅ Automatic fallback labels for missing images
 - ✅ Loading/failure values and image traits
 - ✅ Decorative images can be removed from the accessibility tree
+- ✅ Success is exposed only after the payload has decoded as an image
 
 **Usage:**
 ```swift

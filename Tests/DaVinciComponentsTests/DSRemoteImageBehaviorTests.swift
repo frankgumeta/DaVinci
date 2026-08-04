@@ -1,6 +1,7 @@
 import Testing
 import SwiftUI
 import Foundation
+import UIKit
 @testable import DaVinciTokens
 @testable import DaVinciComponents
 
@@ -121,46 +122,54 @@ struct DSRemoteImageBehaviorTests {
         #expect(String(describing: fill) != String(describing: fit))
     }
 
-    // MARK: - Image Loader Mock Integration
+    // MARK: - Component Loading Flow
 
-    @Test func mockLoaderSucceedsWithData() async throws {
-        let mockData = Data([10, 20, 30, 40, 50])
-        let loader = MockImageLoader(shouldSucceed: true, mockData: mockData)
-        let url = URL(string: "https://example.com/test.jpg")!
+    @Test func componentFlowOnlyReportsSuccessAfterDecoding() async {
+        let pipeline = DSImagePipeline(cache: DSImageCache(costLimit: 1_024 * 1_024))
+        let result = await DSRemoteImage.loadImage(
+            from: URL(string: "https://example.com/valid.png"),
+            using: MockImageLoader(mockData: makePNGData()),
+            pipeline: pipeline
+        )
 
-        let data = try await loader.loadImageData(from: url)
-        #expect(data == mockData)
+        guard case .success(let image) = result else {
+            Issue.record("Expected a decoded success result")
+            return
+        }
+        #expect(image.pixelWidth == 2)
+        #expect(image.pixelHeight == 2)
     }
 
-    @Test func mockLoaderFailsWithError() async {
-        let loader = MockImageLoader(shouldSucceed: false)
-        let url = URL(string: "https://example.com/test.jpg")!
+    @Test func componentFlowRejectsCorruptDataAndNilURL() async {
+        let pipeline = DSImagePipeline(cache: DSImageCache(costLimit: 1_024))
+        let corrupt = await DSRemoteImage.loadImage(
+            from: URL(string: "https://example.com/corrupt.png"),
+            using: MockImageLoader(mockData: Data([1, 2, 3])),
+            pipeline: pipeline
+        )
+        let missing = await DSRemoteImage.loadImage(
+            from: nil,
+            using: MockImageLoader(),
+            pipeline: pipeline
+        )
 
-        do {
-            _ = try await loader.loadImageData(from: url)
-            #expect(Bool(false), "Expected loader to throw")
-        } catch {
-            #expect(error is URLError)
+        guard case .failure = corrupt else {
+            Issue.record("Corrupt data must not become success")
+            return
+        }
+        guard case .failure = missing else {
+            Issue.record("A nil URL must fail")
+            return
         }
     }
 
-    // MARK: - Cache Integration
-
-    @Test func cacheStoresAndRetrievesData() async {
-        let cache = DSImageCache(capacity: 10)
-        let url = URL(string: "https://example.com/cached.jpg")!
-        let data = Data([1, 2, 3])
-
-        await cache.setData(data, for: url)
-        let retrieved = await cache.data(for: url)
-        #expect(retrieved == data)
-    }
-
-    @Test func cacheMissReturnsNil() async {
-        let cache = DSImageCache(capacity: 10)
-        let url = URL(string: "https://example.com/miss.jpg")!
-
-        let retrieved = await cache.data(for: url)
-        #expect(retrieved == nil)
+    private func makePNGData() -> Data {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 2, height: 2), format: format)
+        return renderer.pngData { context in
+            UIColor.systemBlue.setFill()
+            context.fill(CGRect(x: 0, y: 0, width: 2, height: 2))
+        }
     }
 }

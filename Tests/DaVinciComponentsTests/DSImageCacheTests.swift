@@ -1,132 +1,91 @@
-import Testing
 import Foundation
+import Testing
+import UIKit
 @testable import DaVinciComponents
 
-// MARK: - DSImageCache Tests
-
+@MainActor
 @Suite("DSImageCache")
 struct DSImageCacheTests {
+    @Test func cacheStoresAndReturnsDecodedImage() async {
+        let cache = DSImageCache(costLimit: 10)
+        let url = testURL("one")
+        let image = decodedImage(cost: 4, marker: 1)
 
-    @Test func cacheSingleItem() async {
-        let cache = DSImageCache(capacity: 10)
-        let url = URL(string: "https://example.com/image1.jpg")!
-        let data = Data([1, 2, 3, 4, 5])
-
-        await cache.setData(data, for: url)
-        let retrieved = await cache.data(for: url)
-
-        #expect(retrieved == data)
+        #expect(await cache.insert(image, for: url))
+        #expect(await cache.image(for: url)?.data == image.data)
+        #expect(await cache.totalCost == 4)
+        #expect(await cache.count == 1)
     }
 
-    @Test func cacheReturnsNilForMissingURL() async {
-        let cache = DSImageCache(capacity: 10)
-        let url = URL(string: "https://example.com/missing.jpg")!
+    @Test func cacheOverwritesCostForSameURL() async {
+        let cache = DSImageCache(costLimit: 10)
+        let url = testURL("same")
 
-        let retrieved = await cache.data(for: url)
+        await cache.insert(decodedImage(cost: 3, marker: 1), for: url)
+        await cache.insert(decodedImage(cost: 7, marker: 2), for: url)
 
-        #expect(retrieved == nil)
+        #expect(await cache.image(for: url)?.data == Data([2]))
+        #expect(await cache.totalCost == 7)
+        #expect(await cache.count == 1)
     }
 
-    @Test func cacheOverwritesSameURL() async {
-        let cache = DSImageCache(capacity: 10)
-        let url = URL(string: "https://example.com/image.jpg")!
-        let data1 = Data([1, 2, 3])
-        let data2 = Data([4, 5, 6, 7])
+    @Test func cacheEvictsLeastRecentlyUsedItemsByCost() async {
+        let cache = DSImageCache(costLimit: 10)
+        let first = testURL("first")
+        let second = testURL("second")
+        let third = testURL("third")
 
-        await cache.setData(data1, for: url)
-        await cache.setData(data2, for: url)
-        let retrieved = await cache.data(for: url)
+        await cache.insert(decodedImage(cost: 4, marker: 1), for: first)
+        await cache.insert(decodedImage(cost: 4, marker: 2), for: second)
+        _ = await cache.image(for: first)
+        await cache.insert(decodedImage(cost: 4, marker: 3), for: third)
 
-        #expect(retrieved == data2)
-        #expect(retrieved != data1)
+        #expect(await cache.image(for: first) != nil)
+        #expect(await cache.image(for: second) == nil)
+        #expect(await cache.image(for: third) != nil)
+        #expect(await cache.totalCost == 8)
     }
 
-    @Test func cacheEvictsOldestWhenAtCapacity() async {
-        let cache = DSImageCache(capacity: 3)
-        let url1 = URL(string: "https://example.com/1.jpg")!
-        let url2 = URL(string: "https://example.com/2.jpg")!
-        let url3 = URL(string: "https://example.com/3.jpg")!
-        let url4 = URL(string: "https://example.com/4.jpg")!
+    @Test func cacheRejectsAnItemLargerThanItsBudget() async {
+        let cache = DSImageCache(costLimit: 5)
+        let url = testURL("oversized")
 
-        let data1 = Data([1])
-        let data2 = Data([2])
-        let data3 = Data([3])
-        let data4 = Data([4])
+        let inserted = await cache.insert(decodedImage(cost: 6, marker: 1), for: url)
 
-        await cache.setData(data1, for: url1)
-        await cache.setData(data2, for: url2)
-        await cache.setData(data3, for: url3)
-        await cache.setData(data4, for: url4)
-
-        let retrieved1 = await cache.data(for: url1)
-        let retrieved2 = await cache.data(for: url2)
-        let retrieved3 = await cache.data(for: url3)
-        let retrieved4 = await cache.data(for: url4)
-
-        #expect(retrieved1 == nil)
-        #expect(retrieved2 == data2)
-        #expect(retrieved3 == data3)
-        #expect(retrieved4 == data4)
+        #expect(!inserted)
+        #expect(await cache.image(for: url) == nil)
+        #expect(await cache.totalCost == 0)
     }
 
-    @Test func cacheRemoveAllClearsEntries() async {
-        let cache = DSImageCache(capacity: 10)
-        let url1 = URL(string: "https://example.com/1.jpg")!
-        let url2 = URL(string: "https://example.com/2.jpg")!
-
-        await cache.setData(Data([1]), for: url1)
-        await cache.setData(Data([2]), for: url2)
+    @Test func removeAllResetsEntriesAndCost() async {
+        let cache = DSImageCache(costLimit: 10)
+        await cache.insert(decodedImage(cost: 4, marker: 1), for: testURL("one"))
+        await cache.insert(decodedImage(cost: 4, marker: 2), for: testURL("two"))
 
         await cache.removeAll()
 
-        let retrieved1 = await cache.data(for: url1)
-        let retrieved2 = await cache.data(for: url2)
-
-        #expect(retrieved1 == nil)
-        #expect(retrieved2 == nil)
+        #expect(await cache.isEmpty)
+        #expect(await cache.totalCost == 0)
     }
 
-    @Test func cacheHandlesMultipleDifferentURLs() async {
-        let cache = DSImageCache(capacity: 100)
-        var urls: [URL] = []
-        var dataMap: [URL: Data] = [:]
+    @Test func defaultCacheLimitIsExplicit() async {
+        let cache = DSImageCache()
 
-        for i in 1...10 {
-            let url = URL(string: "https://example.com/image\(i).jpg")!
-            let data = Data([UInt8(i)])
-            urls.append(url)
-            dataMap[url] = data
-            await cache.setData(data, for: url)
-        }
-
-        for url in urls {
-            let retrieved = await cache.data(for: url)
-            #expect(retrieved == dataMap[url])
-        }
+        #expect(await cache.costLimit == 50 * 1_024 * 1_024)
+        #expect(type(of: DSImageCache.shared) == DSImageCache.self)
     }
 
-    @Test func sharedCacheExists() async {
-        let shared = DSImageCache.shared
-        #expect(type(of: shared) == DSImageCache.self)
+    private func testURL(_ path: String) -> URL {
+        URL(string: "https://example.com/\(path).png")!
     }
 
-    @Test func cachePreservesInsertionOrder() async {
-        let cache = DSImageCache(capacity: 5)
-        let urls = (1...5).map { URL(string: "https://example.com/\($0).jpg")! }
-
-        for (index, url) in urls.enumerated() {
-            await cache.setData(Data([UInt8(index)]), for: url)
-        }
-
-        let newURL = URL(string: "https://example.com/new.jpg")!
-        await cache.setData(Data([99]), for: newURL)
-
-        let firstURLData = await cache.data(for: urls[0])
-        #expect(firstURLData == nil)
-
-        for index in 1..<urls.count {
-            let data = await cache.data(for: urls[index])
-            #expect(data != nil)
-        }
+    private func decodedImage(cost: Int, marker: UInt8) -> DSDecodedImage {
+        DSDecodedImage(
+            data: Data([marker]),
+            image: UIImage(),
+            pixelWidth: 1,
+            pixelHeight: 1,
+            memoryCost: cost
+        )
     }
 }

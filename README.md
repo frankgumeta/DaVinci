@@ -422,7 +422,7 @@ For complete accessibility guidelines, color contrast ratios, and testing proced
 
 ### Performance
 
-**DSRemoteImage** includes automatic caching:
+**DSRemoteImage** uses a shared validated image pipeline:
 ```swift
 // First load: fetches from network
 DSRemoteImage(url: imageURL, width: 100, height: 100)
@@ -431,7 +431,12 @@ DSRemoteImage(url: imageURL, width: 100, height: 100)
 DSRemoteImage(url: imageURL, width: 100, height: 100)
 ```
 
-Cache is shared across all `DSRemoteImage` instances in the app.
+Concurrent requests for the same URL share one load. The default loader accepts
+successful HTTP responses with supported image MIME types; payloads must also decode
+as images before reaching success or the cache. Decoding runs away from the main
+actor, payloads are limited to 20 MB and 40 megapixels, and the shared decoded-image
+LRU cache has a 50 MB cost budget. Failed requests are not cached, so recreating the
+view or changing its URL can retry them.
 
 ## Documentation
 
