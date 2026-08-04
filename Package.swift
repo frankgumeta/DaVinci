@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.3
 
 import PackageDescription
 
@@ -55,5 +55,6 @@ let package = Package(
             dependencies: ["DaVinciComponents", "DaVinciTokens", "DaVinciGallery"],
             resources: [.copy("__Snapshots__")]
         )
-    ]
+    ],
+    swiftLanguageModes: [.v6]
 )

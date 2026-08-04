@@ -33,7 +33,7 @@ jobs:
 
   test:
     name: Test (latest iOS runtime)
-    runs-on: macos-latest
+    runs-on: macos-26
     
     steps:
     - name: Checkout
@@ -42,7 +42,12 @@ jobs:
     - name: Select Xcode
       uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: latest-stable
+        xcode-version: '26.6'
+
+    - name: Verify Toolchain
+      run: |
+        xcodebuild -version | grep -F 'Xcode 26.6'
+        xcrun swift --version | grep -F 'Apple Swift version 6.3'
         
     - name: Create iOS Simulator
       id: simulator
@@ -87,7 +92,7 @@ jobs:
 
   build-ios:
     name: Build (iOS 17 deployment)
-    runs-on: macos-latest
+    runs-on: macos-26
     
     steps:
     - name: Checkout
@@ -96,7 +101,12 @@ jobs:
     - name: Select Xcode
       uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: latest-stable
+        xcode-version: '26.6'
+
+    - name: Verify Toolchain
+      run: |
+        xcodebuild -version | grep -F 'Xcode 26.6'
+        xcrun swift --version | grep -F 'Apple Swift version 6.3'
         
     - name: Build iOS Package
       run: |

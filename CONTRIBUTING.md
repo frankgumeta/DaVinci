@@ -18,8 +18,9 @@ Be respectful, inclusive, and collaborative. We aim to maintain a welcoming envi
 ## Getting Started
 
 ### Prerequisites
-- Xcode 16.0 or later
-- Swift 6.0 or later
+- Xcode 26.6
+- Swift tools 6.3
+- Swift language mode 6 with complete strict concurrency
 - iOS 17.0+ (iOS-only package)
 
 See [Docs/Compatibility.md](Docs/Compatibility.md) for the compatibility matrix

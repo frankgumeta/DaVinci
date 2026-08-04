@@ -4,7 +4,7 @@
 
 ![DaVinci Framework Icon](assets/davinci-framework-icon.svg)
 
-[![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)](https://swift.org)
+[![Swift](https://img.shields.io/badge/Swift-6.3-orange.svg)](https://swift.org)
 [![Platform](https://img.shields.io/badge/Platform-iOS%2017%2B-blue.svg)](https://developer.apple.com)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![CI](https://img.shields.io/badge/CI-Passing-brightgreen.svg)](https://github.com/frankgumeta/DaVinci/actions)
@@ -276,7 +276,7 @@ DaVinciDemo            (depends on all)
 
 - **All token structs are immutable** (`public let`) and `Sendable` — safe to use from any isolation context.
 - **`DSTheme`** is injected via the `.dsTheme` SwiftUI environment value.
-- **Swift 6 strict concurrency** is enforced across all targets (`swift-tools-version: 6.0`).
+- **Swift 6 strict concurrency** is enforced across all targets (`swift-tools-version: 6.3`, language mode 6).
 - **No `Equatable` on Color-containing types** — structs with `SwiftUI.Color` fields omit `Equatable` to avoid unstable equality.
 
 ## Testing

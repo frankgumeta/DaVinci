@@ -6,9 +6,9 @@ DaVinci deliberately supports the following environment:
 |---|---|---|
 | Platform | iOS 17 or later | CI builds every package product with `IPHONEOS_DEPLOYMENT_TARGET=17.0` |
 | SDK | Current SDK in latest stable Xcode | CI builds and runs the complete suite on each pull request |
-| Swift tools | Swift tools 6.0 or later | Declared by `Package.swift` |
-| Swift language | Swift 6 with strict concurrency | Compiled in Swift 6 language mode |
-| Xcode | Xcode 16 or later | Xcode 16 provides the required Swift 6 toolchain; CI uses latest stable Xcode |
+| Swift tools | Swift tools 6.3 | Declared by `Package.swift` |
+| Swift language | Swift 6 with complete strict concurrency | Language mode 6 makes complete checking the default |
+| Xcode | Xcode 26.6 | CI pins `macos-26` and selects Xcode 26.6 explicitly |
 
 ## Why iOS 17
 
@@ -16,6 +16,12 @@ The minimum platform is determined by product APIs, not by Swift concurrency.
 DaVinci's accessibility contracts use `AccessibilityTraits.isToggle`, which is
 available starting in iOS 17. Swift 6 strict concurrency is enforced by the
 compiler and does not require iOS 26.
+
+## Concurrency checking
+
+The package declares Swift language mode 6 explicitly. In Swift 6, complete
+strict-concurrency checking is the default, so DaVinci does not use unsafe compiler
+flags or the older `StrictConcurrency` upcoming feature to enable it.
 
 ## Platform scope
 
@@ -30,9 +36,9 @@ CI performs two complementary checks:
 
 1. A generic iOS Simulator build with deployment target 17.0, which verifies that
    all products compile for the minimum supported deployment target against the
-   current SDK.
+   Xcode 26.6 SDK.
 2. The complete test suite on a dynamically created iPhone Simulator using the
-   newest iOS runtime installed on the selected runner.
+   newest iOS runtime installed on the macOS 26 runner.
 
 The helper at `.github/scripts/create-ios-simulator.sh` avoids assuming that a
 particular simulator is already registered. It prefers a recent iPhone device type
