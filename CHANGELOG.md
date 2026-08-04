@@ -24,6 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unit tests covering the snapshot comparator and missing-reference contract
 
 ### Changed
+- Reduced the supported deployment target from iOS 26 to the API-driven minimum, iOS 17
+- Set the supported toolchain to Xcode 26.6 and Swift tools 6.3 with explicit Swift 6 language mode
+- Swift 6 complete strict-concurrency checking is enforced without unsafe package flags
+- Immutable skeleton multiplier tables are explicitly nonisolated under Swift 6.3
+- CI now pins macOS 26 and Xcode 26.6, builds for iOS 17, and tests on the latest available iOS runtime
+- CI and release workflows dynamically create a compatible simulator instead of requiring a preinstalled device name
+- Documented the iOS-only SwiftPM workflow and compatibility matrix
 - `DSRemoteImage` reaches success and cache only after image decoding succeeds
 - Failed and cancelled image consumers no longer publish stale success states
 - Loading buttons and images now expose explicit accessibility values and traits

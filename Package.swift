@@ -1,11 +1,11 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 6.3
 
 import PackageDescription
 
 let package = Package(
     name: "DaVinci",
     platforms: [
-        .iOS(.v26)
+        .iOS(.v17)
     ],
     products: [
         .library(
@@ -55,5 +55,6 @@ let package = Package(
             dependencies: ["DaVinciComponents", "DaVinciTokens", "DaVinciGallery"],
             resources: [.copy("__Snapshots__")]
         )
-    ]
+    ],
+    swiftLanguageModes: [.v6]
 )

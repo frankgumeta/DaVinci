@@ -4,16 +4,20 @@
 
 ![DaVinci Framework Icon](assets/davinci-framework-icon.svg)
 
-[![Swift](https://img.shields.io/badge/Swift-6.2-orange.svg)](https://swift.org)
-[![Platform](https://img.shields.io/badge/Platform-iOS%2026%2B-blue.svg)](https://developer.apple.com)
+[![Swift](https://img.shields.io/badge/Swift-6.3-orange.svg)](https://swift.org)
+[![Platform](https://img.shields.io/badge/Platform-iOS%2017%2B-blue.svg)](https://developer.apple.com)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![CI](https://img.shields.io/badge/CI-Passing-brightgreen.svg)](https://github.com/frankgumeta/DaVinci/actions)
 
 </div>
 
-A Swift Package providing a modular design system for iOS 26+, built entirely with SwiftUI and Swift 6 strict concurrency.
+A Swift Package providing a modular design system for iOS 17+, built entirely with SwiftUI and Swift 6 strict concurrency.
 
-> **Why iOS 26+?** DaVinci requires iOS 26 to leverage Swift 6 strict concurrency features, ensuring thread-safe design tokens and components. This enables modern, safe concurrent code without data races.
+DaVinci requires iOS 17 because its accessibility contracts use the toggle trait
+introduced in that release. Swift 6 strict concurrency is a compiler and language
+requirement; it does not require a matching iOS deployment target. See the
+[compatibility matrix](Docs/Compatibility.md) for the supported toolchain and test
+strategy.
 
 ## Features
 
@@ -272,7 +276,7 @@ DaVinciDemo            (depends on all)
 
 - **All token structs are immutable** (`public let`) and `Sendable` — safe to use from any isolation context.
 - **`DSTheme`** is injected via the `.dsTheme` SwiftUI environment value.
-- **Swift 6 strict concurrency** is enforced across all targets (`swift-tools-version: 6.2`).
+- **Swift 6 strict concurrency** is enforced across all targets (`swift-tools-version: 6.3`, language mode 6).
 - **No `Equatable` on Color-containing types** — structs with `SwiftUI.Color` fields omit `Equatable` to avoid unstable equality.
 
 ## Testing
@@ -280,16 +284,30 @@ DaVinciDemo            (depends on all)
 Run the test suite to validate tokens and components:
 
 ```bash
-# Run all tests on iOS Simulator
+# Create and boot an iPhone using the latest installed iOS runtime
+SIMULATOR_UDID="$(bash .github/scripts/create-ios-simulator.sh)"
+
+# Run all tests on that simulator
 xcodebuild test \
   -scheme DaVinci-Package \
-  -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest'
+  -destination "platform=iOS Simulator,id=$SIMULATOR_UDID"
 
 # Run with verbose output
 xcodebuild test \
   -scheme DaVinci-Package \
-  -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+  -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
   -verbose
+```
+
+The package is iOS-only, so plain `swift test` is not a supported validation
+command. CI also compiles all products with an iOS 17 deployment target against
+the current SDK:
+
+```bash
+xcodebuild build \
+  -scheme DaVinci-Package \
+  -destination 'generic/platform=iOS Simulator' \
+  IPHONEOS_DEPLOYMENT_TARGET=17.0
 ```
 
 ### Test Coverage
@@ -318,12 +336,12 @@ their pixels. Missing references fail by default; recording is always explicit.
 # Record new snapshots
 RECORD_SNAPSHOTS=1 xcodebuild test \
   -scheme DaVinci-Package \
-  -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest'
+  -destination "platform=iOS Simulator,id=$SIMULATOR_UDID"
 
 # Compare against references (default)
 xcodebuild test \
   -scheme DaVinci-Package \
-  -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest'
+  -destination "platform=iOS Simulator,id=$SIMULATOR_UDID"
 ```
 
 Snapshots are stored in `Tests/DaVinciComponentsTests/__Snapshots__/` and cover all component variants in light and dark modes.
@@ -336,7 +354,8 @@ artifact on failed runs.
 
 Snapshot rendering fixes the canvas size, 2x scale, `en_US_POSIX` locale, UTC time
 zone, left-to-right layout, Dynamic Type `.large`, theme, and color scheme. Use the
-same iPhone 17 / latest stable Xcode configuration as CI when approving baselines.
+repository simulator helper and latest stable Xcode, matching CI, when approving
+baselines.
 
 ## Best Practices
 

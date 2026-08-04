@@ -18,9 +18,13 @@ Be respectful, inclusive, and collaborative. We aim to maintain a welcoming envi
 ## Getting Started
 
 ### Prerequisites
-- Xcode 16.0 or later
-- Swift 6.2 or later
-- iOS 18.0+ (iOS-only package)
+- Xcode 26.6
+- Swift tools 6.3
+- Swift language mode 6 with complete strict concurrency
+- iOS 17.0+ (iOS-only package)
+
+See [Docs/Compatibility.md](Docs/Compatibility.md) for the compatibility matrix
+and the distinction between toolchain, SDK, and deployment requirements.
 
 ### Setup
 
@@ -39,12 +43,18 @@ open Package.swift
 ```bash
 xcodebuild build \
   -scheme DaVinci-Package \
-  -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest'
+  -destination 'generic/platform=iOS Simulator' \
+  IPHONEOS_DEPLOYMENT_TARGET=17.0
+
+SIMULATOR_UDID="$(bash .github/scripts/create-ios-simulator.sh)"
 
 xcodebuild test \
   -scheme DaVinci-Package \
-  -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest'
+  -destination "platform=iOS Simulator,id=$SIMULATOR_UDID"
 ```
+
+DaVinci intentionally supports iOS only. Plain `swift test` attempts a host build
+and is not a supported validation command for this package.
 
 ## Development Workflow
 
@@ -68,9 +78,10 @@ git checkout -b feature/your-feature-name
 
 4. Run tests locally:
 ```bash
+SIMULATOR_UDID="$(bash .github/scripts/create-ios-simulator.sh)"
 xcodebuild test \
   -scheme DaVinci-Package \
-  -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest'
+  -destination "platform=iOS Simulator,id=$SIMULATOR_UDID"
 ```
 
 5. Update documentation if needed
@@ -218,20 +229,22 @@ struct ComponentNameTests {
 
 ### Running Tests
 ```bash
+SIMULATOR_UDID="$(bash .github/scripts/create-ios-simulator.sh)"
+
 # Run all tests
 xcodebuild test \
   -scheme DaVinci-Package \
-  -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest'
+  -destination "platform=iOS Simulator,id=$SIMULATOR_UDID"
 
 # Record new snapshots (when UI changes are intentional)
 RECORD_SNAPSHOTS=1 xcodebuild test \
   -scheme DaVinci-Package \
-  -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest'
+  -destination "platform=iOS Simulator,id=$SIMULATOR_UDID"
 
 # Run with verbose output
 xcodebuild test \
   -scheme DaVinci-Package \
-  -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+  -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
   -verbose
 ```
 
@@ -242,10 +255,10 @@ xcodebuild test \
 - When intentionally changing UI, run with `RECORD_SNAPSHOTS=1` to update references
 - Recording mode rewrites every snapshot exercised by the selected test run
 - Review the changed PNG files visually before committing them
-- Use iPhone 17 Simulator for consistency with CI
+- Use the repository simulator helper with latest stable Xcode, matching CI
 - Failure artifacts are written under `.build/snapshot-failures/`, which is ignored by Git
 - CI uploads failure artifacts for 14 days as `snapshot-failures`
-- Ensure snapshots render consistently on iPhone 17 Simulator
+- Ensure snapshots render consistently on the helper-created simulator
 
 The in-repository comparator normalizes images to RGBA8. Per-channel differences up
 to `2/255` are treated as antialiasing noise. A comparison passes only when no more
@@ -266,7 +279,7 @@ Xcode configuration as CI.
 # Re-record snapshots with your changes
 RECORD_SNAPSHOTS=1 xcodebuild test \
   -scheme DaVinci-Package \
-  -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest'
+  -destination "platform=iOS Simulator,id=$SIMULATOR_UDID"
 ```
 
 After recording, inspect `git diff --stat` and every changed PNG. A green test run in
@@ -280,14 +293,14 @@ in the owning snapshot suite, run that suite, and revert the flag before the fin
 comparison run. Never commit a hard-coded recording flag.
 
 **Snapshots differ slightly between machines?**
-- Ensure you're using iPhone 17 Simulator (matches CI)
+- Create the simulator with `.github/scripts/create-ios-simulator.sh`, as CI does
 - Check Xcode version matches CI (latest-stable)
 - Verify simulator is clean: `xcrun simctl erase all`
 - Font rendering can vary - ensure system fonts are up to date
 
 **Snapshot test passes locally but fails in CI?**
-- CI uses `iPhone 17, OS=latest` - match this exactly
-- Check if your snapshot was recorded on a different device
+- Check that local Xcode and the installed iOS runtime match CI
+- Reproduce with a simulator created by the repository helper
 - Verify `__Snapshots__/` directory is committed to git
 - Download the `snapshot-failures` artifact and compare expected, received, and diff
 
