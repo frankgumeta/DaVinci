@@ -36,10 +36,7 @@ import DaVinciTokens
 /// ## Topics
 ///
 /// ### Creating Cards
-/// - ``init(style:content:)``
-///
-/// ### Card Styles
-/// - ``DSCardStyle``
+/// - ``init(style:accessibilityLabel:accessibilityHint:accessibilityTraits:content:)``
 public struct DSCard<Content: View>: View {
 
     @Environment(\.dsTheme) private var theme

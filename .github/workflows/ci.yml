@@ -31,6 +31,20 @@ jobs:
           exit 1
         fi
 
+  lint:
+    name: SwiftLint
+    runs-on: macos-26
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    - name: Install SwiftLint
+      run: brew install swiftlint
+
+    - name: Run SwiftLint
+      run: swiftlint lint --strict
+
   test:
     name: Test (latest iOS runtime)
     runs-on: macos-26
@@ -59,6 +73,7 @@ jobs:
           -scheme DaVinci-Package \
           -destination 'platform=iOS Simulator,id=${{ steps.simulator.outputs.udid }}' \
           -enableCodeCoverage YES \
+          -resultBundlePath .build/TestResults.xcresult \
           -derivedDataPath .build
 
     - name: Upload Snapshot Failure Artifacts
@@ -70,26 +85,23 @@ jobs:
         if-no-files-found: ignore
         retention-days: 14
         
-    - name: Generate Code Coverage Report
+    - name: Enforce Product Code Coverage
       run: |
-        xcrun xccov view --report .build/Logs/Test/*.xcresult > coverage.txt || echo "Coverage report generation skipped"
-        
-    - name: Upload Coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        files: ./coverage.txt
-        flags: unittests
-        name: codecov-umbrella
-        token: ${{ secrets.CODECOV_TOKEN }}
-        
-    - name: Install SwiftLint
-      run: |
-        brew install swiftlint
-        
-    - name: Run SwiftLint
-      run: |
-        swiftlint
+        python3 .github/scripts/check-code-coverage.py \
+          .build/TestResults.xcresult \
+          --minimum DaVinciTokens=100 \
+          --minimum DaVinciComponents=95 \
+          --output coverage.md
 
+    - name: Upload Coverage Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage
+        path: coverage.md
+        if-no-files-found: warn
+        retention-days: 14
+        
   build-ios:
     name: Build (iOS 17 deployment)
     runs-on: macos-26
@@ -114,4 +126,11 @@ jobs:
           -scheme DaVinci-Package \
           -destination 'generic/platform=iOS Simulator' \
           IPHONEOS_DEPLOYMENT_TARGET=17.0 \
+          -derivedDataPath .build
+
+    - name: Build API Documentation
+      run: |
+        xcodebuild docbuild \
+          -scheme DaVinci-Package \
+          -destination 'generic/platform=iOS Simulator' \
           -derivedDataPath .build

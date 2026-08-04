@@ -5,7 +5,7 @@ DaVinci deliberately supports the following environment:
 | Area | Supported baseline | How it is validated |
 |---|---|---|
 | Platform | iOS 17 or later | CI builds every package product with `IPHONEOS_DEPLOYMENT_TARGET=17.0` |
-| SDK | Current SDK in latest stable Xcode | CI builds and runs the complete suite on each pull request |
+| SDK | SDK bundled with Xcode 26.6 | CI builds and runs the complete suite on each pull request |
 | Swift tools | Swift tools 6.3 | Declared by `Package.swift` |
 | Swift language | Swift 6 with complete strict concurrency | Language mode 6 makes complete checking the default |
 | Xcode | Xcode 26.6 | CI pins `macos-26` and selects Xcode 26.6 explicitly |

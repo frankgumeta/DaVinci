@@ -1,5 +1,8 @@
 # DaVinci Design System v1.1.0 Release Report
 
+> Historical report for version 1.1.0. For current compatibility, coverage, and
+> validation guarantees, use `README.md`, `CHANGELOG.md`, and `Docs/Compatibility.md`.
+
 **Release Date:** March 20, 2026  
 **Release Type:** Minor Version (Feature Release)
 
@@ -7,11 +10,11 @@
 
 ## Executive Summary
 
-Version 1.1.0 represents a major expansion of the DaVinci Design System with **7 new components**, comprehensive test coverage improvements achieving **>95% overall coverage**, and critical infrastructure enhancements for test reliability.
+Version 1.1.0 represents a major expansion of the DaVinci Design System with **7 new components**, substantially improved core-library coverage, and infrastructure enhancements for test reliability.
 
 ### Key Metrics
 - **New Components:** 7 (DSSwitch, DSProgressBar, DSDivider, DSBadge, DSSegmentedControl, DSRemoteImage, DSSkeleton + DSShimmering)
-- **Test Coverage:** >95% across all targets (DaVinciTokens: 100%, DaVinciComponents: >92%)
+- **Core-Library Coverage:** DaVinciTokens: 100%, DaVinciComponents: 92.44%; no aggregate across test and product targets
 - **Total Tests:** 381 tests (180+ behavioral, 80+ snapshot)
 - **Breaking Changes:** 1 (removed deprecated `DSBadge.Variant.default`)
 
@@ -146,7 +149,7 @@ Circle().fill(Color.gray).dsShimmering(true)
 |---|---|---|
 | **DaVinciTokens** | 100.00% | +62% |
 | **DaVinciComponents** | 92.44% | +54% (from 38%) |
-| **Overall** | >95% | +57% |
+| **Aggregate** | Not reported | Test and product targets are not combined |
 
 ### Test Breakdown
 
@@ -177,7 +180,7 @@ Circle().fill(Color.gray).dsShimmering(true)
 **Snapshot Test Improvements:**
 - Auto-record missing snapshots (no RECORD_SNAPSHOTS flag needed initially)
 - Deterministic rendering with fixed frame sizes
-- Pixel-perfect comparison with tolerance
+- Snapshot reference comparison with tolerance
 - Light/dark mode coverage for all components
 
 ---
@@ -268,11 +271,10 @@ DaVinciTokensTests:     99.27% (817/823 lines)
 ```
 
 ### Accessibility Compliance
-- All interactive components include VoiceOver support
-- Semantic accessibility labels with smart defaults
-- Accessibility traits properly assigned (button, toggle, header, etc.)
-- Reduce motion respected in animations
-- WCAG AA contrast ratios maintained
+- Interactive components expose accessibility labels, values, and traits
+- Reduce Motion behavior is included where components animate
+- Host-app VoiceOver focus, keyboard navigation, and announcements still require
+  manual validation; this report is not an accessibility certification
 
 ---
 
@@ -380,12 +382,9 @@ DSSkeletonList(count: 5)
 
 ## Conclusion
 
-Version 1.1.0 delivers a comprehensive component library expansion with industry-leading test coverage (>95%), zero warnings, and production-ready quality. The release maintains backward compatibility except for one clearly documented breaking change with a trivial migration path.
+Version 1.1.0 delivers a substantial component-library expansion and documents one
+breaking change with a direct migration path. Current production-readiness decisions
+must also consider the host application's integration, accessibility matrix, and the
+latest CI evidence.
 
-**Recommendation:** Approved for production release.
-
----
-
-**Prepared by:** Cascade AI  
-**Review Status:** Ready for merge  
-**Release Confidence:** High
+**Recommendation at publication:** Proceed through the release checklist and host-app validation.

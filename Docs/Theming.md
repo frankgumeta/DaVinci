@@ -43,7 +43,7 @@ All DaVinci components read theme values via `@Environment(\.dsTheme)`:
 
 ## Using the Default Theme
 
-The default theme provides a complete, production-ready design system:
+The default theme provides a complete baseline token set:
 
 ```swift
 import SwiftUI

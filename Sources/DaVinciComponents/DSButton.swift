@@ -67,7 +67,7 @@ public enum DSButtonIcon: Sendable {
 /// ## Topics
 ///
 /// ### Creating Buttons
-/// - ``init(_:variant:icon:isLoading:isDisabled:action:)``
+/// - ``init(_:variant:icon:isLoading:isDisabled:accessibilityLabel:accessibilityHint:action:)``
 ///
 /// ### Button Variants
 /// - ``Variant``
