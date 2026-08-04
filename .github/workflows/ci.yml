@@ -32,7 +32,7 @@ jobs:
         fi
 
   test:
-    name: Test
+    name: Test (latest iOS runtime)
     runs-on: macos-latest
     
     steps:
@@ -44,11 +44,15 @@ jobs:
       with:
         xcode-version: latest-stable
         
+    - name: Create iOS Simulator
+      id: simulator
+      run: echo "udid=$(bash .github/scripts/create-ios-simulator.sh)" >> "$GITHUB_OUTPUT"
+
     - name: Build and Test
       run: |
         xcodebuild test \
           -scheme DaVinci-Package \
-          -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+          -destination 'platform=iOS Simulator,id=${{ steps.simulator.outputs.udid }}' \
           -enableCodeCoverage YES \
           -derivedDataPath .build
 
@@ -82,7 +86,7 @@ jobs:
         swiftlint
 
   build-ios:
-    name: Build (iOS)
+    name: Build (iOS 17 deployment)
     runs-on: macos-latest
     
     steps:
@@ -98,5 +102,6 @@ jobs:
       run: |
         xcodebuild build \
           -scheme DaVinci-Package \
-          -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+          -destination 'generic/platform=iOS Simulator' \
+          IPHONEOS_DEPLOYMENT_TARGET=17.0 \
           -derivedDataPath .build
