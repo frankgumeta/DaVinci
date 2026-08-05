@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-> Planned release: **v1.2.0 — Codex Tutela**
+## [1.2.0] - 2026-08-05
+
+> **Codex Tutela**
 
 ### Added
 - Reproducible per-product coverage reporting and CI thresholds for the core libraries
@@ -69,8 +71,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   it reports the documented "Placeholder image" label with no failure value
 
 ### Migration
-- Update development and CI environments to Xcode 26.6 and Swift tools 6.3 before
-  adopting this release. The Swift language mode remains Swift 6.
+- This release intentionally adopts Xcode 26.6 and Swift tools 6.3. Update
+  development and CI environments before adopting it; the Swift language mode
+  remains Swift 6.
 - The minimum deployment target moves from iOS 26 down to iOS 17, expanding the
   supported device range.
 - Existing `DSImageLoading` conformers remain source-compatible through default
