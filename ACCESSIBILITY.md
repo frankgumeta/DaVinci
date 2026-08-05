@@ -107,6 +107,7 @@ DSText("Body content", role: .body)       // Regular text
 - ✅ Loading/failure values and image traits
 - ✅ Decorative images can be removed from the accessibility tree
 - ✅ Success is exposed only after the payload has decoded as an image
+- ✅ A missing URL is announced as a placeholder, not as a failed load
 
 **Usage:**
 ```swift
@@ -123,6 +124,10 @@ Use `isDecorative: true` only when the image communicates no information.
 **Default labels when not specified:**
 - With URL: "Remote image"
 - Without URL: "Placeholder image"
+- With URL, after a failed load: "Image failed to load", value "Failed to load"
+
+A `nil` URL resolves to the placeholder immediately, so assistive technologies never
+announce a loading state for content that can never load.
 
 ### DSCard
 

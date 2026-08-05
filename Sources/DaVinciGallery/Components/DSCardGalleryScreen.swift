@@ -58,12 +58,12 @@ struct DSCardGalleryScreen: View {
                     DSCard(style: .standard) {
                         VStack(alignment: .leading, spacing: SpacingTokens.space3) {
                             HStack {
-                                DSText("Release 1.1.0", role: .headline)
+                                DSText("Codex Tutela", role: .headline)
                                 Spacer()
                                 DSBadge("New", variant: .brand)
                             }
                             DSText(
-                                "DSBadge, DSDivider, DSProgressBar, DSSegmentedControl, DSSwitch.",
+                                "Deterministic placeholders, bounded image transfers, per-loader caching.",
                                 role: .body,
                                 color: theme.colors.semantic.textSecondary
                             )

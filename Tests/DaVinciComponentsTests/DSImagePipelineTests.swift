@@ -22,6 +22,53 @@ private actor CountingImageLoader: DSImageLoading {
     }
 }
 
+/// A second, distinct loader type used to prove that caching and deduplication
+/// are scoped per loader identity and not per URL alone.
+private actor AlternateCountingImageLoader: DSImageLoading {
+    private(set) var requestCount = 0
+    private let data: Data
+    private let delay: Duration
+
+    init(data: Data, delay: Duration = .zero) {
+        self.data = data
+        self.delay = delay
+    }
+
+    func loadImageData(from url: URL) async throws -> Data {
+        requestCount += 1
+        if delay > .zero {
+            try await Task.sleep(for: delay)
+        }
+        return data
+    }
+}
+
+/// A loader whose cache identity is supplied explicitly, mirroring a loader
+/// configured with per-user credentials or a tenant-specific session.
+private actor IdentifiedImageLoader: DSImageLoading {
+    private(set) var requestCount = 0
+    private let data: Data
+    private let identity: String
+    nonisolated let maximumPayloadBytes: Int
+
+    nonisolated var cacheIdentity: String { identity }
+
+    init(
+        data: Data,
+        identity: String,
+        maximumPayloadBytes: Int = DSDefaultImageLoader.defaultMaximumPayloadBytes
+    ) {
+        self.data = data
+        self.identity = identity
+        self.maximumPayloadBytes = maximumPayloadBytes
+    }
+
+    func loadImageData(from url: URL) async throws -> Data {
+        requestCount += 1
+        return data
+    }
+}
+
 @MainActor
 @Suite("DSImagePipeline")
 struct DSImagePipelineTests {
@@ -147,6 +194,91 @@ struct DSImagePipelineTests {
 
         #expect(await loader.requestCount == 2)
         #expect(await pipeline.inFlightCount == 0)
+    }
+
+    // MARK: - Loader Isolation
+
+    @Test func differentLoaderTypesDoNotShareCachedResults() async throws {
+        let first = CountingImageLoader(data: makePNGData())
+        let second = AlternateCountingImageLoader(data: makePNGData())
+        let pipeline = makePipeline()
+        let url = testURL("cross-loader")
+
+        _ = try await pipeline.image(for: url, using: first)
+        _ = try await pipeline.image(for: url, using: second)
+
+        #expect(await first.requestCount == 1)
+        #expect(await second.requestCount == 1)
+    }
+
+    @Test func differentLoaderTypesDoNotShareInFlightRequests() async throws {
+        let first = CountingImageLoader(data: makePNGData(), delay: .milliseconds(50))
+        let second = AlternateCountingImageLoader(
+            data: makePNGData(),
+            delay: .milliseconds(50)
+        )
+        let pipeline = makePipeline()
+        let url = testURL("cross-loader-inflight")
+
+        async let firstImage = pipeline.image(for: url, using: first)
+        async let secondImage = pipeline.image(for: url, using: second)
+        _ = try await [firstImage, secondImage]
+
+        #expect(await first.requestCount == 1)
+        #expect(await second.requestCount == 1)
+        #expect(await pipeline.inFlightCount == 0)
+    }
+
+    @Test func distinctCacheIdentitiesIsolateTheSameLoaderType() async throws {
+        let data = makePNGData()
+        let tenantA = IdentifiedImageLoader(data: data, identity: "tenant-a")
+        let tenantB = IdentifiedImageLoader(data: data, identity: "tenant-b")
+        let pipeline = makePipeline()
+        let url = testURL("tenant")
+
+        _ = try await pipeline.image(for: url, using: tenantA)
+        _ = try await pipeline.image(for: url, using: tenantB)
+
+        #expect(await tenantA.requestCount == 1)
+        #expect(await tenantB.requestCount == 1)
+    }
+
+    @Test func matchingCacheIdentitiesStillShareOneLoad() async throws {
+        let data = makePNGData()
+        let first = IdentifiedImageLoader(data: data, identity: "shared-tenant")
+        let second = IdentifiedImageLoader(data: data, identity: "shared-tenant")
+        let pipeline = makePipeline()
+        let url = testURL("shared-tenant")
+
+        _ = try await pipeline.image(for: url, using: first)
+        _ = try await pipeline.image(for: url, using: second)
+
+        #expect(await first.requestCount == 1)
+        #expect(await second.requestCount == 0)
+    }
+
+    @Test func payloadLimitIsPartOfTheCachePolicy() async throws {
+        let data = makePNGData()
+        let permissive = IdentifiedImageLoader(
+            data: data,
+            identity: "shared-policy",
+            maximumPayloadBytes: data.count
+        )
+        let restrictive = IdentifiedImageLoader(
+            data: data,
+            identity: "shared-policy",
+            maximumPayloadBytes: data.count - 1
+        )
+        let pipeline = makePipeline()
+        let url = testURL("policy")
+
+        _ = try await pipeline.image(for: url, using: permissive)
+        await expectError(.payloadTooLarge(limit: data.count - 1, actual: data.count)) {
+            try await pipeline.image(for: url, using: restrictive)
+        }
+
+        #expect(await permissive.requestCount == 1)
+        #expect(await restrictive.requestCount == 1)
     }
 
     private func makePipeline() -> DSImagePipeline {

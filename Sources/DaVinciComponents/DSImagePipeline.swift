@@ -111,39 +111,52 @@ internal enum DSImageDecoder {
 }
 
 /// Coordinates validation, decoded-image caching, and request deduplication.
+///
+/// Caching and deduplication are scoped by `DSImageRequestKey`, so requests are
+/// only shared between consumers that use the same URL *and* an equivalent
+/// loader identity.
 internal actor DSImagePipeline {
     static let shared = DSImagePipeline(cache: .shared)
 
-    static let defaultMaximumPayloadBytes = 20 * 1_024 * 1_024
+    static let defaultMaximumPayloadBytes = DSDefaultImageLoader.defaultMaximumPayloadBytes
     static let defaultMaximumPixelCount = 40_000_000
 
     private let cache: DSImageCache
-    private let maximumPayloadBytes: Int
+    private let maximumPayloadBytesOverride: Int?
     private let maximumPixelCount: Int
-    private var inFlight: [URL: Task<DSDecodedImage, Error>] = [:]
+    private var inFlight: [DSImageRequestKey: Task<DSDecodedImage, Error>] = [:]
 
     init(
         cache: DSImageCache = DSImageCache(),
-        maximumPayloadBytes: Int = DSImagePipeline.defaultMaximumPayloadBytes,
+        maximumPayloadBytes: Int? = nil,
         maximumPixelCount: Int = DSImagePipeline.defaultMaximumPixelCount
     ) {
         self.cache = cache
-        self.maximumPayloadBytes = maximumPayloadBytes
+        self.maximumPayloadBytesOverride = maximumPayloadBytes.map { max(0, $0) }
         self.maximumPixelCount = maximumPixelCount
     }
 
     func image(for url: URL, using loader: any DSImageLoading) async throws -> DSDecodedImage {
-        if let cached = await cache.image(for: url) {
+        let loaderMaximumPayloadBytes = max(0, loader.maximumPayloadBytes)
+        let maximumPayloadBytes = maximumPayloadBytesOverride.map {
+            min($0, loaderMaximumPayloadBytes)
+        } ?? loaderMaximumPayloadBytes
+        let key = DSImageRequestKey(
+            url: url,
+            loader: loader,
+            maximumPayloadBytes: maximumPayloadBytes
+        )
+
+        if let cached = await cache.image(for: key) {
             return cached
         }
 
-        if let existing = inFlight[url] {
+        if let existing = inFlight[key] {
             let image = try await existing.value
             try Task.checkCancellation()
             return image
         }
 
-        let maximumPayloadBytes = maximumPayloadBytes
         let maximumPixelCount = maximumPixelCount
         let request = Task {
             let data = try await loader.loadImageData(from: url)
@@ -154,16 +167,16 @@ internal actor DSImagePipeline {
                 maximumPixelCount: maximumPixelCount
             )
         }
-        inFlight[url] = request
+        inFlight[key] = request
 
         do {
             let image = try await request.value
-            inFlight[url] = nil
-            await cache.insert(image, for: url)
+            inFlight[key] = nil
+            await cache.insert(image, for: key)
             try Task.checkCancellation()
             return image
         } catch {
-            inFlight[url] = nil
+            inFlight[key] = nil
             throw error
         }
     }

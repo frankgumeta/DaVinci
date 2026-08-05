@@ -488,12 +488,33 @@ DSRemoteImage(url: imageURL, width: 100, height: 100)
 DSRemoteImage(url: imageURL, width: 100, height: 100)
 ```
 
-Concurrent requests for the same URL share one load. The default loader accepts
-successful HTTP responses with supported image MIME types; payloads must also decode
-as images before reaching success or the cache. Decoding runs away from the main
+Concurrent requests for the same URL and loader share one load. The default loader
+accepts successful HTTP responses with supported image MIME types; payloads must also
+decode as images before reaching success or the cache. Decoding runs away from the main
 actor, payloads are limited to 20 MB and 40 megapixels, and the shared decoded-image
 LRU cache has a 50 MB cost budget. Failed requests are not cached, so recreating the
 view or changing its URL can retry them.
+
+The default 20 MB ceiling is enforced during the transfer, not after it: a declared
+`Content-Length` above the limit is rejected from the response metadata, and a response
+without a declared length is aborted as soon as the limit is exceeded. Override it with
+`DSDefaultImageLoader(maximumPayloadBytes:)`.
+
+Caching and deduplication are scoped by URL, loader identity, and payload limit. The
+default loader isolates distinct `URLSession` instances automatically. Use
+`cacheNamespace` when credentials can change within one session or when equivalent
+sessions should intentionally share cached results. A custom loader that returns
+different bytes for the same URL should override `cacheIdentity`:
+
+```swift
+struct AuthenticatedImageLoader: DSImageLoading {
+    let userID: String
+
+    var cacheIdentity: String { "authenticated-\(userID)" }
+
+    func loadImageData(from url: URL) async throws -> Data { /* ... */ }
+}
+```
 
 ## Documentation
 

@@ -17,6 +17,9 @@ import DaVinciTokens
 ///
 /// Lifecycle is managed via `.task(id:)` — changing the URL automatically
 /// cancels the previous load and starts a new one.
+///
+/// A `nil` URL is resolved synchronously to the placeholder state, so the view
+/// never renders a shimmering skeleton for content that can never load.
 public struct DSRemoteImage: View {
 
     // MARK: - ContentMode
@@ -29,7 +32,7 @@ public struct DSRemoteImage: View {
 
     // MARK: - LoadPhase
 
-    private enum LoadPhase: Sendable {
+    internal enum LoadPhase: Sendable, Equatable {
         case loading
         case success
         case failure
@@ -56,7 +59,7 @@ public struct DSRemoteImage: View {
     private let label: String?
     private let isDecorative: Bool
 
-    @State private var phase: LoadPhase = .loading
+    @State private var phase: LoadPhase
     @State private var decodedImage: Image?
 
     // MARK: - Init
@@ -65,6 +68,9 @@ public struct DSRemoteImage: View {
     ///
     /// Set `isDecorative` to `true` only when the image communicates no
     /// information; decorative images are hidden from assistive technologies.
+    ///
+    /// - Note: A `nil` URL renders the placeholder immediately, without passing
+    ///   through a loading state, because there is nothing to load.
     public init(
         url: URL?,
         width: CGFloat,
@@ -85,6 +91,7 @@ public struct DSRemoteImage: View {
         self.placeholderSystemImage = placeholderSystemImage
         self.label = accessibilityLabel
         self.isDecorative = isDecorative
+        _phase = State(initialValue: Self.initialPhase(for: url))
     }
 
     /// Convenience initializer accepting a `CGSize`.
@@ -184,7 +191,8 @@ public struct DSRemoteImage: View {
         case .success:
             return customLabel ?? (url != nil ? "Remote image" : "Placeholder image")
         case .failure:
-            return customLabel ?? "Image failed to load"
+            // A missing URL is not a failure: nothing was ever requested.
+            return customLabel ?? (url != nil ? "Image failed to load" : "Placeholder image")
         }
     }
 
@@ -204,7 +212,7 @@ public struct DSRemoteImage: View {
             value = nil
             traits = .isImage
         case .failure:
-            value = "Failed to load"
+            value = url != nil ? "Failed to load" : nil
             traits = .isImage
         }
         return DSAccessibilityDescriptor(
@@ -234,8 +242,17 @@ public struct DSRemoteImage: View {
 
     // MARK: - Loading
 
+    /// The phase a freshly created or re-identified view starts in.
+    ///
+    /// A `nil` URL can never succeed, so it resolves to `.failure` synchronously.
+    /// This keeps the rendered output deterministic instead of depending on when
+    /// SwiftUI schedules the asynchronous load.
+    internal static func initialPhase(for url: URL?) -> LoadPhase {
+        url == nil ? .failure : .loading
+    }
+
     private func load(_ url: URL?) async {
-        phase = .loading
+        phase = Self.initialPhase(for: url)
         decodedImage = nil
 
         let result = await Self.loadImage(from: url, using: loader)
