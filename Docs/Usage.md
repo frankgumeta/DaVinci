@@ -425,12 +425,35 @@ DSRemoteImage(
 ```
 
 The default loading path validates HTTP status and image MIME type, rejects corrupt
-or oversized payloads before success, and decodes away from the main actor. Requests
-for the same URL are deduplicated, and validated decoded images share a 50 MB LRU
+or oversized payloads before success, and decodes away from the main actor. Oversized
+payloads are rejected during the transfer rather than after it, so a misconfigured or
+hostile server cannot buffer an unbounded response in memory. Requests for the same URL
+*and loader identity* are deduplicated, and validated decoded images share a 50 MB LRU
 cache. There is no automatic retry loop; changing the URL or recreating the view
 starts a new attempt after a failure. Cancelling one view prevents stale UI updates
 but does not cancel shared work that another view may still need; that work may
 finish and populate the cache.
+
+A `nil` URL renders the placeholder immediately and never passes through the loading
+state, so a view with no image is deterministic to render and to snapshot.
+
+The default loader isolates distinct `URLSession` instances automatically, and its
+payload limit is part of the cache key. Pass a user- or tenant-specific
+`cacheNamespace` if credentials can change without replacing the session. Equivalent
+sessions may use the same namespace when they should intentionally share cached images.
+
+Custom loaders are isolated by `cacheIdentity`, which defaults to the conforming type.
+Override it when one loader type can return different bytes for the same URL:
+
+```swift
+struct TenantImageLoader: DSImageLoading {
+    let tenant: String
+
+    var cacheIdentity: String { "tenant-\(tenant)" }
+
+    func loadImageData(from url: URL) async throws -> Data { /* ... */ }
+}
+```
 
 If an image conveys no information, remove it from the accessibility tree:
 

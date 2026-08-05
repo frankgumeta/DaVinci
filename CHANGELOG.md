@@ -7,11 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+> Planned release: **v1.2.0 — Codex Tutela**
+
 ### Added
 - Reproducible per-product coverage reporting and CI thresholds for the core libraries
 - Explicit semantic-versioning and compatibility-change policy
 - Deduplicated `DSRemoteImage` pipeline with HTTP/MIME validation, off-main decoding, and payload limits
 - Cost-limited 50 MB LRU cache for validated decoded images
+- `DSImageLoading.cacheIdentity` scopes cached and in-flight image results per loader,
+  so unrelated loaders requesting the same URL no longer share a payload
+- `DSDefaultImageLoader(session:maximumPayloadBytes:cacheNamespace:)` exposes the
+  transfer ceiling and explicit cache scoping, with a documented 20 MB default
+- Tests covering loader isolation, custom cache identities, declared-length rejection,
+  and mid-transfer abort for undeclared payloads
 - Shared, testable accessibility contracts for labels, values, hints, traits, enabled state, and grouping
 - Automated contrast coverage for default and alternate themes in light and dark modes
 - Rendered 44pt minimum-target checks for primary interactive controls
@@ -48,9 +56,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Custom typography examples now declare their semantic `relativeTo` text style
 - Missing snapshot references now fail unless `RECORD_SNAPSHOTS=1` is explicitly set
 - Snapshot rendering now fixes locale, time zone, layout direction, Dynamic Type size, and scale
+- `DSDefaultImageLoader` enforces its payload ceiling *during* the transfer: a declared
+  `Content-Length` above the limit is rejected from response metadata, and a response
+  without a declared length is aborted as soon as the limit is exceeded
+- Image caching and deduplication are keyed by URL, loader identity, and payload policy;
+  distinct default-loader sessions are isolated automatically
+
+### Fixed
+- `DSRemoteImage` with a `nil` URL now renders its placeholder synchronously instead of
+  briefly showing a shimmering skeleton, making the rendered output deterministic
+- `DSRemoteImage` no longer announces "Image failed to load" when no URL was provided;
+  it reports the documented "Placeholder image" label with no failure value
+
+### Migration
+- Update development and CI environments to Xcode 26.6 and Swift tools 6.3 before
+  adopting this release. The Swift language mode remains Swift 6.
+- The minimum deployment target moves from iOS 26 down to iOS 17, expanding the
+  supported device range.
+- Existing `DSImageLoading` conformers remain source-compatible through default
+  implementations. Override `cacheIdentity` and `maximumPayloadBytes` when a custom
+  loader has user-, tenant-, session-, or policy-specific behavior.
+- Existing `DSTextStyle` initializer calls remain source-compatible; pass `relativeTo`
+  explicitly for custom styles that should follow a semantic Dynamic Type curve.
 
 ### Removed
 - Unrelated template MCP notes server from the `github/` directory
+- Per-release `RELEASE_1.1.0.md` report, superseded by `CHANGELOG.md`,
+  `README.md`, and `Docs/Compatibility.md`
 
 ---
 

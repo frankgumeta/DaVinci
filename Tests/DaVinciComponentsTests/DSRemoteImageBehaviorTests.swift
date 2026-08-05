@@ -95,7 +95,42 @@ struct DSRemoteImageBehaviorTests {
             customLabel: nil,
             url: nil
         )
-        #expect(label == "Image failed to load")
+        #expect(label == "Placeholder image")
+    }
+
+    @Test func nilURLIsNotAnnouncedAsAFailure() {
+        let descriptor = DSRemoteImage.accessibilityDescriptor(
+            phase: .failure,
+            customLabel: nil,
+            url: nil,
+            isDecorative: false
+        )
+
+        #expect(descriptor.label == "Placeholder image")
+        #expect(descriptor.value == nil)
+    }
+
+    @Test func failedRemoteURLStillAnnouncesFailure() {
+        let descriptor = DSRemoteImage.accessibilityDescriptor(
+            phase: .failure,
+            customLabel: nil,
+            url: URL(string: "https://example.com/broken.jpg"),
+            isDecorative: false
+        )
+
+        #expect(descriptor.label == "Image failed to load")
+        #expect(descriptor.value == "Failed to load")
+    }
+
+    // MARK: - Deterministic Initial Phase
+
+    @Test func nilURLStartsInThePlaceholderPhase() {
+        #expect(DSRemoteImage.initialPhase(for: nil) == .failure)
+    }
+
+    @Test func validURLStartsInTheLoadingPhase() {
+        let url = URL(string: "https://example.com/photo.jpg")
+        #expect(DSRemoteImage.initialPhase(for: url) == .loading)
     }
 
     // MARK: - Custom Label Always Wins
