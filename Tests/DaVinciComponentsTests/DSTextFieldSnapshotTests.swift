@@ -88,4 +88,75 @@ struct DSTextFieldSnapshotTests {
             record: recordMode
         )
     }
+
+    // MARK: - Outlined
+
+    @Test func textField_outlined_light() throws {
+        let field = DSTextField(
+            "Email",
+            text: .constant(""),
+            prompt: "you@example.com",
+            configuration: .outlined
+        )
+        try SnapshotTester.assertSnapshot(
+            field,
+            named: "textfield-outlined",
+            size: CGSize(width: 300, height: 80),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    @Test func textField_outlined_dark() throws {
+        let field = DSTextField(
+            "Email",
+            text: .constant(""),
+            prompt: "you@example.com",
+            configuration: .outlined
+        )
+        try SnapshotTester.assertSnapshot(
+            field,
+            named: "textfield-outlined",
+            size: CGSize(width: 300, height: 80),
+            colorScheme: .dark,
+            record: recordMode
+        )
+    }
+
+    // MARK: - Accessories
+
+    @Test func textField_withLeadingAndClear_light() throws {
+        let field = DSTextField(
+            "Name",
+            text: .constant("Frank"),
+            configuration: .filled
+                .leading(DSSymbol(systemName: "person")!)
+                .trailing(.clear)
+        )
+        try SnapshotTester.assertSnapshot(
+            field,
+            named: "textfield-accessories",
+            size: CGSize(width: 300, height: 80),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    @Test func textField_outlinedWithAccessories_light() throws {
+        let field = DSTextField(
+            "Search",
+            text: .constant("query"),
+            configuration: .outlined
+                .labelVisibility(.hidden)
+                .leading(DSSymbol(systemName: "magnifyingglass")!)
+                .trailing(.clear)
+        )
+        try SnapshotTester.assertSnapshot(
+            field,
+            named: "textfield-outlined-accessories",
+            size: CGSize(width: 300, height: 60),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
 }

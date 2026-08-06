@@ -11,6 +11,8 @@ struct DSTextFieldGalleryScreen: View {
     @State private var search = ""
     @State private var password = ""
     @State private var bio = ""
+    @State private var name = "Frank"
+    @State private var outlinedText = ""
 
     var body: some View {
         ScrollView {
@@ -30,6 +32,43 @@ struct DSTextFieldGalleryScreen: View {
                 GallerySection(title: "With Prompts") {
                     DSTextField("Password", text: $password, prompt: "Enter your password")
                     DSTextField("Bio", text: $bio, prompt: "Tell us about yourself")
+                }
+
+                GallerySection(title: "Outlined") {
+                    DSTextField(
+                        "Email",
+                        text: $outlinedText,
+                        prompt: "you@example.com",
+                        configuration: .outlined
+                    )
+                    DSTextField(
+                        "Name",
+                        text: .constant("Frank"),
+                        configuration: .outlined
+                    )
+                    DSTextField(
+                        "Error",
+                        text: .constant("bad@"),
+                        configuration: .outlined.message(.error("Invalid email"))
+                    )
+                }
+
+                GallerySection(title: "Accessories") {
+                    DSTextField(
+                        "Name",
+                        text: $name,
+                        configuration: .filled
+                            .leading(DSSymbol(systemName: "person")!)
+                            .trailing(.clear)
+                    )
+                    DSTextField(
+                        "Search",
+                        text: $search,
+                        configuration: .outlined
+                            .labelVisibility(.hidden)
+                            .leading(DSSymbol(systemName: "magnifyingglass")!)
+                            .trailing(.clear)
+                    )
                 }
 
                 GallerySection(title: "Empty State") {

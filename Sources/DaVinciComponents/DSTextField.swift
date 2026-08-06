@@ -194,13 +194,65 @@ public struct DSTextField: View {
     }
 
     private var fieldContainer: some View {
-        inputField
-            .padding(.horizontal, SpacingTokens.space3)
-            .frame(minHeight: ControlHeightTokens.medium)
-            .background(containerBackground)
-            .clipShape(RoundedRectangle(cornerRadius: RadiusTokens.small))
-            .overlay(containerBorder)
-            .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
+        HStack(spacing: SpacingTokens.space2) {
+            if let symbol = leadingSymbol {
+                leadingAccessory(symbol)
+            }
+            inputField
+            if let action = trailingAction, showsTrailingAction {
+                trailingAccessory(action)
+            }
+        }
+        .padding(.horizontal, SpacingTokens.space3)
+        .frame(minHeight: ControlHeightTokens.medium)
+        .background(containerBackground)
+        .clipShape(RoundedRectangle(cornerRadius: RadiusTokens.small))
+        .overlay(containerBorder)
+        .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
+    }
+
+    private var showsTrailingAction: Bool {
+        switch trailingAction {
+        case .clear: return !text.isEmpty
+        case .none: return false
+        }
+    }
+
+    private func leadingAccessory(_ symbol: DSSymbol) -> some View {
+        Image(systemName: symbol.systemName)
+            .font(.system(size: theme.typography.body.size))
+            .foregroundStyle(accessoryColor)
+            .accessibilityHidden(true)
+    }
+
+    private func trailingAccessory(_ action: DSTextFieldTrailingAction) -> some View {
+        switch action {
+        case .clear:
+            Button {
+                text = ""
+                isFocused = true
+            } label: {
+                Image(systemName: DSSymbol.clear.systemName)
+                    .font(.system(size: theme.typography.body.size))
+                    .foregroundStyle(accessoryColor)
+                    .frame(minWidth: 44, minHeight: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Clear text")
+            .accessibilityHint("Removes the entered text")
+        }
+    }
+
+    private var accessoryColor: Color {
+        switch fieldState {
+        case .disabled:
+            theme.colors.semantic.textTertiary.opacity(0.5)
+        case .error:
+            theme.colors.feedback.error
+        default:
+            theme.colors.semantic.textTertiary
+        }
     }
 
     private var inputField: some View {
@@ -538,6 +590,37 @@ internal enum DSTextFieldStyleResolver {
     VStack(spacing: 16) {
         DSTextField("Email", text: $text, prompt: "you@example.com", configuration: config)
         DSTextField("Username", text: $text, configuration: .filled.message(.error("Already taken")))
+    }
+    .padding()
+}
+
+#Preview("DSTextField — Accessories") {
+    @Previewable @State var text = "Frank"
+    let person = DSSymbol(systemName: "person")!
+    VStack(spacing: 16) {
+        DSTextField(
+            "Name",
+            text: $text,
+            configuration: .filled.leading(person).trailing(.clear)
+        )
+        DSTextField(
+            "Search",
+            text: $text,
+            configuration: .outlined
+                .labelVisibility(.hidden)
+                .leading(DSSymbol(systemName: "magnifyingglass")!)
+                .trailing(.clear)
+        )
+    }
+    .padding()
+}
+
+#Preview("DSTextField — Outlined") {
+    @Previewable @State var text = ""
+    VStack(spacing: 16) {
+        DSTextField("Email", text: $text, prompt: "you@example.com", configuration: .outlined)
+        DSTextField("Name", text: .constant("Frank"), configuration: .outlined)
+        DSTextField("Error", text: .constant("bad@"), configuration: .outlined.message(.error("Invalid")))
     }
     .padding()
 }
