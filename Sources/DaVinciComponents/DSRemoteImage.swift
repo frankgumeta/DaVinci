@@ -94,6 +94,38 @@ public struct DSRemoteImage: View {
         _phase = State(initialValue: Self.initialPhase(for: url))
     }
 
+    /// Creates a remotely loaded image with an explicit frame and a validated
+    /// placeholder symbol.
+    ///
+    /// Set `isDecorative` to `true` only when the image communicates no
+    /// information; decorative images are hidden from assistive technologies.
+    ///
+    /// - Note: A `nil` URL renders the placeholder immediately, without passing
+    ///   through a loading state, because there is nothing to load.
+    public init(
+        url: URL?,
+        width: CGFloat,
+        height: CGFloat,
+        cornerRadius: CGFloat = RadiusTokens.extraSmall,
+        contentMode: ContentMode = .fill,
+        showsShimmer: Bool = true,
+        placeholder: DSSymbol?,
+        accessibilityLabel: String? = nil,
+        isDecorative: Bool = false
+    ) {
+        self.init(
+            url: url,
+            width: width,
+            height: height,
+            cornerRadius: cornerRadius,
+            contentMode: contentMode,
+            showsShimmer: showsShimmer,
+            placeholderSystemImage: placeholder?.systemName,
+            accessibilityLabel: accessibilityLabel,
+            isDecorative: isDecorative
+        )
+    }
+
     /// Convenience initializer accepting a `CGSize`.
     ///
     /// Set `isDecorative` to `true` only when the image communicates no
@@ -116,6 +148,33 @@ public struct DSRemoteImage: View {
             contentMode: contentMode,
             showsShimmer: showsShimmer,
             placeholderSystemImage: placeholderSystemImage,
+            accessibilityLabel: accessibilityLabel,
+            isDecorative: isDecorative
+        )
+    }
+
+    /// Convenience initializer accepting a `CGSize` and a validated placeholder symbol.
+    ///
+    /// Set `isDecorative` to `true` only when the image communicates no
+    /// information; decorative images are hidden from assistive technologies.
+    public init(
+        url: URL?,
+        size: CGSize,
+        cornerRadius: CGFloat = RadiusTokens.extraSmall,
+        contentMode: ContentMode = .fill,
+        showsShimmer: Bool = true,
+        placeholder: DSSymbol?,
+        accessibilityLabel: String? = nil,
+        isDecorative: Bool = false
+    ) {
+        self.init(
+            url: url,
+            width: size.width,
+            height: size.height,
+            cornerRadius: cornerRadius,
+            contentMode: contentMode,
+            showsShimmer: showsShimmer,
+            placeholder: placeholder,
             accessibilityLabel: accessibilityLabel,
             isDecorative: isDecorative
         )
@@ -172,7 +231,7 @@ public struct DSRemoteImage: View {
             Rectangle()
                 .fill(theme.colors.semantic.bgSecondary)
 
-            Image(systemName: placeholderSystemImage ?? "photo")
+            Image(systemName: placeholderSystemImage ?? DSSymbol.imagePlaceholder.systemName)
                 .font(.system(size: min(width, height) * 0.3))
                 .foregroundStyle(theme.colors.semantic.textTertiary)
         }
@@ -390,7 +449,7 @@ private typealias PlatformColor = NSColor
             url: URL(string: "https://example.com/broken.jpg"),
             width: 120,
             height: 120,
-            placeholderSystemImage: "exclamationmark.triangle"
+            placeholder: DSSymbol(systemName: "exclamationmark.triangle")
         )
         DSRemoteImage(
             url: nil,
@@ -414,7 +473,7 @@ private typealias PlatformColor = NSColor
             url: nil,
             width: 120,
             height: 120,
-            placeholderSystemImage: "person.crop.circle"
+            placeholder: DSSymbol(systemName: "person.crop.circle")
         )
     }
     .padding()

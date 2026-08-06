@@ -13,9 +13,9 @@ struct DSIconButtonGalleryScreen: View {
 
                 GallerySection(title: "Variants") {
                     HStack(spacing: SpacingTokens.space3) {
-                        DSIconButton(systemName: "plus", titleForAccessibility: "Add", variant: .primary) {}
-                        DSIconButton(systemName: "gearshape", titleForAccessibility: "Settings", variant: .secondary) {}
-                        DSIconButton(systemName: "pencil", titleForAccessibility: "Edit", variant: .outline) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "plus")!, titleForAccessibility: "Add", variant: .primary) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "gearshape")!, titleForAccessibility: "Settings", variant: .secondary) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "pencil")!, titleForAccessibility: "Edit", variant: .outline) {}
                     }
                 }
 
@@ -23,7 +23,7 @@ struct DSIconButtonGalleryScreen: View {
                     HStack(spacing: SpacingTokens.space4) {
                         VStack(spacing: SpacingTokens.space2) {
                             DSIconButton(
-                                systemName: "heart.fill",
+                                symbol: DSSymbol(systemName: "heart.fill")!,
                                 titleForAccessibility: "Like (Small)",
                                 variant: .primary,
                                 size: .small
@@ -32,7 +32,7 @@ struct DSIconButtonGalleryScreen: View {
                         }
                         VStack(spacing: SpacingTokens.space2) {
                             DSIconButton(
-                                systemName: "heart.fill",
+                                symbol: DSSymbol(systemName: "heart.fill")!,
                                 titleForAccessibility: "Like (Medium)",
                                 variant: .primary,
                                 size: .medium
@@ -41,7 +41,7 @@ struct DSIconButtonGalleryScreen: View {
                         }
                         VStack(spacing: SpacingTokens.space2) {
                             DSIconButton(
-                                systemName: "heart.fill",
+                                symbol: DSSymbol(systemName: "heart.fill")!,
                                 titleForAccessibility: "Like (Large)",
                                 variant: .primary,
                                 size: .large
@@ -53,15 +53,15 @@ struct DSIconButtonGalleryScreen: View {
 
                 GallerySection(title: "States") {
                     HStack(spacing: SpacingTokens.space3) {
-                        DSIconButton(systemName: "trash", titleForAccessibility: "Delete", variant: .primary) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "trash")!, titleForAccessibility: "Delete", variant: .primary) {}
                         DSIconButton(
-                            systemName: "trash",
+                            symbol: DSSymbol(systemName: "trash")!,
                             titleForAccessibility: "Delete (disabled)",
                             variant: .primary,
                             isDisabled: true
                         ) {}
                         DSIconButton(
-                            systemName: "trash",
+                            symbol: DSSymbol(systemName: "trash")!,
                             titleForAccessibility: "Delete (loading)",
                             variant: .primary,
                             isLoading: true
@@ -76,11 +76,11 @@ struct DSIconButtonGalleryScreen: View {
 
                 GallerySection(title: "Common Actions") {
                     HStack(spacing: SpacingTokens.space3) {
-                        DSIconButton(systemName: "xmark", titleForAccessibility: "Close", variant: .secondary) {}
-                        DSIconButton(systemName: "arrow.left", titleForAccessibility: "Back", variant: .outline) {}
-                        DSIconButton(systemName: "square.and.arrow.up", titleForAccessibility: "Share", variant: .secondary) {}
-                        DSIconButton(systemName: "bookmark", titleForAccessibility: "Save", variant: .outline) {}
-                        DSIconButton(systemName: "ellipsis", titleForAccessibility: "More", variant: .secondary) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "xmark")!, titleForAccessibility: "Close", variant: .secondary) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "arrow.left")!, titleForAccessibility: "Back", variant: .outline) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "square.and.arrow.up")!, titleForAccessibility: "Share", variant: .secondary) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "bookmark")!, titleForAccessibility: "Save", variant: .outline) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "ellipsis")!, titleForAccessibility: "More", variant: .secondary) {}
                     }
                 }
             }

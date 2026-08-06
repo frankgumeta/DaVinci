@@ -51,7 +51,7 @@ struct TypographyGalleryScreen: View {
                         "A longer body example wraps without losing its typography hierarchy.",
                         role: .body
                     )
-                    DSButton("Continue with accessible text", icon: .trailing(systemName: "arrow.right")) {}
+                    DSButton("Continue with accessible text", icon: .trailing(DSSymbol(systemName: "arrow.right")!)) {}
                     DSBadge("Accessible status", variant: .success, size: .large)
                     DSSegmentedControl(
                         options: ["Overview", "Activity"],

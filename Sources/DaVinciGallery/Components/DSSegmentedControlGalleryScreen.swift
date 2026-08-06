@@ -31,21 +31,28 @@ struct DSSegmentedControlGalleryScreen: View {
                     DSSegmentedControl(
                         options: ["List", "Grid"],
                         selectedIndex: $viewMode,
-                        icons: ["list.bullet", "square.grid.2x2"]
+                        symbols: [
+                            DSSymbol(systemName: "list.bullet")!,
+                            DSSymbol(systemName: "square.grid.2x2")!
+                        ]
                     )
                     DSSegmentedControl(
                         options: ["Map", "Satellite", "Hybrid"],
                         selectedIndex: .constant(0),
-                        icons: ["map", "globe.americas", "map.fill"]
+                        symbols: [
+                            DSSymbol(systemName: "map")!,
+                            DSSymbol(systemName: "globe.americas")!,
+                            DSSymbol(systemName: "map.fill")!
+                        ]
                     )
                 }
 
                 GallerySection(title: "DSSegmentItem Model") {
                     DSSegmentedControl(
                         segments: [
-                            DSSegmentItem(title: "Map", iconSystemName: "map"),
-                            DSSegmentItem(title: "List", iconSystemName: "list.bullet"),
-                            DSSegmentItem(title: "Grid", iconSystemName: "square.grid.2x2")
+                            DSSegmentItem(title: "Map", icon: DSSymbol(systemName: "map")!),
+                            DSSegmentItem(title: "List", icon: DSSymbol(systemName: "list.bullet")!),
+                            DSSegmentItem(title: "Grid", icon: DSSymbol(systemName: "square.grid.2x2")!)
                         ],
                         selectedIndex: $modelIndex
                     )
@@ -67,9 +74,9 @@ struct DSSegmentedControlGalleryScreen: View {
                     DSText("Icon-only items", role: .caption, color: theme.colors.semantic.textSecondary)
                     DSSegmentedControl(
                         segments: [
-                            DSSegmentItem(title: "", iconSystemName: "sun.max"),
-                            DSSegmentItem(title: "", iconSystemName: "cloud"),
-                            DSSegmentItem(title: "", iconSystemName: "cloud.rain")
+                            DSSegmentItem(title: "", icon: DSSymbol(systemName: "sun.max")!),
+                            DSSegmentItem(title: "", icon: DSSymbol(systemName: "cloud")!),
+                            DSSegmentItem(title: "", icon: DSSymbol(systemName: "cloud.rain")!)
                         ],
                         selectedIndex: .constant(0)
                     )

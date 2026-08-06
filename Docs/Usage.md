@@ -4,6 +4,7 @@ Practical patterns and best practices for using DaVinci components in real-world
 
 ## Table of Contents
 - [When to Use Which Component](#when-to-use-which-component)
+- [SF Symbols with DSSymbol](#sf-symbols-with-dssymbol)
 - [Common Patterns](#common-patterns)
 - [Forms](#forms)
 - [Lists and Cards](#lists-and-cards)
@@ -39,6 +40,47 @@ DSIconButton(
 ```
 
 **Rule of Thumb**: If the action needs a visible text label for clarity, use `DSButton`. If the icon is universally recognized (settings, close, share), use `DSIconButton`.
+
+---
+
+### SF Symbols with DSSymbol
+
+DaVinci components accept SF Symbols via `DSSymbol`, a validated reference type
+that guarantees the symbol renders on the current operating system.
+
+```swift
+// Construct with init?(systemName:) — nil means the symbol doesn't exist
+// on this OS, so handle the fallback at the call site.
+guard let gear = DSSymbol(systemName: "gear") else {
+    return
+}
+
+// Pass to any component that accepts DSSymbol.
+DSIconButton(symbol: gear, titleForAccessibility: "Settings", variant: .secondary) {
+    showSettings()
+}
+
+// DSButtonIcon factories accept DSSymbol directly.
+let plus = DSSymbol(systemName: "plus")!
+DSButton("Add Item", icon: .leading(plus)) { addItem() }
+
+// DSSegmentItem accepts an optional DSSymbol icon.
+DSSegmentItem(title: "List", icon: DSSymbol(systemName: "list.bullet"))
+
+// DSRemoteImage accepts an optional DSSymbol placeholder.
+DSRemoteImage(url: url, width: 120, height: 120, placeholder: DSSymbol(systemName: "person"))
+```
+
+The string-based APIs from v1.2.0 remain available for backward compatibility:
+
+```swift
+DSIconButton(systemName: "gear", titleForAccessibility: "Settings") {}
+DSButton("Add", icon: .leading(systemName: "plus")) {}
+```
+
+**When to use which**: Prefer `DSSymbol` in new code — it catches typos and
+unavailable symbols at construction time. Use the `String` API only when
+migrating existing call sites incrementally.
 
 ---
 

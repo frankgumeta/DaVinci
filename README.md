@@ -132,8 +132,9 @@ DSButton("Submit", variant: .primary) {
     submitForm()
 }
 
-// With icon
-DSButton("Add Item", variant: .secondary, icon: .leading(systemName: "plus")) {
+// With icon (validated DSSymbol)
+let plus = DSSymbol(systemName: "plus")!
+DSButton("Add Item", variant: .secondary, icon: .leading(plus)) {
     addItem()
 }
 
@@ -143,8 +144,9 @@ DSButton("Saving...", variant: .primary, isLoading: true) {
 }
 
 // Icon-only button
+let gear = DSSymbol(systemName: "gear")!
 DSIconButton(
-    systemName: "gear",
+    symbol: gear,
     titleForAccessibility: "Settings",
     variant: .secondary
 ) {
@@ -447,8 +449,9 @@ announcements, and keyboard navigation still require manual validation in the ho
 
 ```swift
 // Icon buttons require accessibility labels
+let trash = DSSymbol(systemName: "trash")!
 DSIconButton(
-    systemName: "trash",
+    symbol: trash,
     titleForAccessibility: "Delete item", // VoiceOver reads this
     variant: .secondary
 ) { deleteItem() }

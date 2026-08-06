@@ -146,4 +146,44 @@ struct DSSegmentedControlBehaviorTests {
             #expect(control.segments[index].title == option)
         }
     }
+
+    // MARK: - DSSymbol API
+
+    @Test func segmentItemStoresIconFromDSSymbol() throws {
+        let symbol = try #require(DSSymbol(systemName: "list.bullet"))
+        let item = DSSegmentItem(title: "List", icon: symbol)
+        #expect(item.iconSystemName == "list.bullet")
+    }
+
+    @Test func segmentItemIconIsNilWhenDSSymbolIsNil() {
+        let item = DSSegmentItem(title: "Day", icon: nil)
+        #expect(item.iconSystemName == nil)
+    }
+
+    @Test @MainActor func convenienceInitMapsSymbolsByIndex() throws {
+        let listSymbol = try #require(DSSymbol(systemName: "list.bullet"))
+        let gridSymbol = try #require(DSSymbol(systemName: "square.grid.2x2"))
+        let control = DSSegmentedControl(
+            options: ["List", "Grid"],
+            selectedIndex: .constant(0),
+            symbols: [listSymbol, gridSymbol]
+        )
+
+        #expect(control.segments[0].iconSystemName == "list.bullet")
+        #expect(control.segments[1].iconSystemName == "square.grid.2x2")
+    }
+
+    @Test @MainActor func convenienceInitFewerSymbolsThanOptions() throws {
+        let starSymbol = try #require(DSSymbol(systemName: "star"))
+        let control = DSSegmentedControl(
+            options: ["A", "B", "C"],
+            selectedIndex: .constant(0),
+            symbols: [starSymbol]
+        )
+
+        #expect(control.segments.count == 3)
+        #expect(control.segments[0].iconSystemName == "star")
+        #expect(control.segments[1].iconSystemName == nil)
+        #expect(control.segments[2].iconSystemName == nil)
+    }
 }
