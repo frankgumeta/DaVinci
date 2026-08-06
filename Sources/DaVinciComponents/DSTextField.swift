@@ -21,18 +21,32 @@ import DaVinciTokens
 /// DSTextField("Email", text: $email, error: "Invalid email format")
 /// ```
 ///
-/// ## Appearance
+/// ## Reusable Configuration
 ///
-/// The default appearance is `.filled`, which preserves the v1.2.0 render.
-/// Additional appearances and accessories are introduced in later phases.
+/// For fields that share appearance, accessories or messages, build a
+/// ``Configuration`` once and pass it to multiple fields:
+///
+/// ```swift
+/// let accountField: DSTextField.Configuration = .outlined
+///     .labelVisibility(.hidden)
+///     .leading(DSSymbol(systemName: "person")!)
+///     .trailing(.clear)
+///     .message(.supporting("Helper text"))
+///
+/// DSTextField("Email", text: $email, configuration: accountField)
+/// ```
 ///
 /// ## Topics
 ///
 /// ### Creating a Text Field
 /// - ``init(_:text:prompt:showsLabel:accessibilityLabel:accessibilityHint:error:)``
+/// - ``init(_:text:prompt:configuration:accessibilityLabel:accessibilityHint:)``
 ///
 /// ### Appearance
 /// - ``Appearance``
+///
+/// ### Configuration
+/// - ``Configuration``
 public struct DSTextField: View {
 
     /// Visual appearance of the field container.
@@ -66,13 +80,18 @@ public struct DSTextField: View {
     private let label: String
     @Binding private var text: String
     private let prompt: String?
-    private let showsLabel: Bool
+    private let labelVisibility: DSTextFieldLabelVisibility
     private let accessibilityLabel: String?
     private let accessibilityHint: String?
-    private let error: String?
+    private let fieldMessage: DSFieldMessage?
     private let appearance: Appearance
+    private let leadingSymbol: DSSymbol?
+    private let trailingAction: DSTextFieldTrailingAction?
+    private let characterLimit: Int?
 
     @FocusState private var isFocused: Bool
+
+    // MARK: - v1.2.0 Initializer (forwarding)
 
     public init(
         _ label: String,
@@ -83,35 +102,75 @@ public struct DSTextField: View {
         accessibilityHint: String? = nil,
         error: String? = nil
     ) {
-        self.label = label
-        self._text = text
-        self.prompt = prompt
-        self.showsLabel = showsLabel
-        self.accessibilityLabel = accessibilityLabel
-        self.accessibilityHint = accessibilityHint
-        self.error = error
-        self.appearance = .filled
+        self.init(
+            label,
+            text: text,
+            prompt: prompt,
+            labelVisibility: showsLabel ? .visible : .hidden,
+            accessibilityLabel: accessibilityLabel,
+            accessibilityHint: accessibilityHint,
+            fieldMessage: error.map { .error($0) },
+            appearance: .filled,
+            leadingSymbol: nil,
+            trailingAction: nil,
+            characterLimit: nil
+        )
     }
+
+    // MARK: - Configuration Initializer
+
+    public init(
+        _ label: String,
+        text: Binding<String>,
+        prompt: String? = nil,
+        configuration: Configuration,
+        accessibilityLabel: String? = nil,
+        accessibilityHint: String? = nil
+    ) {
+        self.init(
+            label,
+            text: text,
+            prompt: prompt,
+            labelVisibility: configuration.labelVisibility,
+            accessibilityLabel: accessibilityLabel,
+            accessibilityHint: accessibilityHint,
+            fieldMessage: configuration.message,
+            appearance: configuration.appearance,
+            leadingSymbol: configuration.leading,
+            trailingAction: configuration.trailingAction,
+            characterLimit: configuration.characterLimit
+        )
+    }
+
+    // MARK: - Internal Canonical Initializer
 
     internal init(
         _ label: String,
         text: Binding<String>,
         prompt: String?,
-        showsLabel: Bool,
+        labelVisibility: DSTextFieldLabelVisibility,
         accessibilityLabel: String?,
         accessibilityHint: String?,
-        error: String?,
-        appearance: Appearance
+        fieldMessage: DSFieldMessage?,
+        appearance: Appearance,
+        leadingSymbol: DSSymbol?,
+        trailingAction: DSTextFieldTrailingAction?,
+        characterLimit: Int?
     ) {
         self.label = label
         self._text = text
         self.prompt = prompt
-        self.showsLabel = showsLabel
+        self.labelVisibility = labelVisibility
         self.accessibilityLabel = accessibilityLabel
         self.accessibilityHint = accessibilityHint
-        self.error = error
+        self.fieldMessage = fieldMessage
         self.appearance = appearance
+        self.leadingSymbol = leadingSymbol
+        self.trailingAction = trailingAction
+        self.characterLimit = characterLimit
     }
+
+    // MARK: - Body
 
     public var body: some View {
         if showsLabel {
@@ -123,6 +182,8 @@ public struct DSTextField: View {
             fieldContainer
         }
     }
+
+    private var showsLabel: Bool { labelVisibility == .visible }
 
     // MARK: - Composed parts
 
@@ -179,7 +240,7 @@ public struct DSTextField: View {
     internal var fieldState: FieldState {
         FieldState.resolve(
             isEnabled: environmentIsEnabled,
-            hasError: error != nil,
+            hasError: fieldMessage?.isError ?? false,
             isFocused: isFocused
         )
     }
@@ -192,8 +253,8 @@ public struct DSTextField: View {
 
     internal var resolvedAccessibilityValue: String {
         let enteredValue = text.isEmpty ? (prompt ?? "Empty") : text
-        if let error = error {
-            return "\(enteredValue). Error: \(error)"
+        if let message = fieldMessage, message.isError {
+            return "\(enteredValue). Error: \(message.text)"
         }
         return enteredValue
     }
@@ -205,6 +266,165 @@ public struct DSTextField: View {
             hint: accessibilityHint,
             isEnabled: environmentIsEnabled
         )
+    }
+}
+
+// MARK: - Configuration Support Types
+
+/// Whether the field label is rendered above the input.
+public enum DSTextFieldLabelVisibility: Sendable {
+    case visible
+    case hidden
+}
+
+/// Trailing accessory action. Only ``clear`` is supported in 1.3.0.
+public enum DSTextFieldTrailingAction: Sendable {
+    /// Clears the text binding and retains focus.
+    case clear
+}
+
+// MARK: - Configuration
+
+extension DSTextField {
+
+    /// Reusable, value-type configuration for ``DSTextField``.
+    ///
+    /// Build a configuration once and share it across multiple fields. Each
+    /// builder method returns a copy with the requested change applied,
+    /// leaving the original unchanged.
+    ///
+    /// ```swift
+    /// let account: DSTextField.Configuration = .outlined
+    ///     .labelVisibility(.hidden)
+    ///     .leading(DSSymbol(systemName: "person")!)
+    ///     .trailing(.clear)
+    ///     .message(.supporting("Enter your account email"))
+    /// ```
+    ///
+    /// `DSFieldMessage` is an enum, so ``supporting`` and ``error`` are
+    /// mutually exclusive by construction — a configuration cannot hold
+    /// both at the same time.
+    ///
+    /// ## Topics
+    ///
+    /// ### Presets
+    /// - ``filled``
+    /// - ``outlined``
+    ///
+    /// ### Builders
+    /// - ``labelVisibility(_:)``
+    /// - ``leading(_:)``
+    /// - ``trailing(_:)``
+    /// - ``message(_:)``
+    /// - ``characterLimit(_:)``
+    public struct Configuration: Sendable {
+
+        /// Visual appearance of the field container.
+        public let appearance: DSTextField.Appearance
+
+        /// Whether the label row is rendered.
+        public let labelVisibility: DSTextFieldLabelVisibility
+
+        /// Optional leading decorative symbol.
+        public let leading: DSSymbol?
+
+        /// Optional trailing action.
+        public let trailingAction: DSTextFieldTrailingAction?
+
+        /// Optional auxiliary message (supporting or error).
+        public let message: DSFieldMessage?
+
+        /// Optional maximum character count. When set, the binding is
+        /// prevented from exceeding this count.
+        public let characterLimit: Int?
+
+        private init(
+            appearance: DSTextField.Appearance,
+            labelVisibility: DSTextFieldLabelVisibility,
+            leading: DSSymbol? = nil,
+            trailingAction: DSTextFieldTrailingAction? = nil,
+            message: DSFieldMessage? = nil,
+            characterLimit: Int? = nil
+        ) {
+            self.appearance = appearance
+            self.labelVisibility = labelVisibility
+            self.leading = leading
+            self.trailingAction = trailingAction
+            self.message = message
+            self.characterLimit = characterLimit
+        }
+
+        /// Filled appearance with a visible label (default, matches v1.2.0).
+        public static let filled = Configuration(
+            appearance: .filled,
+            labelVisibility: .visible
+        )
+
+        /// Outlined appearance with a visible label.
+        public static let outlined = Configuration(
+            appearance: .outlined,
+            labelVisibility: .visible
+        )
+
+        /// Returns a copy with the given label visibility.
+        public func labelVisibility(_ visibility: DSTextFieldLabelVisibility) -> Configuration {
+            Configuration(
+                appearance: appearance,
+                labelVisibility: visibility,
+                leading: leading,
+                trailingAction: trailingAction,
+                message: message,
+                characterLimit: characterLimit
+            )
+        }
+
+        /// Returns a copy with the given leading symbol.
+        public func leading(_ symbol: DSSymbol) -> Configuration {
+            Configuration(
+                appearance: appearance,
+                labelVisibility: labelVisibility,
+                leading: symbol,
+                trailingAction: trailingAction,
+                message: message,
+                characterLimit: characterLimit
+            )
+        }
+
+        /// Returns a copy with the given trailing action.
+        public func trailing(_ action: DSTextFieldTrailingAction) -> Configuration {
+            Configuration(
+                appearance: appearance,
+                labelVisibility: labelVisibility,
+                leading: leading,
+                trailingAction: action,
+                message: message,
+                characterLimit: characterLimit
+            )
+        }
+
+        /// Returns a copy with the given field message.
+        public func message(_ newMessage: DSFieldMessage) -> Configuration {
+            Configuration(
+                appearance: appearance,
+                labelVisibility: labelVisibility,
+                leading: leading,
+                trailingAction: trailingAction,
+                message: newMessage,
+                characterLimit: characterLimit
+            )
+        }
+
+        /// Returns a copy with the given character limit.
+        public func characterLimit(_ limit: Int) -> Configuration {
+            Configuration(
+                appearance: appearance,
+                labelVisibility: labelVisibility,
+                leading: leading,
+                trailingAction: trailingAction,
+                message: message,
+                characterLimit: limit
+            )
+        }
     }
 }
 
@@ -305,6 +525,19 @@ internal enum DSTextFieldStyleResolver {
     VStack(spacing: 16) {
         DSTextField("Name", text: $text)
             .disabled(true)
+    }
+    .padding()
+}
+
+#Preview("DSTextField — Configuration") {
+    @Previewable @State var text = ""
+    let config: DSTextField.Configuration = .outlined
+        .labelVisibility(.visible)
+        .message(.supporting("Enter your account email"))
+
+    VStack(spacing: 16) {
+        DSTextField("Email", text: $text, prompt: "you@example.com", configuration: config)
+        DSTextField("Username", text: $text, configuration: .filled.message(.error("Already taken")))
     }
     .padding()
 }
