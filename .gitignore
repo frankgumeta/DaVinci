@@ -11,3 +11,6 @@ coverage.md
 
 # AI context — local only
 AI_CONTEXT.md
+
+# API baseline snapshots — local reference for version comparison
+.baseline/
