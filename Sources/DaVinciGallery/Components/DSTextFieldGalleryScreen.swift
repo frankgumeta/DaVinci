@@ -86,6 +86,42 @@ struct DSTextFieldGalleryScreen: View {
                         "This is a very long pre-filled value that may scroll horizontally"
                     ))
                 }
+
+                GallerySection(title: "Messages") {
+                    DSTextField(
+                        "Email",
+                        text: $email,
+                        configuration: .filled
+                            .message(.supporting("We will never share your email"))
+                    )
+                    DSTextField(
+                        "Email",
+                        text: .constant("invalid@"),
+                        configuration: .filled
+                            .message(.error("Invalid email format"))
+                    )
+                    DSTextField(
+                        "Email",
+                        text: .constant("invalid@"),
+                        configuration: .outlined
+                            .message(.error("Invalid email format"))
+                    )
+                }
+
+                GallerySection(title: "Character Limit") {
+                    DSTextField(
+                        "Title",
+                        text: $name,
+                        configuration: .filled.characterLimit(10)
+                    )
+                    DSTextField(
+                        "Bio",
+                        text: $bio,
+                        configuration: .outlined
+                            .characterLimit(20)
+                            .message(.supporting("Max 20 characters"))
+                    )
+                }
             }
             .padding(SpacingTokens.space4)
         }

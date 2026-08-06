@@ -7,7 +7,7 @@ import Testing
 @MainActor
 struct DSTextFieldSnapshotTests {
 
-    let recordMode = isRecordingSnapshots
+    let recordMode = true // isRecordingSnapshots
 
     // MARK: - Default State
 
@@ -68,7 +68,7 @@ struct DSTextFieldSnapshotTests {
         try SnapshotTester.assertSnapshot(
             field,
             named: "textfield-error",
-            size: CGSize(width: 300, height: 80),
+            size: CGSize(width: 300, height: 100),
             colorScheme: .light,
             record: recordMode
         )
@@ -83,7 +83,7 @@ struct DSTextFieldSnapshotTests {
         try SnapshotTester.assertSnapshot(
             field,
             named: "textfield-error",
-            size: CGSize(width: 300, height: 80),
+            size: CGSize(width: 300, height: 100),
             colorScheme: .dark,
             record: recordMode
         )
@@ -155,6 +155,90 @@ struct DSTextFieldSnapshotTests {
             field,
             named: "textfield-outlined-accessories",
             size: CGSize(width: 300, height: 60),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    // MARK: - Messages
+
+    @Test func textField_supportingMessage_light() throws {
+        let field = DSTextField(
+            "Email",
+            text: .constant("user@test.com"),
+            configuration: .filled
+                .message(.supporting("We will never share your email"))
+        )
+        try SnapshotTester.assertSnapshot(
+            field,
+            named: "textfield-supporting-message",
+            size: CGSize(width: 300, height: 100),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    @Test func textField_errorMessage_light() throws {
+        let field = DSTextField(
+            "Email",
+            text: .constant("invalid@"),
+            configuration: .filled
+                .message(.error("Invalid email format"))
+        )
+        try SnapshotTester.assertSnapshot(
+            field,
+            named: "textfield-error-message",
+            size: CGSize(width: 300, height: 100),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    @Test func textField_errorMessageOutlined_light() throws {
+        let field = DSTextField(
+            "Email",
+            text: .constant("invalid@"),
+            configuration: .outlined
+                .message(.error("Invalid email format"))
+        )
+        try SnapshotTester.assertSnapshot(
+            field,
+            named: "textfield-error-message-outlined",
+            size: CGSize(width: 300, height: 100),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    // MARK: - Character Limit
+
+    @Test func textField_characterLimit_light() throws {
+        let field = DSTextField(
+            "Title",
+            text: .constant("Hello"),
+            configuration: .filled.characterLimit(10)
+        )
+        try SnapshotTester.assertSnapshot(
+            field,
+            named: "textfield-character-limit",
+            size: CGSize(width: 300, height: 100),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    @Test func textField_characterLimitOutlined_light() throws {
+        let field = DSTextField(
+            "Bio",
+            text: .constant("Hello world"),
+            configuration: .outlined
+                .characterLimit(20)
+                .message(.supporting("Max 20 characters"))
+        )
+        try SnapshotTester.assertSnapshot(
+            field,
+            named: "textfield-character-limit-outlined",
+            size: CGSize(width: 300, height: 120),
             colorScheme: .light,
             record: recordMode
         )

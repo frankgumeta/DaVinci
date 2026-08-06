@@ -173,13 +173,15 @@ public struct DSTextField: View {
     // MARK: - Body
 
     public var body: some View {
-        if showsLabel {
-            VStack(alignment: .leading, spacing: SpacingTokens.space1) {
-                labelRow
-                fieldContainer
-            }
-        } else {
+        VStack(alignment: .leading, spacing: SpacingTokens.space1) {
+            if showsLabel { labelRow }
             fieldContainer
+            if let message = fieldMessage {
+                DSFieldMessageRow(message)
+            }
+            if let limit = characterLimit {
+                characterCounterRow(limit)
+            }
         }
     }
 
@@ -264,6 +266,44 @@ public struct DSTextField: View {
         .dsTextStyle(theme.typography.body, family: theme.typography.family)
         .foregroundStyle(theme.colors.semantic.textPrimary)
         .focused($isFocused)
+        .onChange(of: text) { _, newValue in
+            truncateIfNeeded(newValue)
+        }
+    }
+
+    // MARK: - Character Limit
+
+    private func truncateIfNeeded(_ newValue: String) {
+        guard let limit = characterLimit else { return }
+        let count = newValue.count
+        if count > limit {
+            // Truncate by Character, preserving grapheme clusters.
+            // String.prefix returns a Substring bounded by Character
+            // count, which respects grapheme cluster boundaries.
+            text = String(newValue.prefix(limit))
+        }
+    }
+
+    @ViewBuilder
+    private func characterCounterRow(_ limit: Int) -> some View {
+        HStack {
+            Spacer()
+            Text("\(text.count)/\(limit)")
+                .dsTextStyle(theme.typography.caption, family: theme.typography.family)
+                .foregroundStyle(counterColor(limit))
+                .accessibilityHidden(true)
+        }
+    }
+
+    private func counterColor(_ limit: Int) -> Color {
+        let count = text.count
+        if count > limit {
+            return theme.colors.feedback.error
+        }
+        if count >= limit - 5 {
+            return theme.colors.semantic.textSecondary
+        }
+        return theme.colors.semantic.textTertiary
     }
 
     @ViewBuilder
@@ -480,67 +520,6 @@ extension DSTextField {
     }
 }
 
-// MARK: - Style Resolver
-
-/// Resolves concrete colors and stroke widths from an appearance and state.
-///
-/// Precedence: `disabled > error > focused > normal`. Focus does not
-/// eliminate the error indication — when both are present, error wins
-/// but the border reinforces.
-internal enum DSTextFieldStyleResolver {
-
-    internal struct ResolvedStyle: Equatable {
-        let borderColor: Color
-        let borderWidth: CGFloat
-    }
-
-    @MainActor
-    internal static func resolve(
-        appearance: DSTextField.Appearance,
-        state: DSTextField.FieldState,
-        theme: DSTheme
-    ) -> ResolvedStyle {
-        switch state {
-        case .disabled:
-            return ResolvedStyle(
-                borderColor: theme.colors.semantic.textTertiary.opacity(0.5),
-                borderWidth: StrokeTokens.hairline
-            )
-        case .error:
-            return ResolvedStyle(
-                borderColor: theme.colors.feedback.error,
-                borderWidth: StrokeTokens.hairline
-            )
-        case .focused:
-            switch appearance {
-            case .filled:
-                return ResolvedStyle(
-                    borderColor: theme.colors.brand.primary,
-                    borderWidth: StrokeTokens.hairline
-                )
-            case .outlined:
-                return ResolvedStyle(
-                    borderColor: theme.colors.brand.primary,
-                    borderWidth: StrokeTokens.hairline * 1.5
-                )
-            }
-        case .normal:
-            switch appearance {
-            case .filled:
-                return ResolvedStyle(
-                    borderColor: theme.colors.semantic.textTertiary,
-                    borderWidth: StrokeTokens.hairline
-                )
-            case .outlined:
-                return ResolvedStyle(
-                    borderColor: theme.colors.semantic.textTertiary,
-                    borderWidth: StrokeTokens.hairline
-                )
-            }
-        }
-    }
-}
-
 // MARK: - Previews
 
 #Preview("DSTextField") {
@@ -621,6 +600,47 @@ internal enum DSTextFieldStyleResolver {
         DSTextField("Email", text: $text, prompt: "you@example.com", configuration: .outlined)
         DSTextField("Name", text: .constant("Frank"), configuration: .outlined)
         DSTextField("Error", text: .constant("bad@"), configuration: .outlined.message(.error("Invalid")))
+    }
+    .padding()
+}
+
+#Preview("DSTextField — Messages") {
+    @Previewable @State var text = "invalid@"
+    VStack(spacing: 16) {
+        DSTextField(
+            "Email",
+            text: $text,
+            configuration: .filled.message(.supporting("We will never share your email"))
+        )
+        DSTextField(
+            "Email",
+            text: $text,
+            configuration: .filled.message(.error("Invalid email format"))
+        )
+        DSTextField(
+            "Email",
+            text: $text,
+            configuration: .outlined.message(.error("Invalid email format"))
+        )
+    }
+    .padding()
+}
+
+#Preview("DSTextField — Character Limit") {
+    @Previewable @State var text = "Hello"
+    VStack(spacing: 16) {
+        DSTextField(
+            "Title",
+            text: $text,
+            configuration: .filled.characterLimit(10)
+        )
+        DSTextField(
+            "Bio",
+            text: $text,
+            configuration: .outlined
+                .characterLimit(20)
+                .message(.supporting("Max 20 characters"))
+        )
     }
     .padding()
 }
