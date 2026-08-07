@@ -205,7 +205,8 @@ public struct DSTextField: View {
                 trailingAccessory(action)
             }
         }
-        .padding(.horizontal, SpacingTokens.space3)
+        .padding(.leading, SpacingTokens.space3)
+        .padding(.trailing, showsTrailingAction ? SpacingTokens.space1 : SpacingTokens.space3)
         .frame(minHeight: ControlHeightTokens.medium)
         .background(containerBackground)
         .clipShape(RoundedRectangle(cornerRadius: RadiusTokens.small))

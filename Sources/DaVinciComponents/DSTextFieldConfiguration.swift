@@ -30,8 +30,8 @@ extension DSTextField {
     ///     .message(.supporting("Enter your account email"))
     /// ```
     ///
-    /// `DSFieldMessage` is an enum, so ``supporting`` and ``error`` are
-    /// mutually exclusive by construction.
+    /// `DSFieldMessage` is an enum, so ``DSFieldMessage/supporting(_:)`` and
+    /// ``DSFieldMessage/error(_:)`` are mutually exclusive by construction.
     public struct Configuration: Sendable {
 
         public let appearance: DSTextField.Appearance
