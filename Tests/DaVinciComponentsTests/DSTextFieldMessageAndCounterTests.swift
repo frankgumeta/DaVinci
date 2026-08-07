@@ -33,6 +33,43 @@ struct DSTextFieldCharacterLimitTests {
         #expect(config.leading != nil)
         #expect(config.characterLimit == 20)
     }
+
+    @Test func constrainedTextTruncatesWithoutSplittingGraphemeClusters() {
+        let value = "A👨‍👩‍👧‍👦B"
+        #expect(DSTextField.constrainedText(value, limit: 2) == "A👨‍👩‍👧‍👦")
+    }
+
+    @Test func constrainedTextHandlesZeroAndNegativeLimitsSafely() {
+        #expect(DSTextField.constrainedText("abc", limit: 0).isEmpty)
+        #expect(DSTextField.constrainedText("abc", limit: -3).isEmpty)
+    }
+
+    @Test func constrainedTextLeavesValueUnchangedWithoutLimit() {
+        #expect(DSTextField.constrainedText("abc", limit: nil) == "abc")
+    }
+
+    @Test func clearActionClearsTheBinding() {
+        var value = "query"
+        let binding = Binding(get: { value }, set: { value = $0 })
+        let field = DSTextField(
+            "Search",
+            text: binding,
+            configuration: .filled.trailing(.clear)
+        )
+
+        field.clearText()
+
+        #expect(value.isEmpty)
+    }
+
+    @Test func characterProgressIsIncludedInAccessibilityValue() {
+        let field = DSTextField(
+            "Title",
+            text: .constant("Hello"),
+            configuration: .filled.characterLimit(10)
+        )
+        #expect(field.resolvedAccessibilityValue == "Hello. 5 of 10 characters")
+    }
 }
 
 // MARK: - DSFieldMessage Rendering Tests

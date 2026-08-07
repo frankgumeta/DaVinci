@@ -122,6 +122,40 @@ struct DSTextFieldGalleryScreen: View {
                             .message(.supporting("Max 20 characters"))
                     )
                 }
+
+                GallerySection(title: "Disabled") {
+                    DSTextField(
+                        "Email",
+                        text: .constant("disabled@example.com"),
+                        configuration: .outlined
+                            .message(.supporting("This field cannot be edited"))
+                            .characterLimit(40)
+                    )
+                    .disabled(true)
+                }
+
+                GallerySection(title: "Right-to-Left") {
+                    DSTextField(
+                        "بحث",
+                        text: .constant("دافنشي"),
+                        configuration: .outlined
+                            .leading(DSSymbol(systemName: "magnifyingglass")!)
+                            .trailing(.clear)
+                            .message(.supporting("اكتب عبارة البحث"))
+                    )
+                    .environment(\.layoutDirection, .rightToLeft)
+                }
+
+                GallerySection(title: "Accessibility Size") {
+                    DSTextField(
+                        "Email address",
+                        text: .constant("invalid@"),
+                        configuration: .outlined.message(
+                            .error("Enter a complete email address before continuing")
+                        )
+                    )
+                    .environment(\.dynamicTypeSize, .accessibility3)
+                }
             }
             .padding(SpacingTokens.space4)
         }

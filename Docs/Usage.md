@@ -64,8 +64,10 @@ DSIconButton(symbol: gear, titleForAccessibility: "Settings", variant: .secondar
 let plus = DSSymbol(systemName: "plus")!
 DSButton("Add Item", icon: .leading(plus)) { addItem() }
 
-// DSSegmentItem accepts an optional DSSymbol icon.
-DSSegmentItem(title: "List", icon: DSSymbol(systemName: "list.bullet"))
+// DSSegmentItem accepts a validated DSSymbol icon.
+if let list = DSSymbol(systemName: "list.bullet") {
+    DSSegmentItem(title: "List", icon: list)
+}
 
 // DSRemoteImage accepts an optional DSSymbol placeholder.
 DSRemoteImage(url: url, width: 120, height: 120, placeholder: DSSymbol(systemName: "person"))
@@ -227,6 +229,43 @@ DSCard(
 ---
 
 ## Forms
+
+### Reusable Text Field Configuration
+
+Use `.filled` to preserve the original DaVinci appearance or `.outlined` for a
+transparent field with a semantic border. Builder calls return copies, so a
+configuration can be reused safely.
+
+```swift
+let accountField: DSTextField.Configuration = .outlined
+    .trailing(.clear)
+    .characterLimit(80)
+
+if let person = DSSymbol(systemName: "person") {
+    DSTextField(
+        "Username",
+        text: $username,
+        configuration: accountField
+            .leading(person)
+            .message(.supporting("Use the name shown on your profile"))
+    )
+}
+```
+
+`DSFieldMessage` accepts either `.supporting` or `.error`, so both cannot be
+displayed simultaneously. The clear action is the only trailing action in
+1.3.0. A configured character limit prevents subsequent binding writes from
+exceeding the maximum and truncates by complete Swift `Character` values.
+
+```swift
+DSTextField(
+    "Bio",
+    text: $bio,
+    configuration: .outlined
+        .message(.error("Bio is required"))
+        .characterLimit(160)
+)
+```
 
 ### Basic Form
 

@@ -78,13 +78,17 @@ struct SnapshotTester {
         size: CGSize = CGSize(width: 375, height: 100),
         colorScheme: ColorScheme = .light,
         theme: DSTheme = .defaultTheme,
+        layoutDirection: LayoutDirection = .leftToRight,
+        dynamicTypeSize: DynamicTypeSize = .large,
         record: Bool = false
     ) throws {
         let receivedData = try render(
             view,
             size: size,
             colorScheme: colorScheme,
-            theme: theme
+            theme: theme,
+            layoutDirection: layoutDirection,
+            dynamicTypeSize: dynamicTypeSize
         )
         let filename = snapshotFilename(name: name, colorScheme: colorScheme)
         let referenceURL = snapshotsDirectory.appendingPathComponent(filename)
@@ -110,11 +114,14 @@ struct SnapshotTester {
         )
     }
 
+    // swiftlint:disable:next function_parameter_count
     private static func render<V: View>(
         _ view: V,
         size: CGSize,
         colorScheme: ColorScheme,
-        theme: DSTheme
+        theme: DSTheme,
+        layoutDirection: LayoutDirection,
+        dynamicTypeSize: DynamicTypeSize
     ) throws -> Data {
         let wrappedView = view
             .frame(width: size.width, height: size.height)
@@ -122,8 +129,8 @@ struct SnapshotTester {
             .preferredColorScheme(colorScheme)
             .environment(\.locale, Locale(identifier: "en_US_POSIX"))
             .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
-            .environment(\.layoutDirection, .leftToRight)
-            .environment(\.dynamicTypeSize, .large)
+            .environment(\.layoutDirection, layoutDirection)
+            .environment(\.dynamicTypeSize, dynamicTypeSize)
             .background(Color(white: colorScheme == .light ? 1.0 : 0.0))
 
         let renderer = ImageRenderer(content: wrappedView)

@@ -211,6 +211,7 @@ public struct DSTextField: View {
         .clipShape(RoundedRectangle(cornerRadius: RadiusTokens.small))
         .overlay(containerBorder)
         .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
+        .onAppear(perform: enforceCharacterLimit)
     }
 
     private var showsTrailingAction: Bool {
@@ -231,7 +232,7 @@ public struct DSTextField: View {
         switch action {
         case .clear:
             Button {
-                text = ""
+                clearText()
                 isFocused = true
             } label: {
                 Image(systemName: DSSymbol.clear.systemName)
@@ -260,28 +261,37 @@ public struct DSTextField: View {
     private var inputField: some View {
         TextField(
             label,
-            text: $text,
+            text: constrainedText,
             prompt: prompt.map { Text($0).foregroundStyle(theme.colors.semantic.textTertiary) }
         )
         .dsTextStyle(theme.typography.body, family: theme.typography.family)
         .foregroundStyle(theme.colors.semantic.textPrimary)
         .focused($isFocused)
-        .onChange(of: text) { _, newValue in
-            truncateIfNeeded(newValue)
-        }
     }
 
     // MARK: - Character Limit
 
-    private func truncateIfNeeded(_ newValue: String) {
-        guard let limit = characterLimit else { return }
-        let count = newValue.count
-        if count > limit {
-            // Truncate by Character, preserving grapheme clusters.
-            // String.prefix returns a Substring bounded by Character
-            // count, which respects grapheme cluster boundaries.
-            text = String(newValue.prefix(limit))
+    private var constrainedText: Binding<String> {
+        Binding(
+            get: { text },
+            set: { text = Self.constrainedText($0, limit: characterLimit) }
+        )
+    }
+
+    internal static func constrainedText(_ value: String, limit: Int?) -> String {
+        guard let limit else { return value }
+        return String(value.prefix(max(0, limit)))
+    }
+
+    private func enforceCharacterLimit() {
+        let constrained = Self.constrainedText(text, limit: characterLimit)
+        if constrained != text {
+            text = constrained
         }
+    }
+
+    internal func clearText() {
+        text = ""
     }
 
     @ViewBuilder
@@ -296,6 +306,10 @@ public struct DSTextField: View {
     }
 
     private func counterColor(_ limit: Int) -> Color {
+        if fieldState == .disabled {
+            return theme.colors.semantic.textTertiary.opacity(0.5)
+        }
+
         let count = text.count
         if count > limit {
             return theme.colors.feedback.error
@@ -321,6 +335,7 @@ public struct DSTextField: View {
         let resolved = DSTextFieldStyleResolver.resolve(
             appearance: appearance,
             state: fieldState,
+            isFocused: isFocused,
             theme: theme
         )
         RoundedRectangle(cornerRadius: RadiusTokens.small)
@@ -345,178 +360,40 @@ public struct DSTextField: View {
 
     internal var resolvedAccessibilityValue: String {
         let enteredValue = text.isEmpty ? (prompt ?? "Empty") : text
-        if let message = fieldMessage, message.isError {
-            return "\(enteredValue). Error: \(message.text)"
+        var parts = [enteredValue]
+
+        if let limit = characterLimit {
+            parts.append("\(min(text.count, limit)) of \(limit) characters")
         }
-        return enteredValue
+
+        if let message = fieldMessage, message.isError {
+            parts.append("Error: \(message.text)")
+        }
+
+        return parts.joined(separator: ". ")
+    }
+
+    internal var resolvedAccessibilityHint: String? {
+        let supportingText: String?
+        if case .supporting(let text) = fieldMessage {
+            supportingText = text
+        } else {
+            supportingText = nil
+        }
+
+        let parts = [accessibilityHint, supportingText]
+            .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        return parts.isEmpty ? nil : parts.joined(separator: ". ")
     }
 
     internal var accessibilityDescriptor: DSAccessibilityDescriptor {
         DSAccessibilityDescriptor(
             label: resolvedAccessibilityLabel,
             value: resolvedAccessibilityValue,
-            hint: accessibilityHint,
+            hint: resolvedAccessibilityHint,
             isEnabled: environmentIsEnabled
         )
-    }
-}
-
-// MARK: - Configuration Support Types
-
-/// Whether the field label is rendered above the input.
-public enum DSTextFieldLabelVisibility: Sendable {
-    case visible
-    case hidden
-}
-
-/// Trailing accessory action. Only ``clear`` is supported in 1.3.0.
-public enum DSTextFieldTrailingAction: Sendable {
-    /// Clears the text binding and retains focus.
-    case clear
-}
-
-// MARK: - Configuration
-
-extension DSTextField {
-
-    /// Reusable, value-type configuration for ``DSTextField``.
-    ///
-    /// Build a configuration once and share it across multiple fields. Each
-    /// builder method returns a copy with the requested change applied,
-    /// leaving the original unchanged.
-    ///
-    /// ```swift
-    /// let account: DSTextField.Configuration = .outlined
-    ///     .labelVisibility(.hidden)
-    ///     .leading(DSSymbol(systemName: "person")!)
-    ///     .trailing(.clear)
-    ///     .message(.supporting("Enter your account email"))
-    /// ```
-    ///
-    /// `DSFieldMessage` is an enum, so ``supporting`` and ``error`` are
-    /// mutually exclusive by construction — a configuration cannot hold
-    /// both at the same time.
-    ///
-    /// ## Topics
-    ///
-    /// ### Presets
-    /// - ``filled``
-    /// - ``outlined``
-    ///
-    /// ### Builders
-    /// - ``labelVisibility(_:)``
-    /// - ``leading(_:)``
-    /// - ``trailing(_:)``
-    /// - ``message(_:)``
-    /// - ``characterLimit(_:)``
-    public struct Configuration: Sendable {
-
-        /// Visual appearance of the field container.
-        public let appearance: DSTextField.Appearance
-
-        /// Whether the label row is rendered.
-        public let labelVisibility: DSTextFieldLabelVisibility
-
-        /// Optional leading decorative symbol.
-        public let leading: DSSymbol?
-
-        /// Optional trailing action.
-        public let trailingAction: DSTextFieldTrailingAction?
-
-        /// Optional auxiliary message (supporting or error).
-        public let message: DSFieldMessage?
-
-        /// Optional maximum character count. When set, the binding is
-        /// prevented from exceeding this count.
-        public let characterLimit: Int?
-
-        private init(
-            appearance: DSTextField.Appearance,
-            labelVisibility: DSTextFieldLabelVisibility,
-            leading: DSSymbol? = nil,
-            trailingAction: DSTextFieldTrailingAction? = nil,
-            message: DSFieldMessage? = nil,
-            characterLimit: Int? = nil
-        ) {
-            self.appearance = appearance
-            self.labelVisibility = labelVisibility
-            self.leading = leading
-            self.trailingAction = trailingAction
-            self.message = message
-            self.characterLimit = characterLimit
-        }
-
-        /// Filled appearance with a visible label (default, matches v1.2.0).
-        public static let filled = Configuration(
-            appearance: .filled,
-            labelVisibility: .visible
-        )
-
-        /// Outlined appearance with a visible label.
-        public static let outlined = Configuration(
-            appearance: .outlined,
-            labelVisibility: .visible
-        )
-
-        /// Returns a copy with the given label visibility.
-        public func labelVisibility(_ visibility: DSTextFieldLabelVisibility) -> Configuration {
-            Configuration(
-                appearance: appearance,
-                labelVisibility: visibility,
-                leading: leading,
-                trailingAction: trailingAction,
-                message: message,
-                characterLimit: characterLimit
-            )
-        }
-
-        /// Returns a copy with the given leading symbol.
-        public func leading(_ symbol: DSSymbol) -> Configuration {
-            Configuration(
-                appearance: appearance,
-                labelVisibility: labelVisibility,
-                leading: symbol,
-                trailingAction: trailingAction,
-                message: message,
-                characterLimit: characterLimit
-            )
-        }
-
-        /// Returns a copy with the given trailing action.
-        public func trailing(_ action: DSTextFieldTrailingAction) -> Configuration {
-            Configuration(
-                appearance: appearance,
-                labelVisibility: labelVisibility,
-                leading: leading,
-                trailingAction: action,
-                message: message,
-                characterLimit: characterLimit
-            )
-        }
-
-        /// Returns a copy with the given field message.
-        public func message(_ newMessage: DSFieldMessage) -> Configuration {
-            Configuration(
-                appearance: appearance,
-                labelVisibility: labelVisibility,
-                leading: leading,
-                trailingAction: trailingAction,
-                message: newMessage,
-                characterLimit: characterLimit
-            )
-        }
-
-        /// Returns a copy with the given character limit.
-        public func characterLimit(_ limit: Int) -> Configuration {
-            Configuration(
-                appearance: appearance,
-                labelVisibility: labelVisibility,
-                leading: leading,
-                trailingAction: trailingAction,
-                message: message,
-                characterLimit: limit
-            )
-        }
     }
 }
 

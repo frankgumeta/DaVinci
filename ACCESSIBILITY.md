@@ -186,12 +186,25 @@ or device. Repeat keyboard checks on iPad when the host app supports it.
 | `DSButton`, `DSIconButton` | normal, disabled, loading | label, hint, “dimmed”, loading value, focus order |
 | `DSSwitch` | on, off, disabled, no visible label | toggle trait, value, activation, fallback label |
 | `DSSegmentedControl` | every selection | container grouping, selected trait, change announcement |
-| `DSTextField` | empty, prompt, value, error, hidden label | label/value/error order, typing, focus retention |
+| `DSTextField` | filled, outlined, prompt, value, supporting, error, clear, limit, disabled, RTL | label/value/hint order, character progress, typing, clear focus retention, IME composition |
 | `DSProgressBar` | determinate, indeterminate, Reduce Motion | percentage/loading value and update frequency |
 | `DSRemoteImage` | loading, success, failure, decorative | image trait, state value, decorative omission |
 | `DSBadge`, `DSCard`, `DSText` | representative content | grouping, reading order, heading/static traits |
 
 Also verify Full Keyboard Access traversal and activation for every interactive row.
+
+### Text field announcements
+
+- Supporting text is attached to the field's accessibility hint instead of
+  becoming a duplicate focusable element.
+- Error text and character progress are included in the field's accessibility
+  value so they remain available while editing.
+- The visible message and counter rows are hidden as standalone accessibility
+  elements to prevent duplicate announcements.
+- Leading symbols are decorative. The clear action remains a separate button
+  with its own label and hint.
+- Validate marked-text composition manually with the keyboards used by the host
+  application; grapheme-safe truncation tests do not replace an IME test.
 
 ## VoiceOver Testing Checklist
 

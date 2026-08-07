@@ -7,7 +7,7 @@ import Testing
 @MainActor
 struct DSTextFieldSnapshotTests {
 
-    let recordMode = true // isRecordingSnapshots
+    let recordMode = isRecordingSnapshots
 
     // MARK: - Default State
 
@@ -240,6 +240,42 @@ struct DSTextFieldSnapshotTests {
             named: "textfield-character-limit-outlined",
             size: CGSize(width: 300, height: 120),
             colorScheme: .light,
+            record: recordMode
+        )
+    }
+    // MARK: - RTL and Dynamic Type
+
+    @Test func textField_outlinedAccessories_rtl() throws {
+        let field = DSTextField(
+            "بحث",
+            text: .constant("دافنشي"),
+            configuration: .outlined
+                .leading(DSSymbol(systemName: "magnifyingglass")!)
+                .trailing(.clear)
+                .message(.supporting("اكتب عبارة البحث"))
+        )
+        try SnapshotTester.assertSnapshot(
+            field,
+            named: "textfield-outlined-accessories-rtl",
+            size: CGSize(width: 340, height: 110),
+            layoutDirection: .rightToLeft,
+            record: recordMode
+        )
+    }
+
+    @Test func textField_longError_ax3() throws {
+        let field = DSTextField(
+            "Email address",
+            text: .constant("invalid@"),
+            configuration: .outlined.message(
+                .error("Enter a complete email address before continuing")
+            )
+        )
+        try SnapshotTester.assertSnapshot(
+            field,
+            named: "textfield-long-error-ax3",
+            size: CGSize(width: 340, height: 220),
+            dynamicTypeSize: .accessibility3,
             record: recordMode
         )
     }

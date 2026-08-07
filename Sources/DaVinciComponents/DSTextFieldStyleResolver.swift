@@ -19,6 +19,7 @@ internal enum DSTextFieldStyleResolver {
     internal static func resolve(
         appearance: DSTextField.Appearance,
         state: DSTextField.FieldState,
+        isFocused: Bool = false,
         theme: DSTheme
     ) -> ResolvedStyle {
         switch state {
@@ -30,7 +31,7 @@ internal enum DSTextFieldStyleResolver {
         case .error:
             return ResolvedStyle(
                 borderColor: theme.colors.feedback.error,
-                borderWidth: StrokeTokens.hairline
+                borderWidth: isFocused ? StrokeTokens.hairline * 1.5 : StrokeTokens.hairline
             )
         case .focused:
             switch appearance {

@@ -70,9 +70,35 @@ struct DSSymbolAdoptionTests {
     }
 
     @Test func segmentItemNilSymbolMatchesNilString() {
-        let fromSymbol = DSSegmentItem(title: "Day", icon: nil)
+        let fromSymbol = DSSegmentItem(title: "Day")
         let fromString = DSSegmentItem(title: "Day", iconSystemName: nil)
 
         #expect(fromSymbol.iconSystemName == fromString.iconSystemName)
+    }
+
+    // MARK: - DSRemoteImage
+
+    @Test @MainActor func remoteImageAcceptsTypedPlaceholderWithExplicitFrame() throws {
+        let symbol = try #require(DSSymbol(systemName: "person"))
+        let image = DSRemoteImage(
+            url: nil,
+            width: 80,
+            height: 80,
+            placeholder: symbol,
+            accessibilityLabel: "Profile photo"
+        )
+
+        #expect(image.accessibilityDescriptor.label == "Profile photo")
+    }
+
+    @Test @MainActor func remoteImageAcceptsTypedPlaceholderWithSize() throws {
+        let symbol = try #require(DSSymbol(systemName: "photo"))
+        let image = DSRemoteImage(
+            url: nil,
+            size: CGSize(width: 80, height: 80),
+            placeholder: symbol
+        )
+
+        #expect(image.accessibilityDescriptor.label == "Placeholder image")
     }
 }

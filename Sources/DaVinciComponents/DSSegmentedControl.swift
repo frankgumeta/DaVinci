@@ -10,13 +10,13 @@ public struct DSSegmentItem: Sendable {
     /// Optional SF Symbol name displayed alongside the title.
     public let iconSystemName: String?
 
-    /// Creates a segment with an optional validated `DSSymbol` icon.
-    public init(title: String, icon: DSSymbol? = nil) {
+    /// Creates a segment with a validated `DSSymbol` icon.
+    public init(title: String, icon: DSSymbol) {
         self.title = title
-        self.iconSystemName = icon?.systemName
+        self.iconSystemName = icon.systemName
     }
 
-    public init(title: String, iconSystemName: String?) {
+    public init(title: String, iconSystemName: String? = nil) {
         self.title = title
         self.iconSystemName = iconSystemName
     }
@@ -107,7 +107,10 @@ public struct DSSegmentedControl: View, Sendable {
     public init(options: [String], selectedIndex: Binding<Int>, symbols: [DSSymbol]?) {
         self.segments = options.indices.map { i in
             let icon = symbols.flatMap { arr in arr.indices.contains(i) ? arr[i] : nil }
-            return DSSegmentItem(title: options[i], icon: icon)
+            if let icon {
+                return DSSegmentItem(title: options[i], icon: icon)
+            }
+            return DSSegmentItem(title: options[i])
         }
         self._selectedIndex = selectedIndex
     }

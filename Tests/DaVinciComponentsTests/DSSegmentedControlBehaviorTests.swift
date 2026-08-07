@@ -156,7 +156,7 @@ struct DSSegmentedControlBehaviorTests {
     }
 
     @Test func segmentItemIconIsNilWhenDSSymbolIsNil() {
-        let item = DSSegmentItem(title: "Day", icon: nil)
+        let item = DSSegmentItem(title: "Day")
         #expect(item.iconSystemName == nil)
     }
 

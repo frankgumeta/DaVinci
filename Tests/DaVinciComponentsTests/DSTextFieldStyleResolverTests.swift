@@ -88,6 +88,17 @@ struct DSTextFieldStyleResolverTests {
         #expect(filled == outlined)
     }
 
+    @Test func focusedErrorReinforcesBorderWithoutLosingErrorColor() {
+        let resolved = DSTextFieldStyleResolver.resolve(
+            appearance: .outlined,
+            state: .error,
+            isFocused: true,
+            theme: theme
+        )
+        #expect(resolved.borderColor == theme.colors.feedback.error)
+        #expect(resolved.borderWidth > StrokeTokens.hairline)
+    }
+
     // MARK: - Resolver: focused
 
     @Test func focusedFilledUsesBrandPrimary() {

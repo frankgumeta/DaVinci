@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `DSSymbol`, a failable runtime-validated SF Symbol reference without a closed catalog
+- Typed symbol overloads for buttons, segmented controls, remote-image placeholders, and text fields
+- Reusable `DSTextField.Configuration` presets for filled and outlined appearances
+- Leading symbols, trailing clear action, supporting/error messages, and grapheme-safe character limits
+- RTL and accessibility-size Gallery scenarios and snapshot coverage for the new text-field layouts
+
+### Changed
+- Text-field state styling now resolves disabled, error, focused, and normal states consistently
+- Focused errors retain the semantic error color while reinforcing the border
+- Supporting text is exposed as an accessibility hint; errors and character progress are exposed in the value
+- Disabled messages and counters use an attenuated semantic treatment
+- Existing String-based symbol APIs and the v1.2 text-field initializer remain available
+
+### Fixed
+- Negative character limits are normalized safely instead of reaching `String.prefix(_:)`
+- Initial and subsequent over-limit text is constrained without splitting extended grapheme clusters
+- `DSTextField` snapshots once again compare committed references instead of recording unconditionally
+
+### Migration
+- Prefer `DSSymbol(systemName:)` and handle its optional result when adopting typed symbol overloads
+- Existing v1.2 call sites require no source changes
+
 ## [1.2.0] - 2026-08-05
 
 > **Codex Tutela**

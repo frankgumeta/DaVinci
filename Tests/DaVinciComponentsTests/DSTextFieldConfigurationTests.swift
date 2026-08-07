@@ -98,6 +98,11 @@ struct DSTextFieldConfigurationTests {
         #expect(modified.characterLimit == 50)
     }
 
+    @Test func negativeCharacterLimitNormalizesToZero() {
+        let config = DSTextField.Configuration.filled.characterLimit(-1)
+        #expect(config.characterLimit == 0)
+    }
+
     // MARK: - Chaining
 
     @Test func chainedBuildersCompose() throws {
@@ -183,6 +188,17 @@ struct DSTextFieldConfigurationInitTests {
         )
         // Supporting messages do not appear in the accessibility value.
         #expect(field.resolvedAccessibilityValue == "good@email.com")
+        #expect(field.accessibilityDescriptor.hint == "Helper")
+    }
+
+    @Test func supportingMessageCombinesWithCustomAccessibilityHint() {
+        let field = DSTextField(
+            "Email",
+            text: .constant(""),
+            configuration: .filled.message(.supporting("Required for receipts")),
+            accessibilityHint: "Enter your email"
+        )
+        #expect(field.accessibilityDescriptor.hint == "Enter your email. Required for receipts")
     }
 
     @Test func legacyErrorInitMatchesConfigurationErrorInit() {

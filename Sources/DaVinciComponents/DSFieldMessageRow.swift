@@ -16,6 +16,7 @@ import DaVinciTokens
 internal struct DSFieldMessageRow: View {
 
     @Environment(\.dsTheme) private var theme
+    @Environment(\.isEnabled) private var isEnabled
 
     let message: DSFieldMessage
 
@@ -41,11 +42,15 @@ internal struct DSFieldMessageRow: View {
     }
 
     private var messageColor: Color {
+        if !isEnabled {
+            return theme.colors.semantic.textTertiary.opacity(0.5)
+        }
+
         switch message {
         case .supporting:
-            theme.colors.semantic.textTertiary
+            return theme.colors.semantic.textTertiary
         case .error:
-            theme.colors.feedback.error
+            return theme.colors.feedback.error
         }
     }
 }
