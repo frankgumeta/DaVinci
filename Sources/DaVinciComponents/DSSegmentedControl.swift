@@ -10,6 +10,12 @@ public struct DSSegmentItem: Sendable {
     /// Optional SF Symbol name displayed alongside the title.
     public let iconSystemName: String?
 
+    /// Creates a segment with a validated `DSSymbol` icon.
+    public init(title: String, icon: DSSymbol) {
+        self.title = title
+        self.iconSystemName = icon.systemName
+    }
+
     public init(title: String, iconSystemName: String? = nil) {
         self.title = title
         self.iconSystemName = iconSystemName
@@ -88,6 +94,23 @@ public struct DSSegmentedControl: View, Sendable {
         self.segments = options.indices.map { i in
             let icon = icons.flatMap { arr in arr.indices.contains(i) ? arr[i] : nil }
             return DSSegmentItem(title: options[i], iconSystemName: icon)
+        }
+        self._selectedIndex = selectedIndex
+    }
+
+    /// Convenience initializer using plain string arrays with validated symbols.
+    ///
+    /// - Parameters:
+    ///   - options: Array of option labels
+    ///   - selectedIndex: Binding to the currently selected index
+    ///   - symbols: Optional validated `DSSymbol` icons; if provided, must align with `options` by index
+    public init(options: [String], selectedIndex: Binding<Int>, symbols: [DSSymbol]?) {
+        self.segments = options.indices.map { i in
+            let icon = symbols.flatMap { arr in arr.indices.contains(i) ? arr[i] : nil }
+            if let icon {
+                return DSSegmentItem(title: options[i], icon: icon)
+            }
+            return DSSegmentItem(title: options[i])
         }
         self._selectedIndex = selectedIndex
     }
@@ -178,9 +201,9 @@ public struct DSSegmentedControl: View, Sendable {
             DSText("With Icons", role: .headline)
             DSSegmentedControl(
                 segments: [
-                    DSSegmentItem(title: "List", iconSystemName: "list.bullet"),
-                    DSSegmentItem(title: "Grid", iconSystemName: "square.grid.2x2"),
-                    DSSegmentItem(title: "Calendar", iconSystemName: "calendar")
+                    DSSegmentItem(title: "List", icon: DSSymbol(systemName: "list.bullet")!),
+                    DSSegmentItem(title: "Grid", icon: DSSymbol(systemName: "square.grid.2x2")!),
+                    DSSegmentItem(title: "Calendar", icon: DSSymbol(systemName: "calendar")!)
                 ],
                 selectedIndex: .constant(0)
             )
@@ -199,7 +222,7 @@ public struct DSSegmentedControl: View, Sendable {
             DSSegmentedControl(
                 options: ["Map", "List"],
                 selectedIndex: .constant(0),
-                icons: ["map", "list.bullet"]
+                symbols: [DSSymbol(systemName: "map")!, DSSymbol(systemName: "list.bullet")!]
             )
         }
     }
@@ -221,7 +244,11 @@ public struct DSSegmentedControl: View, Sendable {
         DSSegmentedControl(
             options: ["List", "Grid", "Calendar"],
             selectedIndex: .constant(0),
-            icons: ["list.bullet", "square.grid.2x2", "calendar"]
+            symbols: [
+                DSSymbol(systemName: "list.bullet")!,
+                DSSymbol(systemName: "square.grid.2x2")!,
+                DSSymbol(systemName: "calendar")!
+            ]
         )
 
         DSSegmentedControl(

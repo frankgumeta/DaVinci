@@ -11,6 +11,8 @@ struct DSTextFieldGalleryScreen: View {
     @State private var search = ""
     @State private var password = ""
     @State private var bio = ""
+    @State private var name = "Frank"
+    @State private var outlinedText = ""
 
     var body: some View {
         ScrollView {
@@ -32,6 +34,43 @@ struct DSTextFieldGalleryScreen: View {
                     DSTextField("Bio", text: $bio, prompt: "Tell us about yourself")
                 }
 
+                GallerySection(title: "Outlined") {
+                    DSTextField(
+                        "Email",
+                        text: $outlinedText,
+                        prompt: "you@example.com",
+                        configuration: .outlined
+                    )
+                    DSTextField(
+                        "Name",
+                        text: .constant("Frank"),
+                        configuration: .outlined
+                    )
+                    DSTextField(
+                        "Error",
+                        text: .constant("bad@"),
+                        configuration: .outlined.message(.error("Invalid email"))
+                    )
+                }
+
+                GallerySection(title: "Accessories") {
+                    DSTextField(
+                        "Name",
+                        text: $name,
+                        configuration: .filled
+                            .leading(DSSymbol(systemName: "person")!)
+                            .trailing(.clear)
+                    )
+                    DSTextField(
+                        "Search",
+                        text: $search,
+                        configuration: .outlined
+                            .labelVisibility(.hidden)
+                            .leading(DSSymbol(systemName: "magnifyingglass")!)
+                            .trailing(.clear)
+                    )
+                }
+
                 GallerySection(title: "Empty State") {
                     DSTextField("Label only", text: .constant(""))
                     DSTextField("Label with prompt", text: .constant(""), prompt: "Placeholder text")
@@ -46,6 +85,76 @@ struct DSTextFieldGalleryScreen: View {
                     DSTextField("Pre-filled long value", text: .constant(
                         "This is a very long pre-filled value that may scroll horizontally"
                     ))
+                }
+
+                GallerySection(title: "Messages") {
+                    DSTextField(
+                        "Email",
+                        text: $email,
+                        configuration: .filled
+                            .message(.supporting("We will never share your email"))
+                    )
+                    DSTextField(
+                        "Email",
+                        text: .constant("invalid@"),
+                        configuration: .filled
+                            .message(.error("Invalid email format"))
+                    )
+                    DSTextField(
+                        "Email",
+                        text: .constant("invalid@"),
+                        configuration: .outlined
+                            .message(.error("Invalid email format"))
+                    )
+                }
+
+                GallerySection(title: "Character Limit") {
+                    DSTextField(
+                        "Title",
+                        text: $name,
+                        configuration: .filled.characterLimit(10)
+                    )
+                    DSTextField(
+                        "Bio",
+                        text: $bio,
+                        configuration: .outlined
+                            .characterLimit(20)
+                            .message(.supporting("Max 20 characters"))
+                    )
+                }
+
+                GallerySection(title: "Disabled") {
+                    DSTextField(
+                        "Email",
+                        text: .constant("disabled@example.com"),
+                        configuration: .outlined
+                            .message(.supporting("This field cannot be edited"))
+                            .characterLimit(40)
+                    )
+                    .disabled(true)
+                }
+
+                GallerySection(title: "Right-to-Left") {
+                    DSTextField(
+                        "بحث",
+                        text: .constant("دافنشي"),
+                        configuration: .outlined
+                            .leading(DSSymbol(systemName: "magnifyingglass")!)
+                            .trailing(.clear)
+                            .message(.supporting("اكتب عبارة البحث"))
+                    )
+                    .environment(\.layoutDirection, .rightToLeft)
+                }
+
+                GallerySection(title: "Accessibility Size") {
+                    DSTextField(
+                        "Email address",
+                        text: .constant("invalid@"),
+                        configuration: .outlined.message(
+                            .error("Enter a complete email address before continuing")
+                        )
+                    )
+                    .environment(\.dynamicTypeSize, .accessibility3)
                 }
             }
             .padding(SpacingTokens.space4)

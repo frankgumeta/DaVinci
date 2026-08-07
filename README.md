@@ -132,8 +132,9 @@ DSButton("Submit", variant: .primary) {
     submitForm()
 }
 
-// With icon
-DSButton("Add Item", variant: .secondary, icon: .leading(systemName: "plus")) {
+// With icon (validated DSSymbol)
+let plus = DSSymbol(systemName: "plus")!
+DSButton("Add Item", variant: .secondary, icon: .leading(plus)) {
     addItem()
 }
 
@@ -143,13 +144,47 @@ DSButton("Saving...", variant: .primary, isLoading: true) {
 }
 
 // Icon-only button
+let gear = DSSymbol(systemName: "gear")!
 DSIconButton(
-    systemName: "gear",
+    symbol: gear,
     titleForAccessibility: "Settings",
     variant: .secondary
 ) {
     openSettings()
 }
+```
+
+### Text Fields
+
+`DSTextField` keeps the v1.2 filled appearance by default and adds a reusable
+configuration for outlined fields, validated leading symbols, clear actions,
+supporting or error messages, and character limits.
+
+```swift
+let searchConfiguration: DSTextField.Configuration = .outlined
+    .labelVisibility(.hidden)
+    .trailing(.clear)
+    .message(.supporting("Search by title or author"))
+    .characterLimit(80)
+
+if let search = DSSymbol(systemName: "magnifyingglass") {
+    DSTextField(
+        "Search",
+        text: $query,
+        prompt: "Search…",
+        configuration: searchConfiguration.leading(search)
+    )
+}
+```
+
+Supporting text is announced as an accessibility hint. Errors and character
+progress are included in the field's accessibility value. Character limits
+truncate by Swift `Character`, preserving extended grapheme clusters.
+
+The original initializer remains source-compatible:
+
+```swift
+DSTextField("Email", text: $email, error: "Invalid email address")
 ```
 
 ### Cards
@@ -327,8 +362,8 @@ excluded from the metric. With Xcode 26.6, the current reproducible line coverag
 | Product target | Covered lines | Executable lines | Coverage | CI policy |
 |---|---:|---:|---:|---|
 | `DaVinciTokens` | 232 | 232 | 100.00% | Minimum 100% |
-| `DaVinciComponents` | 1902 | 2002 | 95.00% | Minimum 95% |
-| `DaVinciGallery` | 0 | 4531 | 0.00% | Reported, not currently gated |
+| `DaVinciComponents` | 2459 | 2577 | 95.42% | Minimum 95% |
+| `DaVinciGallery` | 0 | 4982 | 0.00% | Reported, not currently gated |
 
 There is no aggregate “overall” claim: including test targets would inflate it,
 while including the currently unexercised gallery would conceal the actual gap.
@@ -391,9 +426,10 @@ comparison fails, expected, received, and visual diff images are written to
 artifact on failed runs.
 
 Snapshot rendering fixes the canvas size, 2x scale, `en_US_POSIX` locale, UTC time
-zone, left-to-right layout, Dynamic Type `.large`, theme, and color scheme. Use the
-repository simulator helper and Xcode 26.6, matching CI, when approving
-baselines.
+zone, theme, and color scheme. Layout defaults to left-to-right and Dynamic Type
+`.large`; individual tests can override both for RTL and accessibility-size
+baselines. Use the repository simulator helper and Xcode 26.6, matching CI, when
+approving baselines.
 
 ## Best Practices
 
@@ -447,8 +483,9 @@ announcements, and keyboard navigation still require manual validation in the ho
 
 ```swift
 // Icon buttons require accessibility labels
+let trash = DSSymbol(systemName: "trash")!
 DSIconButton(
-    systemName: "trash",
+    symbol: trash,
     titleForAccessibility: "Delete item", // VoiceOver reads this
     variant: .secondary
 ) { deleteItem() }

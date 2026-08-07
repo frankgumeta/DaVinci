@@ -4,6 +4,7 @@ Practical patterns and best practices for using DaVinci components in real-world
 
 ## Table of Contents
 - [When to Use Which Component](#when-to-use-which-component)
+- [SF Symbols with DSSymbol](#sf-symbols-with-dssymbol)
 - [Common Patterns](#common-patterns)
 - [Forms](#forms)
 - [Lists and Cards](#lists-and-cards)
@@ -39,6 +40,49 @@ DSIconButton(
 ```
 
 **Rule of Thumb**: If the action needs a visible text label for clarity, use `DSButton`. If the icon is universally recognized (settings, close, share), use `DSIconButton`.
+
+---
+
+### SF Symbols with DSSymbol
+
+DaVinci components accept SF Symbols via `DSSymbol`, a validated reference type
+that guarantees the symbol renders on the current operating system.
+
+```swift
+// Construct with init?(systemName:) — nil means the symbol doesn't exist
+// on this OS, so handle the fallback at the call site.
+guard let gear = DSSymbol(systemName: "gear") else {
+    return
+}
+
+// Pass to any component that accepts DSSymbol.
+DSIconButton(symbol: gear, titleForAccessibility: "Settings", variant: .secondary) {
+    showSettings()
+}
+
+// DSButtonIcon factories accept DSSymbol directly.
+let plus = DSSymbol(systemName: "plus")!
+DSButton("Add Item", icon: .leading(plus)) { addItem() }
+
+// DSSegmentItem accepts a validated DSSymbol icon.
+if let list = DSSymbol(systemName: "list.bullet") {
+    DSSegmentItem(title: "List", icon: list)
+}
+
+// DSRemoteImage accepts an optional DSSymbol placeholder.
+DSRemoteImage(url: url, width: 120, height: 120, placeholder: DSSymbol(systemName: "person"))
+```
+
+The string-based APIs from v1.2.0 remain available for backward compatibility:
+
+```swift
+DSIconButton(systemName: "gear", titleForAccessibility: "Settings") {}
+DSButton("Add", icon: .leading(systemName: "plus")) {}
+```
+
+**When to use which**: Prefer `DSSymbol` in new code — it catches typos and
+unavailable symbols at construction time. Use the `String` API only when
+migrating existing call sites incrementally.
 
 ---
 
@@ -185,6 +229,43 @@ DSCard(
 ---
 
 ## Forms
+
+### Reusable Text Field Configuration
+
+Use `.filled` to preserve the original DaVinci appearance or `.outlined` for a
+transparent field with a semantic border. Builder calls return copies, so a
+configuration can be reused safely.
+
+```swift
+let accountField: DSTextField.Configuration = .outlined
+    .trailing(.clear)
+    .characterLimit(80)
+
+if let person = DSSymbol(systemName: "person") {
+    DSTextField(
+        "Username",
+        text: $username,
+        configuration: accountField
+            .leading(person)
+            .message(.supporting("Use the name shown on your profile"))
+    )
+}
+```
+
+`DSFieldMessage` accepts either `.supporting` or `.error`, so both cannot be
+displayed simultaneously. The clear action is the only trailing action in
+1.3.0. A configured character limit prevents subsequent binding writes from
+exceeding the maximum and truncates by complete Swift `Character` values.
+
+```swift
+DSTextField(
+    "Bio",
+    text: $bio,
+    configuration: .outlined
+        .message(.error("Bio is required"))
+        .characterLimit(160)
+)
+```
 
 ### Basic Form
 

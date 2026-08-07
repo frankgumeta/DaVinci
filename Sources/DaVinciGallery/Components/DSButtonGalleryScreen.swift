@@ -18,9 +18,9 @@ struct DSButtonGalleryScreen: View {
                 }
 
                 GallerySection(title: "Icons") {
-                    DSButton("Add Item", variant: .primary, icon: .leading(systemName: "plus")) {}
-                    DSButton("Continue", variant: .outline, icon: .trailing(systemName: "arrow.right")) {}
-                    DSButton("Share", variant: .secondary, icon: .leading(systemName: "square.and.arrow.up")) {}
+                    DSButton("Add Item", variant: .primary, icon: .leading(DSSymbol(systemName: "plus")!)) {}
+                    DSButton("Continue", variant: .outline, icon: .trailing(DSSymbol(systemName: "arrow.right")!)) {}
+                    DSButton("Share", variant: .secondary, icon: .leading(DSSymbol(systemName: "square.and.arrow.up")!)) {}
                 }
 
                 GallerySection(title: "States") {
@@ -43,7 +43,7 @@ struct DSButtonGalleryScreen: View {
                     DSButton(
                         "Loading + Icon",
                         variant: .primary,
-                        icon: .leading(systemName: "checkmark"),
+                        icon: .leading(DSSymbol(systemName: "checkmark")!),
                         isLoading: true
                     ) {}
                 }

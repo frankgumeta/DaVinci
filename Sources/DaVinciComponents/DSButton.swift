@@ -8,6 +8,16 @@ import DaVinciTokens
 public enum DSButtonIcon: Sendable {
     case leading(systemName: String)
     case trailing(systemName: String)
+
+    /// Creates a leading icon from a validated `DSSymbol`.
+    public static func leading(_ symbol: DSSymbol) -> DSButtonIcon {
+        .leading(systemName: symbol.systemName)
+    }
+
+    /// Creates a trailing icon from a validated `DSSymbol`.
+    public static func trailing(_ symbol: DSSymbol) -> DSButtonIcon {
+        .trailing(systemName: symbol.systemName)
+    }
 }
 
 // MARK: - DSButton
@@ -40,11 +50,21 @@ public enum DSButtonIcon: Sendable {
 ///
 /// ## Icons
 ///
-/// Add SF Symbol icons before or after the button text:
+/// Add SF Symbol icons before or after the button text. Prefer the typed
+/// `DSSymbol` API — it validates the symbol at construction time:
+///
+/// ```swift
+/// let plus = DSSymbol(systemName: "plus")!
+/// DSButton("Add Item", icon: .leading(plus)) { }
+///
+/// let arrow = DSSymbol(systemName: "arrow.right")!
+/// DSButton("Continue", icon: .trailing(arrow)) { }
+/// ```
+///
+/// The string-based API from v1.2.0 remains available:
 ///
 /// ```swift
 /// DSButton("Add Item", icon: .leading(systemName: "plus")) { }
-/// DSButton("Continue", icon: .trailing(systemName: "arrow.right")) { }
 /// ```
 ///
 /// ## States
@@ -234,18 +254,18 @@ public struct DSButton: View {
 
 #Preview("DSButton — Leading Icon") {
     VStack(spacing: 12) {
-        DSButton("Add Item", variant: .primary, icon: .leading(systemName: "plus")) {}
-        DSButton("Settings", variant: .secondary, icon: .leading(systemName: "gearshape")) {}
-        DSButton("Edit", variant: .outline, icon: .leading(systemName: "pencil")) {}
+        DSButton("Add Item", variant: .primary, icon: .leading(DSSymbol(systemName: "plus")!)) {}
+        DSButton("Settings", variant: .secondary, icon: .leading(DSSymbol(systemName: "gearshape")!)) {}
+        DSButton("Edit", variant: .outline, icon: .leading(DSSymbol(systemName: "pencil")!)) {}
     }
     .padding()
 }
 
 #Preview("DSButton — Trailing Icon") {
     VStack(spacing: 12) {
-        DSButton("Continue", variant: .primary, icon: .trailing(systemName: "arrow.right")) {}
-        DSButton("Download", variant: .secondary, icon: .trailing(systemName: "arrow.down.circle")) {}
-        DSButton("Share", variant: .outline, icon: .trailing(systemName: "square.and.arrow.up")) {}
+        DSButton("Continue", variant: .primary, icon: .trailing(DSSymbol(systemName: "arrow.right")!)) {}
+        DSButton("Download", variant: .secondary, icon: .trailing(DSSymbol(systemName: "arrow.down.circle")!)) {}
+        DSButton("Share", variant: .outline, icon: .trailing(DSSymbol(systemName: "square.and.arrow.up")!)) {}
     }
     .padding()
 }
