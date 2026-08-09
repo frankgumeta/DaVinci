@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-08-09
+
+> **Codex Forma**
+
 ### Added
 - `DSSymbol`, a failable runtime-validated SF Symbol reference without a closed catalog
 - Typed symbol overloads for buttons, segmented controls, remote-image placeholders, and text fields
