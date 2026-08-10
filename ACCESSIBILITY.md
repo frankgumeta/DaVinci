@@ -45,10 +45,12 @@ The following opaque pairs are calculated from sRGB values in automated tests.
 ### Feedback Colors
 
 Feedback and brand fills are not assumed to work with one fixed text color.
-`DSButton`, `DSBadge`, and `DSSegmentedControl` select the highest-contrast option
-from the theme's semantic foregrounds. Tests require at least 4.5:1 for badge and
-control text across default/alternate themes and both color schemes. Custom themes
-must run the same tests with their own palette.
+`DSButton`, filled `DSBadge`, and `DSSegmentedControl` select the highest-contrast
+option from the theme's semantic foregrounds. Subtle and outlined badges use the
+primary semantic text color over the surrounding surface while tone remains visible
+through tint and border. Tests require at least 4.5:1 for badge and control text
+across supported color schemes. Custom themes must run the same tests with their
+own palette.
 
 ## Component Accessibility Features
 

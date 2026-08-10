@@ -6,7 +6,7 @@ import DaVinciTokens
 /// A themed badge component for displaying counts or status labels.
 ///
 /// `DSBadge` provides a consistent badge interface that automatically adapts to
-/// your theme. It supports different variants and can display text, numbers, or a dot indicator.
+/// your theme. Tone communicates status while appearance controls visual emphasis.
 ///
 /// ## Basic Usage
 ///
@@ -15,20 +15,12 @@ import DaVinciTokens
 /// DSBadge("5")
 /// ```
 ///
-/// ## Variants
-///
-/// - **Brand**: Brand primary color background (default)
-/// - **Success**: Success color background
-/// - **Warning**: Warning color background
-/// - **Error**: Error color background
-/// - **Neutral**: Neutral/subtle background
+/// ## Tones and Appearances
 ///
 /// ```swift
-/// DSBadge("New", variant: .brand)
-/// DSBadge("Active", variant: .success)
-/// DSBadge("Pending", variant: .warning)
-/// DSBadge("Failed", variant: .error)
-/// DSBadge("Info", variant: .neutral)
+/// DSBadge("New", tone: .brand, appearance: .filled)
+/// DSBadge("Active", tone: .success, appearance: .subtle)
+/// DSBadge("Failed", tone: .error, appearance: .outlined)
 /// ```
 ///
 /// ## Sizes
@@ -42,25 +34,38 @@ import DaVinciTokens
 /// ## Dot Badge
 ///
 /// ```swift
-/// DSBadge(variant: .error) // Shows just a dot indicator
+/// DSBadge(tone: .error) // Shows just a dot indicator
 /// ```
 public struct DSBadge: View, Sendable {
     @Environment(\.dsTheme) private var theme
     @Environment(\.colorScheme) private var colorScheme
 
     private let text: String?
-    private let variant: Variant
+    private let tone: Tone
+    private let appearance: Appearance
     private let size: Size
     private let accessibilityLabel: String?
 
-    /// Visual variant of the badge.
-    public enum Variant: Sendable {
-        /// Brand primary color background.
+    /// Semantic color intent of the badge.
+    public enum Tone: CaseIterable, Hashable, Sendable {
         case brand
         case success
         case warning
         case error
         case neutral
+    }
+
+    /// Backward-compatible name for the semantic badge tone.
+    public typealias Variant = Tone
+
+    /// Visual emphasis of the badge.
+    public enum Appearance: CaseIterable, Hashable, Sendable {
+        /// Solid semantic fill with contrast-selected foreground.
+        case filled
+        /// Low-emphasis tinted fill with a subtle border.
+        case subtle
+        /// Transparent fill with a semantic outline.
+        case outlined
     }
 
     /// Semantic size of the badge.
@@ -102,26 +107,52 @@ public struct DSBadge: View, Sendable {
         }
     }
 
-    /// Creates a themed badge.
+    /// Creates a themed badge with independently configurable tone and appearance.
     ///
     /// - Parameters:
     ///   - text: Text to display in the badge (nil for dot badge)
-    ///   - variant: Visual variant of the badge
+    ///   - tone: Semantic color intent
+    ///   - appearance: Visual emphasis
     ///   - size: Semantic size of the badge
     ///   - accessibilityLabel: Optional override for the accessibility label
     public init(
         _ text: String? = nil,
-        variant: Variant = .brand,
+        tone: Tone = .brand,
+        appearance: Appearance = .filled,
         size: Size = .medium,
         accessibilityLabel: String? = nil
     ) {
         self.text = text
-        self.variant = variant
+        self.tone = tone
+        self.appearance = appearance
         self.size = size
         self.accessibilityLabel = accessibilityLabel
     }
 
+    /// Creates a filled badge using the API published before DaVinci 1.4.
+    public init(
+        _ text: String? = nil,
+        variant: Variant,
+        size: Size = .medium,
+        accessibilityLabel: String? = nil
+    ) {
+        self.init(
+            text,
+            tone: variant,
+            appearance: .filled,
+            size: size,
+            accessibilityLabel: accessibilityLabel
+        )
+    }
+
     public var body: some View {
+        let style = DSBadgeStyleResolver.resolve(
+            tone: tone,
+            appearance: appearance,
+            theme: theme,
+            colorScheme: colorScheme
+        )
+
         Group {
             if let text {
                 let textStyle = theme.typography[keyPath: size.textStyle]
@@ -129,15 +160,23 @@ public struct DSBadge: View, Sendable {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
                     .dsTextStyle(textStyle, family: theme.typography.family)
-                    .foregroundStyle(foregroundColor)
+                    .foregroundStyle(style.foregroundColor)
                     .padding(.horizontal, size.horizontalPadding)
                     .padding(.vertical, size.verticalPadding)
-                    .background(backgroundColor)
+                    .background(style.backgroundColor)
                     .clipShape(Capsule())
+                    .overlay {
+                        Capsule()
+                            .strokeBorder(style.borderColor, lineWidth: style.borderWidth)
+                    }
             } else {
                 Circle()
-                    .fill(backgroundColor)
+                    .fill(style.backgroundColor)
                     .frame(width: size.dotSize, height: size.dotSize)
+                    .overlay {
+                        Circle()
+                            .strokeBorder(style.borderColor, lineWidth: style.borderWidth)
+                    }
             }
         }
         .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
@@ -157,22 +196,8 @@ public struct DSBadge: View, Sendable {
         return "Notification indicator"
     }
 
-    internal var backgroundColor: Color {
-        Self.backgroundColor(for: variant, theme: theme)
-    }
-
     internal static func backgroundColor(for variant: Variant, theme: DSTheme) -> Color {
-        switch variant {
-        case .brand:   return theme.colors.brand.primary
-        case .success: return theme.colors.feedback.success
-        case .warning: return theme.colors.feedback.warning
-        case .error:   return theme.colors.feedback.error
-        case .neutral: return theme.colors.semantic.bgTertiary
-        }
-    }
-
-    internal var foregroundColor: Color {
-        Self.foregroundColor(for: variant, theme: theme, colorScheme: colorScheme)
+        DSBadgeStyleResolver.filledBackgroundColor(for: variant, theme: theme)
     }
 
     @MainActor
@@ -181,15 +206,12 @@ public struct DSBadge: View, Sendable {
         theme: DSTheme,
         colorScheme: ColorScheme
     ) -> Color {
-        DSColorContrast.preferredForeground(
-            on: backgroundColor(for: variant, theme: theme),
-            candidates: [
-                theme.colors.semantic.textPrimary,
-                theme.colors.semantic.textOnBrand,
-                theme.colors.semantic.textInverse
-            ],
+        DSBadgeStyleResolver.resolve(
+            tone: variant,
+            appearance: .filled,
+            theme: theme,
             colorScheme: colorScheme
-        )
+        ).foregroundColor
     }
 }
 

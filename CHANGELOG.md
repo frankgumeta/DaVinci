@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `DSBadge.Tone` and independent filled, subtle, and outlined badge appearances
+- `OpacityTokens.subtleFill` and `subtleStroke` for consistent low-emphasis tinted surfaces
+
+### Changed
+- The pre-1.4 `DSBadge.Variant` and `variant:` API now forward compatibly to a filled semantic tone
+
 ## [1.3.0] - 2026-08-09
 
 > **Codex Forma**

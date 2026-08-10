@@ -256,6 +256,8 @@ struct OpacityTokensTests {
         #expect(OpacityTokens.disabled == 0.4)
         #expect(OpacityTokens.pressed == 0.85)
         #expect(OpacityTokens.scrim == 0.35)
+        #expect(OpacityTokens.subtleFill == 0.14)
+        #expect(OpacityTokens.subtleStroke == 0.4)
         #expect(OpacityTokens.shimmerHighlight == 0.55)
         #expect(OpacityTokens.shimmerStatic == 0.30)
     }
@@ -372,6 +374,8 @@ struct StrokeTokensTests {
     #expect(OpacityTokens.disabled >= 0 && OpacityTokens.disabled <= 1)
     #expect(OpacityTokens.pressed >= 0 && OpacityTokens.pressed <= 1)
     #expect(OpacityTokens.scrim >= 0 && OpacityTokens.scrim <= 1)
+    #expect(OpacityTokens.subtleFill >= 0 && OpacityTokens.subtleFill <= 1)
+    #expect(OpacityTokens.subtleStroke >= 0 && OpacityTokens.subtleStroke <= 1)
     #expect(OpacityTokens.shimmerHighlight >= 0 && OpacityTokens.shimmerHighlight <= 1)
     #expect(OpacityTokens.shimmerStatic >= 0 && OpacityTokens.shimmerStatic <= 1)
 }
@@ -380,6 +384,8 @@ struct StrokeTokensTests {
     #expect(OpacityTokens.disabled == 0.4)
     #expect(OpacityTokens.pressed == 0.85)
     #expect(OpacityTokens.scrim == 0.35)
+    #expect(OpacityTokens.subtleFill == 0.14)
+    #expect(OpacityTokens.subtleStroke == 0.4)
     #expect(OpacityTokens.shimmerHighlight == 0.55)
     #expect(OpacityTokens.shimmerStatic == 0.30)
 }

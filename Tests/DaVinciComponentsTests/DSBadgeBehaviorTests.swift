@@ -60,7 +60,27 @@ struct DSBadgeBehaviorTests {
         #expect(styles.count == 3)
     }
 
-    // MARK: - Variant Background Colors
+    // MARK: - Tone and Appearance
+
+    @Test func variantRemainsAnAliasForTone() {
+        let legacy: DSBadge.Variant = .success
+        let canonical: DSBadge.Tone = legacy
+        #expect(canonical == .success)
+    }
+
+    @Test func allTonesAndAppearancesAreAvailable() {
+        #expect(DSBadge.Tone.allCases.count == 5)
+        #expect(DSBadge.Appearance.allCases == [.filled, .subtle, .outlined])
+    }
+
+    @Test func legacyAndCanonicalInitializersRemainAvailable() {
+        let legacy = DSBadge("Legacy", variant: .warning)
+        let canonical = DSBadge("Canonical", tone: .warning, appearance: .subtle)
+        #expect(type(of: legacy) == DSBadge.self)
+        #expect(type(of: canonical) == DSBadge.self)
+    }
+
+    // MARK: - Filled Background Colors
 
     @Test func brandVariantUsesThemeBrandPrimary() {
         let theme = DSTheme.defaultTheme
@@ -92,25 +112,80 @@ struct DSBadgeBehaviorTests {
         #expect(color == theme.colors.semantic.bgTertiary)
     }
 
-    // MARK: - Variant Foreground Colors
+    @Test func subtleAppearanceUsesTintedBackgroundAndHairlineBorder() {
+        let theme = DSTheme.defaultTheme.resolved(for: .light)
 
-    @Test func everyVariantMeetsNormalTextContrastInLightMode() throws {
-        let theme = DSTheme.defaultTheme
-        let variants: [DSBadge.Variant] = [.brand, .success, .warning, .error, .neutral]
-
-        for variant in variants {
-            let background = DSBadge.backgroundColor(for: variant, theme: theme)
-            let foreground = DSBadge.foregroundColor(
-                for: variant,
+        for tone in DSBadge.Tone.allCases {
+            let style = DSBadgeStyleResolver.resolve(
+                tone: tone,
+                appearance: .subtle,
                 theme: theme,
                 colorScheme: .light
             )
-            let ratio = DSColorContrast.ratio(
-                foreground: foreground,
-                background: background,
+            #expect(style.backgroundColor == DSBadgeStyleResolver.toneColor(for: tone, theme: theme)
+                .opacity(OpacityTokens.subtleFill))
+            #expect(style.foregroundColor == theme.colors.semantic.textPrimary)
+            #expect(style.borderWidth == StrokeTokens.hairline)
+        }
+    }
+
+    @Test func outlinedAppearanceUsesTransparentFillAndSemanticBorder() {
+        let theme = DSTheme.defaultTheme.resolved(for: .light)
+
+        for tone in DSBadge.Tone.allCases {
+            let style = DSBadgeStyleResolver.resolve(
+                tone: tone,
+                appearance: .outlined,
+                theme: theme,
                 colorScheme: .light
             )
-            #expect(try #require(ratio) >= 4.5)
+            #expect(style.backgroundColor == Color.clear)
+            #expect(style.foregroundColor == theme.colors.semantic.textPrimary)
+            #expect(style.borderColor == DSBadgeStyleResolver.toneColor(for: tone, theme: theme))
+            #expect(style.borderWidth == StrokeTokens.hairline)
+        }
+    }
+
+    @Test func filledAppearancePreservesLegacyColorResolution() {
+        let theme = DSTheme.defaultTheme.resolved(for: .light)
+
+        for tone in DSBadge.Tone.allCases {
+            let style = DSBadgeStyleResolver.resolve(
+                tone: tone,
+                appearance: .filled,
+                theme: theme,
+                colorScheme: .light
+            )
+            #expect(style.backgroundColor == DSBadge.backgroundColor(for: tone, theme: theme))
+            #expect(style.borderWidth == 0)
+        }
+    }
+
+    // MARK: - Variant Foreground Colors
+
+    @Test func everyToneAndAppearanceMeetsNormalTextContrast() throws {
+        for colorScheme in [ColorScheme.light, .dark] {
+            let theme = DSTheme.defaultTheme.resolved(for: colorScheme)
+
+            for tone in DSBadge.Tone.allCases {
+                for appearance in DSBadge.Appearance.allCases {
+                    let style = DSBadgeStyleResolver.resolve(
+                        tone: tone,
+                        appearance: appearance,
+                        theme: theme,
+                        colorScheme: colorScheme
+                    )
+                    let effectiveBackground = appearance == .filled
+                        ? style.backgroundColor
+                        : theme.colors.semantic.surfacePrimary
+                    let ratio = DSColorContrast.ratio(
+                        foreground: style.foregroundColor,
+                        background: effectiveBackground,
+                        colorScheme: colorScheme
+                    )
+                    #expect(try #require(ratio) >= 4.5)
+                }
+            }
         }
     }
 

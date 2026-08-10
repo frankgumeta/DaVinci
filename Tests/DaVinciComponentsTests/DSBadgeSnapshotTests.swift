@@ -159,4 +159,51 @@ struct DSBadgeSnapshotTests {
             record: recordMode
         )
     }
+
+    // MARK: - Appearance Matrix
+
+    @Test func appearanceMatrix_light() throws {
+        try SnapshotTester.assertSnapshot(
+            DSBadgeAppearanceMatrix(theme: .defaultTheme.resolved(for: .light)),
+            named: "badge-appearance-matrix",
+            size: CGSize(width: 330, height: 70),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    @Test func appearanceMatrix_dark() throws {
+        try SnapshotTester.assertSnapshot(
+            DSBadgeAppearanceMatrix(theme: .defaultTheme.resolved(for: .dark)),
+            named: "badge-appearance-matrix",
+            size: CGSize(width: 330, height: 70),
+            colorScheme: .dark,
+            record: recordMode
+        )
+    }
+
+    @Test func outlinedDot_light() throws {
+        let badge = DSBadge(tone: .error, appearance: .outlined)
+        try SnapshotTester.assertSnapshot(
+            badge,
+            named: "badge-dot-outlined",
+            size: CGSize(width: 40, height: 40),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+}
+
+private struct DSBadgeAppearanceMatrix: View {
+    let theme: DSTheme
+
+    var body: some View {
+        HStack(spacing: SpacingTokens.space3) {
+            DSBadge("Filled", tone: .brand, appearance: .filled)
+            DSBadge("Subtle", tone: .success, appearance: .subtle)
+            DSBadge("Outlined", tone: .error, appearance: .outlined)
+        }
+        .padding(SpacingTokens.space2)
+        .environment(\.dsTheme, theme)
+    }
 }

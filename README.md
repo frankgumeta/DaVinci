@@ -250,7 +250,7 @@ The foundational layer of the design system. Contains **immutable, value-driven,
 | `DSRadius` | Corner radius scale (`extraSmall` through `large`) |
 | `DSElevation` | Shadow parameters (`none`, `small`, `medium`) |
 | `DSMotion` | Animation duration and curve tokens (`fast`, `normal`, `slow`) |
-| `DSOpacity` | Interaction opacity tokens (`disabled`, `pressed`, `scrim`) |
+| `DSOpacity` | Interaction and surface opacity tokens (`disabled`, `pressed`, `scrim`, `subtleFill`, `subtleStroke`) |
 | `DSControlHeight` | Control height scale (`small`, `medium`, `large`) |
 | `DSStroke` | Stroke width tokens |
 | `DSTheme` | Root theme container with SwiftUI `EnvironmentValues` integration |
@@ -271,7 +271,7 @@ Reusable SwiftUI components that consume tokens from `DaVinciTokens`.
 | `DSSwitch` | Themed toggle with label, disabled state, and accessibility value |
 | `DSSegmentedControl` | Text or icon segments with animated selection |
 | `DSProgressBar` | Determinate and indeterminate progress in three sizes |
-| `DSBadge` | Text and dot badges with semantic variants and sizes |
+| `DSBadge` | Text and dot badges with independent semantic tones, visual appearances, and sizes |
 | `DSDivider` | Horizontal or vertical semantic divider |
 | `DSRemoteImage` | Validated remote loading, deduplication, decoding, and bounded cache |
 | `DSSkeletonBlock`, `DSSkeletonRow`, `DSSkeletonCard`, `DSSkeletonList` | Loading placeholders with optional shimmer |

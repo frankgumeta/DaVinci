@@ -139,9 +139,16 @@ DSSkeletonList(count: 5)
 DSSwitch(isOn: $notificationsEnabled, label: "Notifications")
 DSSegmentedControl(options: ["Day", "Week"], selectedIndex: $period)
 DSProgressBar(value: uploadProgress, label: "Uploading")
-DSBadge("New", variant: .brand)
+DSBadge("New", tone: .brand, appearance: .filled)
+DSBadge("Active", tone: .success, appearance: .subtle)
+DSBadge("Failed", tone: .error, appearance: .outlined)
 DSDivider()
 ```
+
+`DSBadge.Tone` communicates status (`brand`, `success`, `warning`, `error`,
+or `neutral`) while `DSBadge.Appearance` controls emphasis (`filled`, `subtle`,
+or `outlined`). The pre-1.4 `variant:` initializer remains available and maps to
+the corresponding tone with the filled appearance.
 
 ### Remote Media
 

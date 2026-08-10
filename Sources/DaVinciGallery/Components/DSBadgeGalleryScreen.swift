@@ -11,13 +11,29 @@ struct DSBadgeGalleryScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: SpacingTokens.space6) {
 
-                GallerySection(title: "Variants") {
+                GallerySection(title: "Tones — Filled") {
                     HStack(spacing: SpacingTokens.space3) {
-                        DSBadge("Brand", variant: .brand)
-                        DSBadge("Success", variant: .success)
-                        DSBadge("Warning", variant: .warning)
-                        DSBadge("Error", variant: .error)
-                        DSBadge("Neutral", variant: .neutral)
+                        DSBadge("Brand", tone: .brand)
+                        DSBadge("Success", tone: .success)
+                        DSBadge("Warning", tone: .warning)
+                        DSBadge("Error", tone: .error)
+                        DSBadge("Neutral", tone: .neutral)
+                    }
+                }
+
+                GallerySection(title: "Appearances") {
+                    appearanceRow(.filled)
+                    appearanceRow(.subtle)
+                    appearanceRow(.outlined)
+                }
+
+                GallerySection(title: "Appearance Dots") {
+                    HStack(spacing: SpacingTokens.space4) {
+                        DSBadge(tone: .brand, appearance: .filled)
+                        DSBadge(tone: .success, appearance: .subtle)
+                        DSBadge(tone: .warning, appearance: .subtle)
+                        DSBadge(tone: .error, appearance: .outlined)
+                        DSBadge(tone: .neutral, appearance: .outlined)
                     }
                 }
 
@@ -100,6 +116,16 @@ struct DSBadgeGalleryScreen: View {
         }
         .background(theme.colors.semantic.bgPrimary)
         .navigationTitle("Badge")
+    }
+
+    private func appearanceRow(_ appearance: DSBadge.Appearance) -> some View {
+        HStack(spacing: SpacingTokens.space2) {
+            DSBadge("Brand", tone: .brand, appearance: appearance)
+            DSBadge("Success", tone: .success, appearance: appearance)
+            DSBadge("Warning", tone: .warning, appearance: appearance)
+            DSBadge("Error", tone: .error, appearance: appearance)
+            DSBadge("Neutral", tone: .neutral, appearance: appearance)
+        }
     }
 }
 
