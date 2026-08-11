@@ -266,7 +266,7 @@ Reusable SwiftUI components that consume tokens from `DaVinciTokens`.
 | `DSButton` | Themed button with primary, secondary, outline, and ghost appearances, icons, loading, and disabled states |
 | `DSIconButton` | Icon-only button with aligned appearances, size, loading, and disabled support |
 | `DSText` | Semantic text component mapping roles (`.display`, `.title`, `.headline`, `.body`, `.callout`, `.caption`, `.overline`) to typography tokens |
-| `DSCard` | Container view with surface styling, padding, radius, and elevation shadow |
+| `DSCard` | Compact, standard, prominent, and outlined surface containers |
 | `DSTextField` | Themed text field with label and prompt |
 | `DSSwitch` | Themed toggle with label, disabled state, and accessibility value |
 | `DSSegmentedControl` | Text or icon segments with animated selection |

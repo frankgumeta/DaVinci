@@ -11,12 +11,14 @@ public enum DSCardStyle: Sendable {
     case standard
     /// Prominent card: generous padding, large radius, medium elevation.
     case prominent
+    /// Outlined card: standard density, no elevation, semantic border.
+    case outlined
 
     /// Inner content padding.
     public var padding: CGFloat {
         switch self {
         case .compact:   SpacingTokens.space3
-        case .standard:  SpacingTokens.space4
+        case .standard, .outlined: SpacingTokens.space4
         case .prominent: SpacingTokens.space5
         }
     }
@@ -25,8 +27,7 @@ public enum DSCardStyle: Sendable {
     public var cornerRadius: CGFloat {
         switch self {
         case .compact:   RadiusTokens.medium
-        case .standard:  RadiusTokens.large
-        case .prominent: RadiusTokens.large
+        case .standard, .prominent, .outlined: RadiusTokens.large
         }
     }
 
@@ -36,6 +37,15 @@ public enum DSCardStyle: Sendable {
         case .compact:   ElevationTokens.none
         case .standard:  ElevationTokens.small
         case .prominent: ElevationTokens.medium
+        case .outlined:  ElevationTokens.none
+        }
+    }
+
+    /// Semantic outline width. Non-outlined presets do not render a border.
+    public var borderWidth: CGFloat {
+        switch self {
+        case .outlined: StrokeTokens.hairline
+        case .compact, .standard, .prominent: 0
         }
     }
 }

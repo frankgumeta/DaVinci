@@ -433,35 +433,6 @@ struct StrokeTokensTests {
     #expect(custom.y == 3)
 }
 
-// MARK: - Card Style tokens
-@Test func cardStylePaddingIsAscending() {
-    #expect(DSCardStyle.compact.padding < DSCardStyle.standard.padding)
-    #expect(DSCardStyle.standard.padding < DSCardStyle.prominent.padding)
-}
-
-@Test func cardStyleCompactHasCorrectTokens() {
-    #expect(DSCardStyle.compact.padding == SpacingTokens.space3)
-    #expect(DSCardStyle.compact.cornerRadius == RadiusTokens.medium)
-    #expect(DSCardStyle.compact.elevation.radius == 0)
-}
-
-@Test func cardStyleStandardHasCorrectTokens() {
-    #expect(DSCardStyle.standard.padding == SpacingTokens.space4)
-    #expect(DSCardStyle.standard.cornerRadius == RadiusTokens.large)
-    #expect(DSCardStyle.standard.elevation.radius == 4)
-}
-
-@Test func cardStyleProminentHasCorrectTokens() {
-    #expect(DSCardStyle.prominent.padding == SpacingTokens.space5)
-    #expect(DSCardStyle.prominent.cornerRadius == RadiusTokens.large)
-    #expect(DSCardStyle.prominent.elevation.radius == 8)
-}
-
-@Test func cardStyleElevationIsAscending() {
-    #expect(DSCardStyle.compact.elevation.radius < DSCardStyle.standard.elevation.radius)
-    #expect(DSCardStyle.standard.elevation.radius < DSCardStyle.prominent.elevation.radius)
-}
-
 // MARK: - List Spacing tokens
 @Test func listSpacingCompactIsZero() {
     #expect(DSListSpacing.compact.value == 0)

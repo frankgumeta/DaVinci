@@ -24,6 +24,18 @@ struct DSCardGalleryScreen: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
+                    DSCard(style: .outlined) {
+                        VStack(alignment: .leading, spacing: SpacingTokens.space2) {
+                            DSText("Outlined", role: .headline)
+                            DSText(
+                                "Standard density with a semantic border instead of elevation.",
+                                role: .body,
+                                color: theme.colors.semantic.textSecondary
+                            )
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
                     DSCard(style: .compact) {
                         HStack(spacing: SpacingTokens.space3) {
                             Circle()

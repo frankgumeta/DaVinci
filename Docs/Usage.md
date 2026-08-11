@@ -124,6 +124,11 @@ DSCard(style: .standard) {
     }
 }
 
+// Standard density without elevation
+DSCard(style: .outlined) {
+    DSText("Account summary", role: .headline)
+}
+
 // Loading state
 DSSkeletonList(count: 5)
 ```

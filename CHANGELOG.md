@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `DSBadge.Tone` and independent filled, subtle, and outlined badge appearances
 - `OpacityTokens.subtleFill` and `subtleStroke` for consistent low-emphasis tinted surfaces
 - Borderless ghost appearances for `DSButton` and `DSIconButton`
+- Outlined `DSCardStyle` with standard density, no elevation, and a semantic border
 
 ### Changed
 - The pre-1.4 `DSBadge.Variant` and `variant:` API now forward compatibly to a filled semantic tone

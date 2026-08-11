@@ -235,6 +235,13 @@ struct DSCardTests {
         #expect(type(of: card) == DSCard<Text>.self)
     }
 
+    @Test @MainActor func cardWithOutlinedStyle() {
+        let card = DSCard(style: .outlined) {
+            Text("Content")
+        }
+        #expect(type(of: card) == DSCard<Text>.self)
+    }
+
     @Test @MainActor func cardWithComplexContent() {
         let card = DSCard {
             VStack {
@@ -272,7 +279,7 @@ struct DSCardTests {
     }
 
     @Test @MainActor func allCardStylesCreate() {
-        let styles: [DSCardStyle] = [.compact, .standard, .prominent]
+        let styles: [DSCardStyle] = [.compact, .standard, .prominent, .outlined]
 
         for style in styles {
             let card = DSCard(style: style) {

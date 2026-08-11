@@ -21,16 +21,18 @@ import DaVinciTokens
 ///
 /// ## Styles
 ///
-/// Three preset styles are available via `DSCardStyle`:
+/// Four preset styles are available via `DSCardStyle`:
 ///
 /// - **Compact**: Tight padding (12pt), no shadow, small radius (10pt)
 /// - **Standard**: Default padding (16pt), small shadow, medium radius (14pt)
 /// - **Prominent**: Generous padding (20pt), medium shadow, large radius (20pt)
+/// - **Outlined**: Standard padding, no shadow, semantic border
 ///
 /// ```swift
 /// DSCard(style: .compact) { /* content */ }
 /// DSCard(style: .standard) { /* content */ }  // default
 /// DSCard(style: .prominent) { /* content */ }
+/// DSCard(style: .outlined) { /* content */ }
 /// ```
 ///
 /// ## Topics
@@ -61,14 +63,31 @@ public struct DSCard<Content: View>: View {
         self.content = content()
     }
 
+    @ViewBuilder
     public var body: some View {
         let elevation = style.elevation
-        content
-            .padding(style.padding)
-            .background(theme.colors.semantic.surfacePrimary)
-            .clipShape(RoundedRectangle(cornerRadius: style.cornerRadius))
+
+        switch style {
+        case .compact, .standard, .prominent:
+            content
+                .padding(style.padding)
+                .background(theme.colors.semantic.surfacePrimary)
+                .clipShape(RoundedRectangle(cornerRadius: style.cornerRadius))
+                .shadow(color: elevation.color, radius: elevation.radius, x: elevation.x, y: elevation.y)
+                .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
+
+        case .outlined:
+            content
+                .padding(style.padding)
+                .background(theme.colors.semantic.surfacePrimary)
+                .clipShape(RoundedRectangle(cornerRadius: style.cornerRadius))
+                .overlay {
+                    RoundedRectangle(cornerRadius: style.cornerRadius)
+                        .strokeBorder(theme.colors.semantic.stroke, lineWidth: style.borderWidth)
+                }
             .shadow(color: elevation.color, radius: elevation.radius, x: elevation.x, y: elevation.y)
             .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
+        }
     }
 
     internal var accessibilityDescriptor: DSAccessibilityDescriptor {
@@ -106,6 +125,13 @@ public struct DSCard<Content: View>: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
+        DSCard(style: .outlined) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Outlined").font(.headline)
+                Text("Standard padding, semantic border.").font(.body)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
     .padding()
 }
@@ -130,6 +156,13 @@ public struct DSCard<Content: View>: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Prominent").font(.headline)
                 Text("Generous padding, medium shadow.").font(.body)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        DSCard(style: .outlined) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Outlined").font(.headline)
+                Text("Standard padding, semantic border.").font(.body)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
