@@ -30,6 +30,51 @@ struct DSProgressBarGalleryScreen: View {
                     DSProgressBar(value: 0.6, size: .large, label: "Large (8pt)")
                 }
 
+                GallerySection(title: "Stepped") {
+                    DSProgressBar(
+                        value: 0.625,
+                        size: .large,
+                        label: "2½ of 4 steps",
+                        style: .stepped(count: 4)
+                    )
+                    DSProgressBar(
+                        value: 0.72,
+                        size: .medium,
+                        label: "Seven-step flow",
+                        style: .stepped(count: 7)
+                    )
+                }
+
+                GallerySection(title: "Striped") {
+                    DSProgressBar(
+                        value: 0.65,
+                        size: .large,
+                        label: "Uploading — 65%",
+                        style: .striped
+                    )
+                    DSProgressBar(
+                        size: .large,
+                        label: "Processing…",
+                        isIndeterminate: true,
+                        style: .striped
+                    )
+                }
+
+                GallerySection(title: "Shimmer") {
+                    DSProgressBar(
+                        value: 0.65,
+                        size: .large,
+                        label: "Downloading — 65%",
+                        style: .shimmer
+                    )
+                    DSProgressBar(
+                        size: .large,
+                        label: "Preparing…",
+                        isIndeterminate: true,
+                        style: .shimmer
+                    )
+                }
+
                 GallerySection(title: "Edge Cases") {
                     DSText("No label", role: .caption, color: theme.colors.semantic.textSecondary)
                     DSProgressBar(value: 0.4)

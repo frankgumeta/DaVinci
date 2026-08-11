@@ -149,11 +149,22 @@ DSSkeletonList(count: 5)
 DSSwitch(isOn: $notificationsEnabled, label: "Notifications")
 DSSegmentedControl(options: ["Day", "Week"], selectedIndex: $period)
 DSProgressBar(value: uploadProgress, label: "Uploading")
+DSProgressBar(value: onboardingProgress, style: .stepped(count: 5))
+DSProgressBar(value: uploadProgress, size: .large, style: .striped)
+DSProgressBar(value: downloadProgress, size: .large, style: .shimmer)
 DSBadge("New", tone: .brand, appearance: .filled)
 DSBadge("Active", tone: .success, appearance: .subtle)
 DSBadge("Failed", tone: .error, appearance: .outlined)
 DSDivider()
 ```
+
+`DSProgressBar.Style.continuous` preserves the original presentation.
+`.stepped(count:)` divides determinate progress into segments and can partially
+fill the active segment; nonpositive counts normalize to one. `.striped` uses
+moving diagonal bands clipped to determinate progress, or fills the complete
+track while indeterminate. With Reduce Motion enabled, the bands remain static.
+`.shimmer` keeps the solid fill and adds one sweeping reflective highlight;
+it also becomes static when Reduce Motion is enabled.
 
 `DSBadge.Tone` communicates status (`brand`, `success`, `warning`, `error`,
 or `neutral`) while `DSBadge.Appearance` controls emphasis (`filled`, `subtle`,

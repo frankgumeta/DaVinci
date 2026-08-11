@@ -273,7 +273,7 @@ Reusable SwiftUI components that consume tokens from `DaVinciTokens`.
 | `DSTextField` | Themed text field with label and prompt |
 | `DSSwitch` | Themed toggle with label, disabled state, and accessibility value |
 | `DSSegmentedControl` | Text or icon segments with animated selection |
-| `DSProgressBar` | Determinate and indeterminate progress in three sizes |
+| `DSProgressBar` | Continuous, stepped, striped, and shimmer progress in three sizes |
 | `DSBadge` | Text and dot badges with independent semantic tones, visual appearances, and sizes |
 | `DSDivider` | Horizontal or vertical semantic divider |
 | `DSRemoteImage` | Validated remote loading, deduplication, decoding, and bounded cache |
@@ -364,9 +364,9 @@ excluded from the metric. With Xcode 26.6, the current reproducible line coverag
 
 | Product target | Covered lines | Executable lines | Coverage | CI policy |
 |---|---:|---:|---:|---|
-| `DaVinciTokens` | 232 | 232 | 100.00% | Minimum 100% |
-| `DaVinciComponents` | 2459 | 2577 | 95.42% | Minimum 95% |
-| `DaVinciGallery` | 0 | 4982 | 0.00% | Reported, not currently gated |
+| `DaVinciTokens` | 238 | 238 | 100.00% | Minimum 100% |
+| `DaVinciComponents` | 2778 | 2907 | 95.56% | Minimum 95% |
+| `DaVinciGallery` | 0 | 5421 | 0.00% | Reported, not currently gated |
 
 There is no aggregate “overall” claim: including test targets would inflate it,
 while including the currently unexercised gallery would conceal the actual gap.

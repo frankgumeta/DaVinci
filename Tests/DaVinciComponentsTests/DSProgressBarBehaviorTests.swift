@@ -155,4 +155,47 @@ struct DSProgressBarBehaviorTests {
         #expect(bar.value == 0.75)
         #expect(bar.resolvedAccessibilityValue == "Loading")
     }
+
+    // MARK: - Styles
+
+    @Test @MainActor func continuousIsTheDefaultStyle() {
+        #expect(DSProgressBar(value: 0.5).style == .continuous)
+    }
+
+    @Test @MainActor func stylesAreStored() {
+        #expect(DSProgressBar(value: 0.5, style: .stepped(count: 5)).style == .stepped(count: 5))
+        #expect(DSProgressBar(value: 0.5, style: .striped).style == .striped)
+        #expect(DSProgressBar(value: 0.5, style: .shimmer).style == .shimmer)
+    }
+
+    @Test @MainActor func invalidStepCountsNormalizeToOne() {
+        #expect(DSProgressBar(style: .stepped(count: 0)).style == .stepped(count: 1))
+        #expect(DSProgressBar(style: .stepped(count: -4)).style == .stepped(count: 1))
+    }
+
+    @Test func steppedProgressFillsCompletedAndPartialSegments() {
+        #expect(SteppedProgressBar.segmentProgress(value: 0.625, count: 4, index: 0) == 1)
+        #expect(SteppedProgressBar.segmentProgress(value: 0.625, count: 4, index: 1) == 1)
+        #expect(SteppedProgressBar.segmentProgress(value: 0.625, count: 4, index: 2) == 0.5)
+        #expect(SteppedProgressBar.segmentProgress(value: 0.625, count: 4, index: 3) == 0)
+    }
+
+    @Test func steppedProgressNormalizesInputs() {
+        #expect(SteppedProgressBar.segmentProgress(value: -1, count: 0, index: 0) == 0)
+        #expect(SteppedProgressBar.segmentProgress(value: 2, count: 0, index: 0) == 1)
+    }
+
+    @Test @MainActor func stylesPreserveAccessibilityValues() {
+        let stepped = DSProgressBar(value: 0.42, style: .stepped(count: 5))
+        let striped = DSProgressBar(value: 0.42, style: .striped)
+        let shimmer = DSProgressBar(value: 0.42, style: .shimmer)
+        #expect(stepped.resolvedAccessibilityValue == "42%")
+        #expect(striped.resolvedAccessibilityValue == "42%")
+        #expect(shimmer.resolvedAccessibilityValue == "42%")
+    }
+
+    @Test func stripedAnimationRespectsReduceMotion() {
+        #expect(StripedProgressBar.shouldAnimate(reduceMotion: false))
+        #expect(!StripedProgressBar.shouldAnimate(reduceMotion: true))
+    }
 }
