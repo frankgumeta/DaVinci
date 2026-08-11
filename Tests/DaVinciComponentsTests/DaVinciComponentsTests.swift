@@ -9,11 +9,19 @@ import SwiftUI
 struct DSButtonTests {
 
     @Test @MainActor func allVariantsCreate() {
-        let variants: [DSButton.Variant] = [.primary, .secondary, .outline]
+        let variants: [DSButton.Variant] = [.primary, .secondary, .outline, .ghost]
         for variant in variants {
             let button = DSButton("Test", variant: variant) {}
             #expect(type(of: button) == DSButton.self)
         }
+    }
+
+    @Test @MainActor func appearanceIsTheCanonicalVariantName() {
+        let legacy: DSButton.Variant = .outline
+        let canonical: DSButton.Appearance = legacy
+        let button = DSButton("Ghost", appearance: .ghost) {}
+        #expect(canonical == .outline)
+        #expect(type(of: button) == DSButton.self)
     }
 
     @Test @MainActor func buttonWithLeadingIcon() {
@@ -55,7 +63,7 @@ struct DSButtonTests {
     }
 
     @Test @MainActor func allVariantsWithAllStates() {
-        let variants: [DSButton.Variant] = [.primary, .secondary, .outline]
+        let variants: [DSButton.Variant] = [.primary, .secondary, .outline, .ghost]
         let states: [(loading: Bool, disabled: Bool)] = [
             (false, false),
             (true, false),
@@ -83,7 +91,7 @@ struct DSButtonTests {
 struct DSIconButtonTests {
 
     @Test @MainActor func allVariantsCreate() {
-        let variants: [DSIconButton.Variant] = [.primary, .secondary, .outline, .accent]
+        let variants: [DSIconButton.Variant] = [.primary, .secondary, .outline, .accent, .ghost]
         for variant in variants {
             let button = DSIconButton(
                 systemName: "gear",
@@ -92,6 +100,18 @@ struct DSIconButtonTests {
             ) {}
             #expect(type(of: button) == DSIconButton.self)
         }
+    }
+
+    @Test @MainActor func appearanceIsTheCanonicalIconVariantName() {
+        let legacy: DSIconButton.Variant = .accent
+        let canonical: DSIconButton.Appearance = legacy
+        let button = DSIconButton(
+            systemName: "ellipsis",
+            titleForAccessibility: "More",
+            appearance: .ghost
+        ) {}
+        #expect(canonical == .accent)
+        #expect(type(of: button) == DSIconButton.self)
     }
 
     @Test @MainActor func allSizesCreate() {
@@ -125,7 +145,7 @@ struct DSIconButtonTests {
     }
 
     @Test @MainActor func allCombinationsCreate() {
-        let variants: [DSIconButton.Variant] = [.primary, .secondary, .outline, .accent]
+        let variants: [DSIconButton.Variant] = [.primary, .secondary, .outline, .accent, .ghost]
         let sizes: [DSIconButton.Size] = [.small, .medium, .large]
 
         for variant in variants {

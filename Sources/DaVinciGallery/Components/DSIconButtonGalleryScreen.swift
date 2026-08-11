@@ -11,11 +11,13 @@ struct DSIconButtonGalleryScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: SpacingTokens.space6) {
 
-                GallerySection(title: "Variants") {
+                GallerySection(title: "Appearances") {
                     HStack(spacing: SpacingTokens.space3) {
-                        DSIconButton(symbol: DSSymbol(systemName: "plus")!, titleForAccessibility: "Add", variant: .primary) {}
-                        DSIconButton(symbol: DSSymbol(systemName: "gearshape")!, titleForAccessibility: "Settings", variant: .secondary) {}
-                        DSIconButton(symbol: DSSymbol(systemName: "pencil")!, titleForAccessibility: "Edit", variant: .outline) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "plus")!, titleForAccessibility: "Add", appearance: .primary) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "gearshape")!, titleForAccessibility: "Settings", appearance: .secondary) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "pencil")!, titleForAccessibility: "Edit", appearance: .outline) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "star")!, titleForAccessibility: "Favorite", appearance: .accent) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "ellipsis")!, titleForAccessibility: "More", appearance: .ghost) {}
                     }
                 }
 
@@ -76,11 +78,11 @@ struct DSIconButtonGalleryScreen: View {
 
                 GallerySection(title: "Common Actions") {
                     HStack(spacing: SpacingTokens.space3) {
-                        DSIconButton(symbol: DSSymbol(systemName: "xmark")!, titleForAccessibility: "Close", variant: .secondary) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "xmark")!, titleForAccessibility: "Close", appearance: .ghost) {}
                         DSIconButton(symbol: DSSymbol(systemName: "arrow.left")!, titleForAccessibility: "Back", variant: .outline) {}
                         DSIconButton(symbol: DSSymbol(systemName: "square.and.arrow.up")!, titleForAccessibility: "Share", variant: .secondary) {}
                         DSIconButton(symbol: DSSymbol(systemName: "bookmark")!, titleForAccessibility: "Save", variant: .outline) {}
-                        DSIconButton(symbol: DSSymbol(systemName: "ellipsis")!, titleForAccessibility: "More", variant: .secondary) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "ellipsis")!, titleForAccessibility: "More", appearance: .ghost) {}
                     }
                 }
             }

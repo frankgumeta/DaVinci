@@ -11,10 +11,11 @@ struct DSButtonGalleryScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: SpacingTokens.space6) {
 
-                GallerySection(title: "Variants") {
-                    DSButton("Primary", variant: .primary) {}
-                    DSButton("Secondary", variant: .secondary) {}
-                    DSButton("Outline", variant: .outline) {}
+                GallerySection(title: "Appearances") {
+                    DSButton("Primary", appearance: .primary) {}
+                    DSButton("Secondary", appearance: .secondary) {}
+                    DSButton("Outline", appearance: .outline) {}
+                    DSButton("Ghost", appearance: .ghost) {}
                 }
 
                 GallerySection(title: "Icons") {
@@ -32,6 +33,7 @@ struct DSButtonGalleryScreen: View {
                     DSButton("Primary", variant: .primary, isDisabled: true) {}
                     DSButton("Secondary", variant: .secondary, isDisabled: true) {}
                     DSButton("Outline", variant: .outline, isDisabled: true) {}
+                    DSButton("Ghost", appearance: .ghost, isDisabled: true) {}
                 }
 
                 GallerySection(title: "Edge Cases") {

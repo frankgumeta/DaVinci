@@ -128,18 +128,18 @@ ContentView()
 
 ```swift
 // Primary button
-DSButton("Submit", variant: .primary) {
+DSButton("Submit", appearance: .primary) {
     submitForm()
 }
 
 // With icon (validated DSSymbol)
 let plus = DSSymbol(systemName: "plus")!
-DSButton("Add Item", variant: .secondary, icon: .leading(plus)) {
+DSButton("Add Item", appearance: .secondary, icon: .leading(plus)) {
     addItem()
 }
 
 // Loading state
-DSButton("Saving...", variant: .primary, isLoading: true) {
+DSButton("Saving...", appearance: .primary, isLoading: true) {
     // Action disabled during loading
 }
 
@@ -148,7 +148,7 @@ let gear = DSSymbol(systemName: "gear")!
 DSIconButton(
     symbol: gear,
     titleForAccessibility: "Settings",
-    variant: .secondary
+    appearance: .ghost
 ) {
     openSettings()
 }
@@ -263,8 +263,8 @@ Reusable SwiftUI components that consume tokens from `DaVinciTokens`.
 
 | Component | Description |
 |---|---|
-| `DSButton` | Themed button with `.primary`, `.secondary`, `.outline` variants, leading/trailing SF Symbol icons, loading and disabled states |
-| `DSIconButton` | Icon-only button with variant, size, loading, and disabled support |
+| `DSButton` | Themed button with primary, secondary, outline, and ghost appearances, icons, loading, and disabled states |
+| `DSIconButton` | Icon-only button with aligned appearances, size, loading, and disabled support |
 | `DSText` | Semantic text component mapping roles (`.display`, `.title`, `.headline`, `.body`, `.callout`, `.caption`, `.overline`) to typography tokens |
 | `DSCard` | Container view with surface styling, padding, radius, and elevation shadow |
 | `DSTextField` | Themed text field with label and prompt |

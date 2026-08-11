@@ -63,7 +63,7 @@ own palette.
 
 **Usage:**
 ```swift
-DSButton("Submit Form", variant: .primary) {
+DSButton("Submit Form", appearance: .primary) {
     submitForm()
 }
 // VoiceOver: "Submit Form, button"
@@ -80,10 +80,14 @@ DSButton("Submit Form", variant: .primary) {
 DSIconButton(
     systemName: "trash",
     titleForAccessibility: "Delete item", // Required!
-    variant: .secondary
+    appearance: .ghost
 ) { deleteItem() }
 // VoiceOver: "Delete item, button"
 ```
+
+Ghost buttons use the primary semantic text color over the surrounding surface,
+preserving text contrast while fill and border are removed. Their interaction
+frames remain identical to the other appearances.
 
 **⚠️ Important:** Always provide descriptive labels, not just icon names:
 - ✅ Good: "Delete item", "Add to favorites", "Share post"

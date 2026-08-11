@@ -125,6 +125,39 @@ struct DSIconButtonSnapshotTests {
         )
     }
 
+    @Test func ghostIconButton_light() throws {
+        let button = DSIconButton(
+            systemName: "ellipsis",
+            titleForAccessibility: "More",
+            appearance: .ghost,
+            size: .medium
+        ) {}
+        try SnapshotTester.assertSnapshot(
+            button,
+            named: "iconbutton-ghost",
+            size: CGSize(width: 100, height: 60),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    @Test func ghostIconButton_dark() throws {
+        let button = DSIconButton(
+            systemName: "ellipsis",
+            titleForAccessibility: "More",
+            appearance: .ghost,
+            size: .medium
+        ) {}
+            .environment(\.dsTheme, DSTheme.defaultTheme.resolved(for: .dark))
+        try SnapshotTester.assertSnapshot(
+            button,
+            named: "iconbutton-ghost",
+            size: CGSize(width: 100, height: 60),
+            colorScheme: .dark,
+            record: recordMode
+        )
+    }
+
     // MARK: - States
 
     @Test func disabledIconButton_light() throws {

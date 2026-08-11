@@ -25,7 +25,7 @@ Practical patterns and best practices for using DaVinci components in real-world
 
 ```swift
 // Text-based primary action
-DSButton("Create Account", variant: .primary) {
+DSButton("Create Account", appearance: .primary) {
     createAccount()
 }
 
@@ -33,11 +33,16 @@ DSButton("Create Account", variant: .primary) {
 DSIconButton(
     systemName: "gear",
     titleForAccessibility: "Settings",
-    variant: .secondary
+    appearance: .ghost
 ) {
     showSettings()
 }
 ```
+
+Use `.ghost` for low-emphasis actions placed directly on an existing surface,
+such as dismiss, overflow, or toolbar actions. Ghost buttons keep the same
+interaction and accessibility frames while removing fill and border. The
+pre-1.4 `Variant` name and `variant:` initializers remain source-compatible.
 
 **Rule of Thumb**: If the action needs a visible text label for clarity, use `DSButton`. If the icon is universally recognized (settings, close, share), use `DSIconButton`.
 

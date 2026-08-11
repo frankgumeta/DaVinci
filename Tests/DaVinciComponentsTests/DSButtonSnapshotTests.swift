@@ -81,6 +81,31 @@ struct DSButtonSnapshotTests {
         )
     }
 
+    // MARK: - Ghost Appearance
+
+    @Test func ghostButton_light() throws {
+        let button = DSButton("Dismiss", appearance: .ghost) {}
+        try SnapshotTester.assertSnapshot(
+            button,
+            named: "button-ghost",
+            size: CGSize(width: 200, height: 60),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    @Test func ghostButton_dark() throws {
+        let button = DSButton("Dismiss", appearance: .ghost) {}
+            .environment(\.dsTheme, DSTheme.defaultTheme.resolved(for: .dark))
+        try SnapshotTester.assertSnapshot(
+            button,
+            named: "button-ghost",
+            size: CGSize(width: 200, height: 60),
+            colorScheme: .dark,
+            record: recordMode
+        )
+    }
+
     // MARK: - Disabled State
 
     @Test func disabledButton_light() throws {
