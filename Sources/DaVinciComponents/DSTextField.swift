@@ -5,9 +5,9 @@ import DaVinciTokens
 
 /// A themed text field component that reads tokens from the `DSTheme` environment.
 ///
-/// `DSTextField` supports two visual appearances — `.filled` (the default,
-/// matching v1.2.0) and `.outlined` — and derives its visual state from focus,
-/// error, and the SwiftUI `.disabled(...)` modifier.
+/// `DSTextField` supports three visual appearances — `.filled` (the default,
+/// matching v1.2.0), `.outlined`, and `.underlined` — and derives its visual
+/// state from focus, error, and the SwiftUI `.disabled(...)` modifier.
 ///
 /// ## Basic Usage
 ///
@@ -55,6 +55,8 @@ public struct DSTextField: View {
         case filled
         /// Transparent background with a neutral border.
         case outlined
+        /// Transparent background with a border along the bottom edge only.
+        case underlined
     }
 
     /// Resolved visual state, ordered by precedence:
@@ -88,6 +90,7 @@ public struct DSTextField: View {
     private let leadingSymbol: DSSymbol?
     private let trailingAction: DSTextFieldTrailingAction?
     private let characterLimit: Int?
+    private let visualStateOverride: FieldState?
 
     @FocusState private var isFocused: Bool
 
@@ -114,6 +117,31 @@ public struct DSTextField: View {
             leadingSymbol: nil,
             trailingAction: nil,
             characterLimit: nil
+        )
+    }
+
+    /// Creates a configured field with a deterministic visual state for
+    /// internal previews and snapshot coverage.
+    internal init(
+        _ label: String,
+        text: Binding<String>,
+        prompt: String? = nil,
+        configuration: Configuration,
+        visualStateOverride: FieldState
+    ) {
+        self.init(
+            label,
+            text: text,
+            prompt: prompt,
+            labelVisibility: configuration.labelVisibility,
+            accessibilityLabel: nil,
+            accessibilityHint: nil,
+            fieldMessage: configuration.message,
+            appearance: configuration.appearance,
+            leadingSymbol: configuration.leading,
+            trailingAction: configuration.trailingAction,
+            characterLimit: configuration.characterLimit,
+            visualStateOverride: visualStateOverride
         )
     }
 
@@ -155,7 +183,8 @@ public struct DSTextField: View {
         appearance: Appearance,
         leadingSymbol: DSSymbol?,
         trailingAction: DSTextFieldTrailingAction?,
-        characterLimit: Int?
+        characterLimit: Int?,
+        visualStateOverride: FieldState? = nil
     ) {
         self.label = label
         self._text = text
@@ -168,6 +197,7 @@ public struct DSTextField: View {
         self.leadingSymbol = leadingSymbol
         self.trailingAction = trailingAction
         self.characterLimit = characterLimit
+        self.visualStateOverride = visualStateOverride
     }
 
     // MARK: - Body
@@ -209,7 +239,7 @@ public struct DSTextField: View {
         .padding(.trailing, showsTrailingAction ? SpacingTokens.space1 : SpacingTokens.space3)
         .frame(minHeight: ControlHeightTokens.medium)
         .background(containerBackground)
-        .clipShape(RoundedRectangle(cornerRadius: RadiusTokens.small))
+        .clipShape(containerShape)
         .overlay(containerBorder)
         .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
         .onAppear(perform: enforceCharacterLimit)
@@ -326,9 +356,13 @@ public struct DSTextField: View {
         switch appearance {
         case .filled:
             theme.colors.semantic.bgSecondary
-        case .outlined:
+        case .outlined, .underlined:
             Color.clear
         }
+    }
+
+    private var containerShape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: appearance == .underlined ? 0 : RadiusTokens.small)
     }
 
     @ViewBuilder
@@ -339,21 +373,31 @@ public struct DSTextField: View {
             isFocused: isFocused,
             theme: theme
         )
-        RoundedRectangle(cornerRadius: RadiusTokens.small)
-            .stroke(resolved.borderColor, lineWidth: resolved.borderWidth)
+        switch appearance {
+        case .filled, .outlined:
+            RoundedRectangle(cornerRadius: RadiusTokens.small)
+                .stroke(resolved.borderColor, lineWidth: resolved.borderWidth)
+        case .underlined:
+            Rectangle()
+                .fill(resolved.borderColor)
+                .frame(height: resolved.borderWidth)
+                .frame(maxHeight: .infinity, alignment: .bottom)
+        }
     }
 
-    // MARK: - State
+}
+
+// MARK: - State and Accessibility
+
+extension DSTextField {
 
     internal var fieldState: FieldState {
-        FieldState.resolve(
+        visualStateOverride ?? FieldState.resolve(
             isEnabled: environmentIsEnabled,
             hasError: fieldMessage?.isError ?? false,
             isFocused: isFocused
         )
     }
-
-    // MARK: - Accessibility (preserved from v1.2.0)
 
     private var resolvedAccessibilityLabel: String {
         accessibilityLabel ?? label
@@ -396,129 +440,4 @@ public struct DSTextField: View {
             isEnabled: environmentIsEnabled
         )
     }
-}
-
-// MARK: - Previews
-
-#Preview("DSTextField") {
-    @Previewable @State var text = ""
-    VStack(spacing: 16) {
-        DSTextField("Email", text: $text, prompt: "you@example.com")
-        DSTextField("Name", text: .constant("Frank Gumeta"))
-        DSTextField("Search", text: $text, prompt: "Search…", showsLabel: false)
-    }
-    .padding()
-}
-
-#Preview("DSTextField — Dark") {
-    @Previewable @State var text = ""
-    VStack(spacing: 16) {
-        DSTextField("Email", text: $text, prompt: "you@example.com")
-        DSTextField("Name", text: .constant("Frank Gumeta"))
-    }
-    .padding()
-    .dsTheme(.defaultTheme)
-    .preferredColorScheme(.dark)
-}
-
-#Preview("DSTextField — Error") {
-    @Previewable @State var text = "invalid@"
-    VStack(spacing: 16) {
-        DSTextField("Email", text: $text, error: "Invalid email format")
-    }
-    .padding()
-}
-
-#Preview("DSTextField — Disabled") {
-    @Previewable @State var text = "Frank"
-    VStack(spacing: 16) {
-        DSTextField("Name", text: $text)
-            .disabled(true)
-    }
-    .padding()
-}
-
-#Preview("DSTextField — Configuration") {
-    @Previewable @State var text = ""
-    let config: DSTextField.Configuration = .outlined
-        .labelVisibility(.visible)
-        .message(.supporting("Enter your account email"))
-
-    VStack(spacing: 16) {
-        DSTextField("Email", text: $text, prompt: "you@example.com", configuration: config)
-        DSTextField("Username", text: $text, configuration: .filled.message(.error("Already taken")))
-    }
-    .padding()
-}
-
-#Preview("DSTextField — Accessories") {
-    @Previewable @State var text = "Frank"
-    let person = DSSymbol(systemName: "person")!
-    VStack(spacing: 16) {
-        DSTextField(
-            "Name",
-            text: $text,
-            configuration: .filled.leading(person).trailing(.clear)
-        )
-        DSTextField(
-            "Search",
-            text: $text,
-            configuration: .outlined
-                .labelVisibility(.hidden)
-                .leading(DSSymbol(systemName: "magnifyingglass")!)
-                .trailing(.clear)
-        )
-    }
-    .padding()
-}
-
-#Preview("DSTextField — Outlined") {
-    @Previewable @State var text = ""
-    VStack(spacing: 16) {
-        DSTextField("Email", text: $text, prompt: "you@example.com", configuration: .outlined)
-        DSTextField("Name", text: .constant("Frank"), configuration: .outlined)
-        DSTextField("Error", text: .constant("bad@"), configuration: .outlined.message(.error("Invalid")))
-    }
-    .padding()
-}
-
-#Preview("DSTextField — Messages") {
-    @Previewable @State var text = "invalid@"
-    VStack(spacing: 16) {
-        DSTextField(
-            "Email",
-            text: $text,
-            configuration: .filled.message(.supporting("We will never share your email"))
-        )
-        DSTextField(
-            "Email",
-            text: $text,
-            configuration: .filled.message(.error("Invalid email format"))
-        )
-        DSTextField(
-            "Email",
-            text: $text,
-            configuration: .outlined.message(.error("Invalid email format"))
-        )
-    }
-    .padding()
-}
-
-#Preview("DSTextField — Character Limit") {
-    @Previewable @State var text = "Hello"
-    VStack(spacing: 16) {
-        DSTextField(
-            "Title",
-            text: $text,
-            configuration: .filled.characterLimit(10)
-        )
-        DSTextField(
-            "Bio",
-            text: $text,
-            configuration: .outlined
-                .characterLimit(20)
-                .message(.supporting("Max 20 characters"))
-        )
-    }
-    .padding()
 }

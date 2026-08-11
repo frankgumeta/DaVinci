@@ -156,8 +156,8 @@ DSIconButton(
 
 ### Text Fields
 
-`DSTextField` keeps the v1.2 filled appearance by default and adds a reusable
-configuration for outlined fields, validated leading symbols, clear actions,
+`DSTextField` keeps the v1.2 filled appearance by default and adds reusable
+configurations for outlined and underlined fields, validated leading symbols, clear actions,
 supporting or error messages, and character limits.
 
 ```swift
@@ -176,6 +176,9 @@ if let search = DSSymbol(systemName: "magnifyingglass") {
     )
 }
 ```
+
+Use `.underlined` for a transparent field with state-aware emphasis along its
+bottom edge only.
 
 Supporting text is announced as an accessibility hint. Errors and character
 progress are included in the field's accessibility value. Character limits

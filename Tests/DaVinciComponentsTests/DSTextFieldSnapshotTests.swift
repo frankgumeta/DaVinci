@@ -243,6 +243,7 @@ struct DSTextFieldSnapshotTests {
             record: recordMode
         )
     }
+
     // MARK: - RTL and Dynamic Type
 
     @Test func textField_outlinedAccessories_rtl() throws {

@@ -57,11 +57,16 @@ struct DSTextFieldStyleResolverTests {
         let outlined = DSTextFieldStyleResolver.resolve(
             appearance: .outlined, state: .disabled, theme: theme
         )
+        let underlined = DSTextFieldStyleResolver.resolve(
+            appearance: .underlined, state: .disabled, theme: theme
+        )
         // Disabled should attenuate the border, not use the same opacity as normal.
         #expect(filled.borderWidth == StrokeTokens.hairline)
         #expect(outlined.borderWidth == StrokeTokens.hairline)
+        #expect(underlined.borderWidth == StrokeTokens.hairline)
         // Both appearances share the same disabled treatment.
         #expect(filled.borderColor == outlined.borderColor)
+        #expect(outlined.borderColor == underlined.borderColor)
     }
 
     // MARK: - Resolver: error
@@ -117,6 +122,14 @@ struct DSTextFieldStyleResolverTests {
         #expect(resolved.borderWidth > StrokeTokens.hairline)
     }
 
+    @Test func focusedUnderlinedUsesBrandPrimaryWithReinforcedWidth() {
+        let resolved = DSTextFieldStyleResolver.resolve(
+            appearance: .underlined, state: .focused, theme: theme
+        )
+        #expect(resolved.borderColor == theme.colors.brand.primary)
+        #expect(resolved.borderWidth > StrokeTokens.hairline)
+    }
+
     @Test func focusedDoesNotEliminateError() {
         // When both focus and error are present, error wins (precedence).
         // This test documents that focus alone would use brand.primary,
@@ -145,6 +158,14 @@ struct DSTextFieldStyleResolverTests {
     @Test func normalOutlinedUsesTertiaryBorder() {
         let resolved = DSTextFieldStyleResolver.resolve(
             appearance: .outlined, state: .normal, theme: theme
+        )
+        #expect(resolved.borderColor == theme.colors.semantic.textTertiary)
+        #expect(resolved.borderWidth == StrokeTokens.hairline)
+    }
+
+    @Test func normalUnderlinedUsesTertiaryBorder() {
+        let resolved = DSTextFieldStyleResolver.resolve(
+            appearance: .underlined, state: .normal, theme: theme
         )
         #expect(resolved.borderColor == theme.colors.semantic.textTertiary)
         #expect(resolved.borderWidth == StrokeTokens.hairline)

@@ -249,9 +249,10 @@ DSCard(
 
 ### Reusable Text Field Configuration
 
-Use `.filled` to preserve the original DaVinci appearance or `.outlined` for a
-transparent field with a semantic border. Builder calls return copies, so a
-configuration can be reused safely.
+Use `.filled` to preserve the original DaVinci appearance, `.outlined` for a
+transparent field with a semantic container border, or `.underlined` for a
+transparent field with a border along its bottom edge only. Builder calls
+return copies, so a configuration can be reused safely.
 
 ```swift
 let accountField: DSTextField.Configuration = .outlined
@@ -281,6 +282,17 @@ DSTextField(
     configuration: .outlined
         .message(.error("Bio is required"))
         .characterLimit(160)
+)
+```
+
+```swift
+DSTextField(
+    "Search",
+    text: $query,
+    prompt: "Search…",
+    configuration: .underlined
+        .trailing(.clear)
+        .message(.supporting("Search by title or author"))
 )
 ```
 

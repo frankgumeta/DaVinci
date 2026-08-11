@@ -63,6 +63,9 @@ extension DSTextField {
         /// Outlined appearance with a visible label.
         public static let outlined = Configuration(appearance: .outlined, labelVisibility: .visible)
 
+        /// Underlined appearance with a visible label.
+        public static let underlined = Configuration(appearance: .underlined, labelVisibility: .visible)
+
         public func labelVisibility(_ visibility: DSTextFieldLabelVisibility) -> Configuration {
             copy(labelVisibility: visibility)
         }

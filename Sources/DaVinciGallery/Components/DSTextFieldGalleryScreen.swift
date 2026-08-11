@@ -13,6 +13,7 @@ struct DSTextFieldGalleryScreen: View {
     @State private var bio = ""
     @State private var name = "Frank"
     @State private var outlinedText = ""
+    @State private var underlinedText = ""
 
     var body: some View {
         ScrollView {
@@ -50,6 +51,28 @@ struct DSTextFieldGalleryScreen: View {
                         "Error",
                         text: .constant("bad@"),
                         configuration: .outlined.message(.error("Invalid email"))
+                    )
+                }
+
+                GallerySection(title: "Underlined") {
+                    DSTextField(
+                        "Email",
+                        text: $underlinedText,
+                        prompt: "you@example.com",
+                        configuration: .underlined
+                    )
+                    DSTextField(
+                        "Search",
+                        text: $search,
+                        configuration: .underlined
+                            .leading(DSSymbol(systemName: "magnifyingglass")!)
+                            .trailing(.clear)
+                            .message(.supporting("Search by component name"))
+                    )
+                    DSTextField(
+                        "Error",
+                        text: .constant("bad@"),
+                        configuration: .underlined.message(.error("Invalid email"))
                     )
                 }
 

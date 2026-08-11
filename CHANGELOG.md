@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OpacityTokens.subtleFill` and `subtleStroke` for consistent low-emphasis tinted surfaces
 - Borderless ghost appearances for `DSButton` and `DSIconButton`
 - Outlined `DSCardStyle` with standard density, no elevation, and a semantic border
+- Underlined `DSTextField` appearance with a transparent background and state-aware bottom border
 
 ### Changed
 - The pre-1.4 `DSBadge.Variant` and `variant:` API now forward compatibly to a filled semantic tone
