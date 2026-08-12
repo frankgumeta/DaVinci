@@ -345,8 +345,7 @@ struct DSRemoteImageTests {
     @Test @MainActor func remoteImageWithURL() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            width: 100,
-            height: 100
+            geometry: .circle(diameter: 100)
         )
         #expect(type(of: image) == DSRemoteImage.self)
     }
@@ -354,26 +353,26 @@ struct DSRemoteImageTests {
     @Test @MainActor func remoteImageWithNilURL() {
         let image = DSRemoteImage(
             url: nil,
-            width: 100,
-            height: 100
+            geometry: .circle(diameter: 100)
         )
         #expect(type(of: image) == DSRemoteImage.self)
     }
 
-    @Test @MainActor func remoteImageWithSize() {
+    @Test @MainActor func remoteImageWithRectangleGeometry() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            size: CGSize(width: 120, height: 120)
+            geometry: .rectangle(size: CGSize(width: 120, height: 80))
         )
         #expect(type(of: image) == DSRemoteImage.self)
     }
 
-    @Test @MainActor func remoteImageWithCustomRadius() {
+    @Test @MainActor func remoteImageWithRoundedGeometry() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            width: 80,
-            height: 80,
-            cornerRadius: RadiusTokens.large
+            geometry: .rounded(
+                size: CGSize(width: 80, height: 80),
+                cornerRadius: RadiusTokens.large
+            )
         )
         #expect(type(of: image) == DSRemoteImage.self)
     }
@@ -381,8 +380,7 @@ struct DSRemoteImageTests {
     @Test @MainActor func remoteImageWithoutShimmer() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            width: 100,
-            height: 100,
+            geometry: .circle(diameter: 100),
             showsShimmer: false
         )
         #expect(type(of: image) == DSRemoteImage.self)
@@ -391,8 +389,7 @@ struct DSRemoteImageTests {
     @Test @MainActor func remoteImageWithCustomPlaceholder() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            width: 100,
-            height: 100,
+            geometry: .circle(diameter: 100),
             placeholderSystemImage: "person.circle"
         )
         #expect(type(of: image) == DSRemoteImage.self)
@@ -401,8 +398,7 @@ struct DSRemoteImageTests {
     @Test @MainActor func remoteImageWithAccessibilityLabel() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            width: 100,
-            height: 100,
+            geometry: .circle(diameter: 100),
             accessibilityLabel: "Profile picture"
         )
         #expect(type(of: image) == DSRemoteImage.self)
@@ -411,8 +407,7 @@ struct DSRemoteImageTests {
     @Test @MainActor func remoteImageFillMode() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            width: 100,
-            height: 100,
+            geometry: .circle(diameter: 100),
             contentMode: .fill
         )
         #expect(type(of: image) == DSRemoteImage.self)
@@ -421,8 +416,7 @@ struct DSRemoteImageTests {
     @Test @MainActor func remoteImageFitMode() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            width: 100,
-            height: 100,
+            geometry: .circle(diameter: 100),
             contentMode: .fit
         )
         #expect(type(of: image) == DSRemoteImage.self)
@@ -779,8 +773,7 @@ struct ThemeIntegrationTests {
             VStack(spacing: 12) {
                 DSRemoteImage(
                     url: URL(string: "https://example.com/image.jpg"),
-                    width: 100,
-                    height: 100
+                    geometry: .circle(diameter: 100)
                 )
                 DSText("Image Title", role: .headline)
                 DSText("Description text", role: .body)

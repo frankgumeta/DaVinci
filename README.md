@@ -206,10 +206,17 @@ DSCard(style: .standard) {
 ```swift
 DSRemoteImage(
     url: URL(string: "https://example.com/image.jpg"),
-    width: 120,
-    height: 120,
-    cornerRadius: RadiusTokens.large,
+    geometry: .rounded(
+        size: CGSize(width: 120, height: 80),
+        cornerRadius: RadiusTokens.large
+    ),
     contentMode: .fill
+)
+
+DSRemoteImage(
+    url: avatarURL,
+    geometry: .circle(diameter: 80),
+    accessibilityLabel: "User avatar"
 )
 ```
 
@@ -276,7 +283,7 @@ Reusable SwiftUI components that consume tokens from `DaVinciTokens`.
 | `DSProgressBar` | Continuous, stepped, striped, and shimmer progress in three sizes |
 | `DSBadge` | Text and dot badges with independent semantic tones, visual appearances, and sizes |
 | `DSDivider` | Horizontal or vertical semantic divider |
-| `DSRemoteImage` | Validated remote loading, deduplication, decoding, and bounded cache |
+| `DSRemoteImage` | Validated remote loading with rectangle, rounded, and circle geometry |
 | `DSSkeletonBlock`, `DSSkeletonRow`, `DSSkeletonCard`, `DSSkeletonList` | Loading placeholders with optional shimmer |
 | `dsShimmering(_:)` | Reduce-Motion-aware shimmer modifier |
 | `DSPressableButtonStyle` | Shared `ButtonStyle` applying `OpacityTokens.pressed` with configurable duration |
@@ -365,8 +372,8 @@ excluded from the metric. With Xcode 26.6, the current reproducible line coverag
 | Product target | Covered lines | Executable lines | Coverage | CI policy |
 |---|---:|---:|---:|---|
 | `DaVinciTokens` | 238 | 238 | 100.00% | Minimum 100% |
-| `DaVinciComponents` | 2778 | 2907 | 95.56% | Minimum 95% |
-| `DaVinciGallery` | 0 | 5421 | 0.00% | Reported, not currently gated |
+| `DaVinciComponents` | 2797 | 2926 | 95.59% | Minimum 95% |
+| `DaVinciGallery` | 0 | 5689 | 0.00% | Reported, not currently gated |
 
 There is no aggregate “overall” claim: including test targets would inflate it,
 while including the currently unexercised gallery would conceal the actual gap.
@@ -496,14 +503,14 @@ DSIconButton(
 // Remote images support custom labels
 DSRemoteImage(
     url: avatarURL,
-    size: CGSize(width: 80, height: 80),
+    geometry: .circle(diameter: 80),
     accessibilityLabel: "User profile picture"
 )
 
 // Decorative images are removed from the accessibility tree
 DSRemoteImage(
     url: backgroundURL,
-    size: CGSize(width: 120, height: 80),
+    geometry: .rectangle(size: CGSize(width: 120, height: 80)),
     isDecorative: true
 )
 ```
@@ -522,10 +529,10 @@ For complete accessibility guidelines, color contrast ratios, and testing proced
 **DSRemoteImage** uses a shared validated image pipeline:
 ```swift
 // First load: fetches from network
-DSRemoteImage(url: imageURL, width: 100, height: 100)
+DSRemoteImage(url: imageURL, geometry: .circle(diameter: 100))
 
 // Subsequent loads: instant from cache
-DSRemoteImage(url: imageURL, width: 100, height: 100)
+DSRemoteImage(url: imageURL, geometry: .circle(diameter: 100))
 ```
 
 Concurrent requests for the same URL and loader share one load. The default loader

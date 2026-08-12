@@ -119,7 +119,7 @@ DSText("Body content", role: .body)       // Regular text
 ```swift
 DSRemoteImage(
     url: profileImageURL,
-    size: CGSize(width: 80, height: 80),
+    geometry: .circle(diameter: 80),
     accessibilityLabel: "Profile picture of John Doe"
 )
 // VoiceOver: "Profile picture of John Doe, image"

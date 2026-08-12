@@ -1,6 +1,7 @@
 import Testing
 import SwiftUI
 @testable import DaVinciComponents
+@testable import DaVinciTokens
 
 // MARK: - DSSymbol Adoption Tests
 
@@ -78,12 +79,11 @@ struct DSSymbolAdoptionTests {
 
     // MARK: - DSRemoteImage
 
-    @Test @MainActor func remoteImageAcceptsTypedPlaceholderWithExplicitFrame() throws {
+    @Test @MainActor func remoteImageAcceptsTypedPlaceholderWithCircleGeometry() throws {
         let symbol = try #require(DSSymbol(systemName: "person"))
         let image = DSRemoteImage(
             url: nil,
-            width: 80,
-            height: 80,
+            geometry: .circle(diameter: 80),
             placeholder: symbol,
             accessibilityLabel: "Profile photo"
         )
@@ -91,11 +91,14 @@ struct DSSymbolAdoptionTests {
         #expect(image.accessibilityDescriptor.label == "Profile photo")
     }
 
-    @Test @MainActor func remoteImageAcceptsTypedPlaceholderWithSize() throws {
+    @Test @MainActor func remoteImageAcceptsTypedPlaceholderWithRoundedGeometry() throws {
         let symbol = try #require(DSSymbol(systemName: "photo"))
         let image = DSRemoteImage(
             url: nil,
-            size: CGSize(width: 80, height: 80),
+            geometry: .rounded(
+                size: CGSize(width: 80, height: 80),
+                cornerRadius: RadiusTokens.extraSmall
+            ),
             placeholder: symbol
         )
 

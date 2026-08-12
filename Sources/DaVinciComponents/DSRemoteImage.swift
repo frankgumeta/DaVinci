@@ -50,9 +50,7 @@ public struct DSRemoteImage: View {
     @Environment(\.dsImageLoader) private var loader
 
     private let url: URL?
-    private let width: CGFloat
-    private let height: CGFloat
-    private let cornerRadius: CGFloat
+    internal let geometry: Geometry
     private let contentMode: ContentMode
     private let showsShimmer: Bool
     private let placeholderSystemImage: String?
@@ -64,18 +62,10 @@ public struct DSRemoteImage: View {
 
     // MARK: - Init
 
-    /// Creates a remotely loaded image with an explicit frame.
-    ///
-    /// Set `isDecorative` to `true` only when the image communicates no
-    /// information; decorative images are hidden from assistive technologies.
-    ///
-    /// - Note: A `nil` URL renders the placeholder immediately, without passing
-    ///   through a loading state, because there is nothing to load.
+    /// Creates a remotely loaded image with explicit geometry.
     public init(
         url: URL?,
-        width: CGFloat,
-        height: CGFloat,
-        cornerRadius: CGFloat = RadiusTokens.extraSmall,
+        geometry: Geometry,
         contentMode: ContentMode = .fill,
         showsShimmer: Bool = true,
         placeholderSystemImage: String? = nil,
@@ -83,9 +73,7 @@ public struct DSRemoteImage: View {
         isDecorative: Bool = false
     ) {
         self.url = url
-        self.width = width
-        self.height = height
-        self.cornerRadius = cornerRadius
+        self.geometry = geometry.normalized
         self.contentMode = contentMode
         self.showsShimmer = showsShimmer
         self.placeholderSystemImage = placeholderSystemImage
@@ -94,19 +82,11 @@ public struct DSRemoteImage: View {
         _phase = State(initialValue: Self.initialPhase(for: url))
     }
 
-    /// Creates a remotely loaded image with an explicit frame and a validated
+    /// Creates a remotely loaded image with explicit geometry and a validated
     /// placeholder symbol.
-    ///
-    /// Set `isDecorative` to `true` only when the image communicates no
-    /// information; decorative images are hidden from assistive technologies.
-    ///
-    /// - Note: A `nil` URL renders the placeholder immediately, without passing
-    ///   through a loading state, because there is nothing to load.
     public init(
         url: URL?,
-        width: CGFloat,
-        height: CGFloat,
-        cornerRadius: CGFloat = RadiusTokens.extraSmall,
+        geometry: Geometry,
         contentMode: ContentMode = .fill,
         showsShimmer: Bool = true,
         placeholder: DSSymbol?,
@@ -115,66 +95,10 @@ public struct DSRemoteImage: View {
     ) {
         self.init(
             url: url,
-            width: width,
-            height: height,
-            cornerRadius: cornerRadius,
+            geometry: geometry,
             contentMode: contentMode,
             showsShimmer: showsShimmer,
             placeholderSystemImage: placeholder?.systemName,
-            accessibilityLabel: accessibilityLabel,
-            isDecorative: isDecorative
-        )
-    }
-
-    /// Convenience initializer accepting a `CGSize`.
-    ///
-    /// Set `isDecorative` to `true` only when the image communicates no
-    /// information; decorative images are hidden from assistive technologies.
-    public init(
-        url: URL?,
-        size: CGSize,
-        cornerRadius: CGFloat = RadiusTokens.extraSmall,
-        contentMode: ContentMode = .fill,
-        showsShimmer: Bool = true,
-        placeholderSystemImage: String? = nil,
-        accessibilityLabel: String? = nil,
-        isDecorative: Bool = false
-    ) {
-        self.init(
-            url: url,
-            width: size.width,
-            height: size.height,
-            cornerRadius: cornerRadius,
-            contentMode: contentMode,
-            showsShimmer: showsShimmer,
-            placeholderSystemImage: placeholderSystemImage,
-            accessibilityLabel: accessibilityLabel,
-            isDecorative: isDecorative
-        )
-    }
-
-    /// Convenience initializer accepting a `CGSize` and a validated placeholder symbol.
-    ///
-    /// Set `isDecorative` to `true` only when the image communicates no
-    /// information; decorative images are hidden from assistive technologies.
-    public init(
-        url: URL?,
-        size: CGSize,
-        cornerRadius: CGFloat = RadiusTokens.extraSmall,
-        contentMode: ContentMode = .fill,
-        showsShimmer: Bool = true,
-        placeholder: DSSymbol?,
-        accessibilityLabel: String? = nil,
-        isDecorative: Bool = false
-    ) {
-        self.init(
-            url: url,
-            width: size.width,
-            height: size.height,
-            cornerRadius: cornerRadius,
-            contentMode: contentMode,
-            showsShimmer: showsShimmer,
-            placeholder: placeholder,
             accessibilityLabel: accessibilityLabel,
             isDecorative: isDecorative
         )
@@ -184,8 +108,8 @@ public struct DSRemoteImage: View {
 
     public var body: some View {
         content
-            .frame(width: width, height: height)
-            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .frame(width: geometry.size.width, height: geometry.size.height)
+            .clipShape(geometry.clipShape)
             .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
             .task(id: url) {
                 await load(url)
@@ -199,9 +123,9 @@ public struct DSRemoteImage: View {
         switch phase {
         case .loading:
             DSSkeletonBlock(
-                height: height,
-                width: width,
-                cornerRadius: cornerRadius,
+                height: geometry.size.height,
+                width: geometry.size.width,
+                cornerRadius: geometry.cornerRadius,
                 isShimmering: showsShimmer
             )
 
@@ -232,7 +156,7 @@ public struct DSRemoteImage: View {
                 .fill(theme.colors.semantic.bgSecondary)
 
             Image(systemName: placeholderSystemImage ?? DSSymbol.imagePlaceholder.systemName)
-                .font(.system(size: min(width, height) * 0.3))
+                .font(.system(size: min(geometry.size.width, geometry.size.height) * 0.3))
                 .foregroundStyle(theme.colors.semantic.textTertiary)
         }
     }
@@ -413,9 +337,10 @@ private typealias PlatformColor = NSColor
 #Preview("DSRemoteImage — Loading") {
     DSRemoteImage(
         url: URL(string: "https://example.com/photo.jpg"),
-        width: 120,
-        height: 120,
-        cornerRadius: RadiusTokens.medium
+        geometry: .rounded(
+            size: CGSize(width: 120, height: 120),
+            cornerRadius: RadiusTokens.medium
+        )
     )
     .padding()
     .environment(\.dsImageLoader, SlowPreviewImageLoader())
@@ -426,15 +351,18 @@ private typealias PlatformColor = NSColor
     VStack(spacing: 16) {
         DSRemoteImage(
             url: URL(string: "https://example.com/photo.jpg"),
-            width: 200,
-            height: 150,
-            cornerRadius: RadiusTokens.large,
+            geometry: .rounded(
+                size: CGSize(width: 200, height: 150),
+                cornerRadius: RadiusTokens.large
+            ),
             contentMode: .fill
         )
         DSRemoteImage(
             url: URL(string: "https://example.com/photo.jpg"),
-            size: CGSize(width: 100, height: 100),
-            cornerRadius: RadiusTokens.extraSmall,
+            geometry: .rounded(
+                size: CGSize(width: 100, height: 100),
+                cornerRadius: RadiusTokens.extraSmall
+            ),
             contentMode: .fit
         )
     }
@@ -447,14 +375,18 @@ private typealias PlatformColor = NSColor
     VStack(spacing: 16) {
         DSRemoteImage(
             url: URL(string: "https://example.com/broken.jpg"),
-            width: 120,
-            height: 120,
+            geometry: .rounded(
+                size: CGSize(width: 120, height: 120),
+                cornerRadius: RadiusTokens.extraSmall
+            ),
             placeholder: DSSymbol(systemName: "exclamationmark.triangle")
         )
         DSRemoteImage(
             url: nil,
-            width: 80,
-            height: 80
+            geometry: .rounded(
+                size: CGSize(width: 80, height: 80),
+                cornerRadius: RadiusTokens.extraSmall
+            )
         )
     }
     .padding()
@@ -466,13 +398,17 @@ private typealias PlatformColor = NSColor
     VStack(spacing: 16) {
         DSRemoteImage(
             url: URL(string: "https://example.com/photo.jpg"),
-            width: 120,
-            height: 120
+            geometry: .rounded(
+                size: CGSize(width: 120, height: 120),
+                cornerRadius: RadiusTokens.extraSmall
+            )
         )
         DSRemoteImage(
             url: nil,
-            width: 120,
-            height: 120,
+            geometry: .rounded(
+                size: CGSize(width: 120, height: 120),
+                cornerRadius: RadiusTokens.extraSmall
+            ),
             placeholder: DSSymbol(systemName: "person.crop.circle")
         )
     }
@@ -485,11 +421,29 @@ private typealias PlatformColor = NSColor
 #Preview("DSRemoteImage — Custom Label") {
     DSRemoteImage(
         url: URL(string: "https://example.com/avatar.jpg"),
-        width: 80,
-        height: 80,
-        cornerRadius: 40,
+        geometry: .circle(diameter: 80),
         accessibilityLabel: "User avatar"
     )
+    .padding()
+    .environment(\.dsImageLoader, SuccessPreviewImageLoader())
+    .dsTheme(.defaultTheme)
+}
+
+#Preview("DSRemoteImage — Geometry") {
+    HStack(spacing: SpacingTokens.space4) {
+        DSRemoteImage(
+            url: URL(string: "https://example.com/avatar.jpg"),
+            geometry: .circle(diameter: 80),
+            placeholder: DSSymbol(systemName: "person.crop.circle")
+        )
+        DSRemoteImage(
+            url: URL(string: "https://example.com/photo.jpg"),
+            geometry: .rounded(
+                size: CGSize(width: 120, height: 80),
+                cornerRadius: RadiusTokens.medium
+            )
+        )
+    }
     .padding()
     .environment(\.dsImageLoader, SuccessPreviewImageLoader())
     .dsTheme(.defaultTheme)

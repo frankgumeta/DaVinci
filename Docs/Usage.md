@@ -75,7 +75,11 @@ if let list = DSSymbol(systemName: "list.bullet") {
 }
 
 // DSRemoteImage accepts an optional DSSymbol placeholder.
-DSRemoteImage(url: url, width: 120, height: 120, placeholder: DSSymbol(systemName: "person"))
+DSRemoteImage(
+    url: url,
+    geometry: .circle(diameter: 120),
+    placeholder: DSSymbol(systemName: "person")
+)
 ```
 
 The string-based APIs from v1.2.0 remain available for backward compatibility:
@@ -180,12 +184,14 @@ Mark purely decorative content so it is omitted from the accessibility tree.
 ```swift
 DSRemoteImage(
     url: avatarURL,
-    width: 80,
-    height: 80,
-    cornerRadius: RadiusTokens.large,
+    geometry: .circle(diameter: 80),
     accessibilityLabel: "Profile photo"
 )
 ```
+
+Use `.rectangle(size:)` for edge-to-edge media and
+`.rounded(size:cornerRadius:)` for cards or thumbnails. Geometry is required so
+dimensions and clipping remain one coherent configuration.
 
 ---
 
@@ -538,8 +544,10 @@ DSButton(
 ```swift
 DSRemoteImage(
     url: imageURL,
-    width: 300,
-    height: 200,
+    geometry: .rounded(
+        size: CGSize(width: 300, height: 200),
+        cornerRadius: RadiusTokens.medium
+    ),
     showsShimmer: true,
     accessibilityLabel: "Product photo"
 )
@@ -581,8 +589,7 @@ If an image conveys no information, remove it from the accessibility tree:
 ```swift
 DSRemoteImage(
     url: decorativeBackgroundURL,
-    width: 300,
-    height: 120,
+    geometry: .rectangle(size: CGSize(width: 300, height: 120)),
     isDecorative: true
 )
 ```
@@ -825,10 +832,8 @@ struct ProfileScreen: View {
                 // Profile Image
                 DSRemoteImage(
                     url: profileImageURL,
-                    width: 120,
-                    height: 120,
-                    cornerRadius: 60,
-                    label: "Profile photo"
+                    geometry: .circle(diameter: 120),
+                    accessibilityLabel: "Profile photo"
                 )
                 
                 // Form
