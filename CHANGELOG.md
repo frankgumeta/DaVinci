@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Underlined `DSTextField` appearance with a transparent background and state-aware bottom border
 - Stepped, animated striped, and reflective shimmer `DSProgressBar` styles, including Reduce Motion support
 - Typed `DSRemoteImage.Geometry` presets for rectangular, rounded, and guaranteed-square circular media
+- Low-emphasis `DSSegmentedControl.Appearance.subtle` with a transparent container and tinted selection capsule
 
 ### Changed
 - The pre-1.4 `DSBadge.Variant` and `variant:` API now forward compatibly to a filled semantic tone

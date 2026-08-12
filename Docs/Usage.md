@@ -152,6 +152,11 @@ DSSkeletonList(count: 5)
 ```swift
 DSSwitch(isOn: $notificationsEnabled, label: "Notifications")
 DSSegmentedControl(options: ["Day", "Week"], selectedIndex: $period)
+DSSegmentedControl(
+    options: ["List", "Grid"],
+    selectedIndex: $viewMode,
+    appearance: .subtle
+)
 DSProgressBar(value: uploadProgress, label: "Uploading")
 DSProgressBar(value: onboardingProgress, style: .stepped(count: 5))
 DSProgressBar(value: uploadProgress, size: .large, style: .striped)
@@ -161,6 +166,11 @@ DSBadge("Active", tone: .success, appearance: .subtle)
 DSBadge("Failed", tone: .error, appearance: .outlined)
 DSDivider()
 ```
+
+`DSSegmentedControl.Appearance.filled` remains the default for a prominent
+selection. Use `.subtle` when the control should sit directly on its parent
+surface with a low-emphasis tinted selection capsule. Both appearances retain
+button and selected accessibility traits; neither represents tab navigation.
 
 `DSProgressBar.Style.continuous` preserves the original presentation.
 `.stepped(count:)` divides determinate progress into segments and can partially

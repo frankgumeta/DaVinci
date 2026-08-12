@@ -47,6 +47,33 @@ struct DSSegmentedControlBehaviorTests {
         #expect(control.segments[0].title == "Day")
         #expect(control.segments[1].title == "Week")
         #expect(control.segments[2].title == "Month")
+        #expect(control.appearance == .filled)
+    }
+
+    @Test @MainActor func primaryInitStoresSubtleAppearance() {
+        let control = DSSegmentedControl(
+            segments: [DSSegmentItem(title: "Day"), DSSegmentItem(title: "Week")],
+            selectedIndex: .constant(0),
+            appearance: .subtle
+        )
+        #expect(control.appearance == .subtle)
+    }
+
+    @Test @MainActor func convenienceInitializersStoreSubtleAppearance() throws {
+        let symbol = try #require(DSSymbol(systemName: "list.bullet"))
+        let strings = DSSegmentedControl(
+            options: ["Day", "Week"],
+            selectedIndex: .constant(0),
+            appearance: .subtle
+        )
+        let symbols = DSSegmentedControl(
+            options: ["List"],
+            selectedIndex: .constant(0),
+            symbols: [symbol],
+            appearance: .subtle
+        )
+        #expect(strings.appearance == .subtle)
+        #expect(symbols.appearance == .subtle)
     }
 
     @Test @MainActor func primaryInitPreservesIcons() {

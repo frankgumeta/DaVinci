@@ -73,15 +73,30 @@ public struct DSSegmentedControl: View, Sendable {
     @Namespace private var animation
 
     internal let segments: [DSSegmentItem]
+    internal let appearance: Appearance
+
+    /// Visual emphasis of the segmented control.
+    public enum Appearance: CaseIterable, Hashable, Sendable {
+        /// Filled container with a high-emphasis brand selection (default).
+        case filled
+        /// Transparent container with a low-emphasis tinted selection.
+        case subtle
+    }
 
     /// Creates a segmented control from an array of `DSSegmentItem` values.
     ///
     /// - Parameters:
     ///   - segments: The items to display as segments
     ///   - selectedIndex: Binding to the currently selected index
-    public init(segments: [DSSegmentItem], selectedIndex: Binding<Int>) {
+    ///   - appearance: Visual emphasis of the container and selected segment
+    public init(
+        segments: [DSSegmentItem],
+        selectedIndex: Binding<Int>,
+        appearance: Appearance = .filled
+    ) {
         self.segments = segments
         self._selectedIndex = selectedIndex
+        self.appearance = appearance
     }
 
     /// Convenience initializer using plain string arrays.
@@ -90,12 +105,19 @@ public struct DSSegmentedControl: View, Sendable {
     ///   - options: Array of option labels
     ///   - selectedIndex: Binding to the currently selected index
     ///   - icons: Optional SF Symbol names; if provided, must align with `options` by index
-    public init(options: [String], selectedIndex: Binding<Int>, icons: [String]? = nil) {
+    ///   - appearance: Visual emphasis of the container and selected segment
+    public init(
+        options: [String],
+        selectedIndex: Binding<Int>,
+        icons: [String]? = nil,
+        appearance: Appearance = .filled
+    ) {
         self.segments = options.indices.map { i in
             let icon = icons.flatMap { arr in arr.indices.contains(i) ? arr[i] : nil }
             return DSSegmentItem(title: options[i], iconSystemName: icon)
         }
         self._selectedIndex = selectedIndex
+        self.appearance = appearance
     }
 
     /// Convenience initializer using plain string arrays with validated symbols.
@@ -104,7 +126,13 @@ public struct DSSegmentedControl: View, Sendable {
     ///   - options: Array of option labels
     ///   - selectedIndex: Binding to the currently selected index
     ///   - symbols: Optional validated `DSSymbol` icons; if provided, must align with `options` by index
-    public init(options: [String], selectedIndex: Binding<Int>, symbols: [DSSymbol]?) {
+    ///   - appearance: Visual emphasis of the container and selected segment
+    public init(
+        options: [String],
+        selectedIndex: Binding<Int>,
+        symbols: [DSSymbol]?,
+        appearance: Appearance = .filled
+    ) {
         self.segments = options.indices.map { i in
             let icon = symbols.flatMap { arr in arr.indices.contains(i) ? arr[i] : nil }
             if let icon {
@@ -113,6 +141,7 @@ public struct DSSegmentedControl: View, Sendable {
             return DSSegmentItem(title: options[i])
         }
         self._selectedIndex = selectedIndex
+        self.appearance = appearance
     }
 
     public var body: some View {
@@ -135,7 +164,7 @@ public struct DSSegmentedControl: View, Sendable {
                     .dsTextStyle(theme.typography.callout, family: theme.typography.family)
                     .foregroundStyle(
                         selectedIndex == index
-                            ? selectedForegroundColor
+                            ? resolvedStyle.selectedForeground
                             : theme.colors.semantic.textSecondary
                     )
                     .frame(maxWidth: .infinity)
@@ -144,7 +173,14 @@ public struct DSSegmentedControl: View, Sendable {
                     .background {
                         if selectedIndex == index {
                             RoundedRectangle(cornerRadius: RadiusTokens.small)
-                                .fill(theme.colors.brand.primary)
+                                .fill(resolvedStyle.selectedBackground)
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: RadiusTokens.small)
+                                        .strokeBorder(
+                                            resolvedStyle.selectedBorder,
+                                            lineWidth: resolvedStyle.selectedBorderWidth
+                                        )
+                                }
                                 .matchedGeometryEffect(id: "selectedSegment", in: animation)
                         }
                     }
@@ -157,7 +193,7 @@ public struct DSSegmentedControl: View, Sendable {
             }
         }
         .padding(SpacingTokens.space1)
-        .background(theme.colors.semantic.bgSecondary)
+        .background(resolvedStyle.containerBackground)
         .clipShape(RoundedRectangle(cornerRadius: RadiusTokens.medium))
         .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
     }
@@ -168,14 +204,10 @@ public struct DSSegmentedControl: View, Sendable {
         DSAccessibilityDescriptor(label: "Segmented control", children: .contain)
     }
 
-    private var selectedForegroundColor: Color {
-        DSColorContrast.preferredForeground(
-            on: theme.colors.brand.primary,
-            candidates: [
-                theme.colors.semantic.textPrimary,
-                theme.colors.semantic.textOnBrand,
-                theme.colors.semantic.textInverse
-            ],
+    private var resolvedStyle: DSSegmentedControlStyleResolver.ResolvedStyle {
+        DSSegmentedControlStyleResolver.resolve(
+            appearance: appearance,
+            theme: theme,
             colorScheme: colorScheme
         )
     }
@@ -184,6 +216,12 @@ public struct DSSegmentedControl: View, Sendable {
 // MARK: - Previews
 
 #Preview("DSSegmentedControl - Light") {
+    @Previewable @State var itemSelection = 1
+    @Previewable @State var subtleSelection = 1
+    @Previewable @State var iconSelection = 0
+    @Previewable @State var filterSelection = 2
+    @Previewable @State var mapSelection = 0
+
     VStack(spacing: SpacingTokens.space5) {
         VStack(alignment: .leading, spacing: SpacingTokens.space3) {
             DSText("DSSegmentItem API", role: .headline)
@@ -193,7 +231,16 @@ public struct DSSegmentedControl: View, Sendable {
                     DSSegmentItem(title: "Week"),
                     DSSegmentItem(title: "Month")
                 ],
-                selectedIndex: .constant(1)
+                selectedIndex: $itemSelection
+            )
+        }
+
+        VStack(alignment: .leading, spacing: SpacingTokens.space3) {
+            DSText("Subtle", role: .headline)
+            DSSegmentedControl(
+                options: ["Day", "Week", "Month"],
+                selectedIndex: $subtleSelection,
+                appearance: .subtle
             )
         }
 
@@ -205,7 +252,7 @@ public struct DSSegmentedControl: View, Sendable {
                     DSSegmentItem(title: "Grid", icon: DSSymbol(systemName: "square.grid.2x2")!),
                     DSSegmentItem(title: "Calendar", icon: DSSymbol(systemName: "calendar")!)
                 ],
-                selectedIndex: .constant(0)
+                selectedIndex: $iconSelection
             )
         }
 
@@ -213,7 +260,7 @@ public struct DSSegmentedControl: View, Sendable {
             DSText("Convenience init (compat)", role: .headline)
             DSSegmentedControl(
                 options: ["All", "Active", "Pending", "Closed"],
-                selectedIndex: .constant(2)
+                selectedIndex: $filterSelection
             )
         }
 
@@ -221,7 +268,7 @@ public struct DSSegmentedControl: View, Sendable {
             DSText("Two options", role: .headline)
             DSSegmentedControl(
                 options: ["Map", "List"],
-                selectedIndex: .constant(0),
+                selectedIndex: $mapSelection,
                 symbols: [DSSymbol(systemName: "map")!, DSSymbol(systemName: "list.bullet")!]
             )
         }
@@ -231,6 +278,10 @@ public struct DSSegmentedControl: View, Sendable {
 }
 
 #Preview("DSSegmentedControl - Dark") {
+    @Previewable @State var itemSelection = 1
+    @Previewable @State var iconSelection = 0
+    @Previewable @State var subtleSelection = 2
+
     VStack(spacing: SpacingTokens.space5) {
         DSSegmentedControl(
             segments: [
@@ -238,12 +289,12 @@ public struct DSSegmentedControl: View, Sendable {
                 DSSegmentItem(title: "Week"),
                 DSSegmentItem(title: "Month")
             ],
-            selectedIndex: .constant(1)
+            selectedIndex: $itemSelection
         )
 
         DSSegmentedControl(
             options: ["List", "Grid", "Calendar"],
-            selectedIndex: .constant(0),
+            selectedIndex: $iconSelection,
             symbols: [
                 DSSymbol(systemName: "list.bullet")!,
                 DSSymbol(systemName: "square.grid.2x2")!,
@@ -253,7 +304,8 @@ public struct DSSegmentedControl: View, Sendable {
 
         DSSegmentedControl(
             options: ["All", "Active", "Pending", "Closed"],
-            selectedIndex: .constant(2)
+            selectedIndex: $subtleSelection,
+            appearance: .subtle
         )
     }
     .padding()

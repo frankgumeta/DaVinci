@@ -11,6 +11,13 @@ struct DSSegmentedControlGalleryScreen: View {
     @State private var viewMode = 0
     @State private var tabIndex = 0
     @State private var modelIndex = 0
+    @State private var subtleIndex = 1
+    @State private var mapIndex = 0
+    @State private var rtlIndex = 1
+    @State private var accessibilityIndex = 0
+    @State private var binaryIndex = 0
+    @State private var sizeIndex = 1
+    @State private var weatherIndex = 0
 
     var body: some View {
         ScrollView {
@@ -38,7 +45,7 @@ struct DSSegmentedControlGalleryScreen: View {
                     )
                     DSSegmentedControl(
                         options: ["Map", "Satellite", "Hybrid"],
-                        selectedIndex: .constant(0),
+                        selectedIndex: $mapIndex,
                         symbols: [
                             DSSymbol(systemName: "map")!,
                             DSSymbol(systemName: "globe.americas")!,
@@ -58,17 +65,52 @@ struct DSSegmentedControlGalleryScreen: View {
                     )
                 }
 
+                GallerySection(title: "Subtle") {
+                    DSSegmentedControl(
+                        options: ["Day", "Week", "Month"],
+                        selectedIndex: $subtleIndex,
+                        appearance: .subtle
+                    )
+                    DSSegmentedControl(
+                        options: ["List", "Grid"],
+                        selectedIndex: $viewMode,
+                        symbols: [
+                            DSSymbol(systemName: "list.bullet")!,
+                            DSSymbol(systemName: "square.grid.2x2")!
+                        ],
+                        appearance: .subtle
+                    )
+                }
+
+                GallerySection(title: "Subtle Right-to-Left") {
+                    DSSegmentedControl(
+                        options: ["اليوم", "الأسبوع", "الشهر"],
+                        selectedIndex: $rtlIndex,
+                        appearance: .subtle
+                    )
+                    .environment(\.layoutDirection, .rightToLeft)
+                }
+
+                GallerySection(title: "Subtle Accessibility Size") {
+                    DSSegmentedControl(
+                        options: ["Recent items", "Saved for later"],
+                        selectedIndex: $accessibilityIndex,
+                        appearance: .subtle
+                    )
+                    .environment(\.dynamicTypeSize, .accessibility3)
+                }
+
                 GallerySection(title: "Edge Cases") {
                     DSText("Two segments", role: .caption, color: theme.colors.semantic.textSecondary)
                     DSSegmentedControl(
                         options: ["On", "Off"],
-                        selectedIndex: .constant(0)
+                        selectedIndex: $binaryIndex
                     )
 
                     DSText("Four segments", role: .caption, color: theme.colors.semantic.textSecondary)
                     DSSegmentedControl(
                         options: ["S", "M", "L", "XL"],
-                        selectedIndex: .constant(1)
+                        selectedIndex: $sizeIndex
                     )
 
                     DSText("Icon-only items", role: .caption, color: theme.colors.semantic.textSecondary)
@@ -78,7 +120,7 @@ struct DSSegmentedControlGalleryScreen: View {
                             DSSegmentItem(title: "", icon: DSSymbol(systemName: "cloud")!),
                             DSSegmentItem(title: "", icon: DSSymbol(systemName: "cloud.rain")!)
                         ],
-                        selectedIndex: .constant(0)
+                        selectedIndex: $weatherIndex
                     )
                 }
             }
