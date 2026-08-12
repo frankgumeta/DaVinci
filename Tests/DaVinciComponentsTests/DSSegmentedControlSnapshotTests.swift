@@ -75,7 +75,7 @@ struct DSSegmentedControlSnapshotTests {
         let control = DSSegmentedControl(
             options: ["List", "Grid"],
             selectedIndex: .constant(0),
-            icons: ["list.bullet", "square.grid.2x2"]
+            symbols: [DSSymbol(systemName: "list.bullet")!, DSSymbol(systemName: "square.grid.2x2")!]
         )
         try SnapshotTester.assertSnapshot(
             control,
@@ -106,8 +106,8 @@ struct DSSegmentedControlSnapshotTests {
 
     @Test func primaryInitSegments_light() throws {
         let segments = [
-            DSSegmentItem(title: "Photos", iconSystemName: "photo"),
-            DSSegmentItem(title: "Videos", iconSystemName: "video"),
+            DSSegmentItem(title: "Photos", icon: DSSymbol(systemName: "photo")!),
+            DSSegmentItem(title: "Videos", icon: DSSymbol(systemName: "video")!),
             DSSegmentItem(title: "Files")
         ]
         let control = DSSegmentedControl(

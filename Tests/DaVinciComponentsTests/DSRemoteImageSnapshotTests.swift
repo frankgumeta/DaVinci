@@ -19,7 +19,7 @@ struct DSRemoteImageSnapshotTests {
                 cornerRadius: RadiusTokens.extraSmall
             ),
             showsShimmer: false,
-            placeholderSystemImage: "photo"
+            placeholder: DSSymbol(systemName: "photo")!
         )
         try SnapshotTester.assertSnapshot(
             view,
@@ -38,7 +38,7 @@ struct DSRemoteImageSnapshotTests {
                 cornerRadius: RadiusTokens.extraSmall
             ),
             showsShimmer: false,
-            placeholderSystemImage: "photo"
+            placeholder: DSSymbol(systemName: "photo")!
         )
         try SnapshotTester.assertSnapshot(
             view,
@@ -59,7 +59,7 @@ struct DSRemoteImageSnapshotTests {
                 cornerRadius: RadiusTokens.medium
             ),
             showsShimmer: false,
-            placeholderSystemImage: "person.crop.circle"
+            placeholder: DSSymbol(systemName: "person.crop.circle")!
         )
         try SnapshotTester.assertSnapshot(
             view,

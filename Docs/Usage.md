@@ -30,19 +30,20 @@ DSButton("Create Account", appearance: .primary) {
 }
 
 // Icon-only action in toolbar
-DSIconButton(
-    systemName: "gear",
-    titleForAccessibility: "Settings",
-    appearance: .ghost
-) {
-    showSettings()
+if let gear = DSSymbol(systemName: "gear") {
+    DSIconButton(
+        symbol: gear,
+        titleForAccessibility: "Settings",
+        appearance: .ghost
+    ) {
+        showSettings()
+    }
 }
 ```
 
 Use `.ghost` for low-emphasis actions placed directly on an existing surface,
 such as dismiss, overflow, or toolbar actions. Ghost buttons keep the same
-interaction and accessibility frames while removing fill and border. The
-pre-1.4 `Variant` name and `variant:` initializers remain source-compatible.
+interaction and accessibility frames while removing fill and border.
 
 **Rule of Thumb**: If the action needs a visible text label for clarity, use `DSButton`. If the icon is universally recognized (settings, close, share), use `DSIconButton`.
 
@@ -61,11 +62,11 @@ guard let gear = DSSymbol(systemName: "gear") else {
 }
 
 // Pass to any component that accepts DSSymbol.
-DSIconButton(symbol: gear, titleForAccessibility: "Settings", variant: .secondary) {
+DSIconButton(symbol: gear, titleForAccessibility: "Settings", appearance: .secondary) {
     showSettings()
 }
 
-// DSButtonIcon factories accept DSSymbol directly.
+// DSButtonIcon cases accept DSSymbol directly.
 let plus = DSSymbol(systemName: "plus")!
 DSButton("Add Item", icon: .leading(plus)) { addItem() }
 
@@ -82,16 +83,8 @@ DSRemoteImage(
 )
 ```
 
-The string-based APIs from v1.2.0 remain available for backward compatibility:
-
-```swift
-DSIconButton(systemName: "gear", titleForAccessibility: "Settings") {}
-DSButton("Add", icon: .leading(systemName: "plus")) {}
-```
-
-**When to use which**: Prefer `DSSymbol` in new code — it catches typos and
-unavailable symbols at construction time. Use the `String` API only when
-migrating existing call sites incrementally.
+All component icon APIs require `DSSymbol`, so invalid or unavailable names are
+handled before a component is constructed.
 
 ---
 
@@ -182,8 +175,7 @@ it also becomes static when Reduce Motion is enabled.
 
 `DSBadge.Tone` communicates status (`brand`, `success`, `warning`, `error`,
 or `neutral`) while `DSBadge.Appearance` controls emphasis (`filled`, `subtle`,
-or `outlined`). The pre-1.4 `variant:` initializer remains available and maps to
-the corresponding tone with the filled appearance.
+or `outlined`). Tone and appearance are independent axes of the canonical initializer.
 
 ### Remote Media
 
@@ -213,7 +205,7 @@ dimensions and clipping remain one coherent configuration.
 VStack {
     Spacer()
     
-    DSButton("Continue", variant: .primary) {
+    DSButton("Continue", appearance: .primary) {
         onContinue()
     }
     .padding(.horizontal, SpacingTokens.space4)
@@ -224,11 +216,11 @@ VStack {
 
 ```swift
 HStack(spacing: SpacingTokens.space2) {
-    DSButton("Cancel", variant: .outline) {
+    DSButton("Cancel", appearance: .outline) {
         dismiss()
     }
     
-    DSButton("Save", variant: .primary) {
+    DSButton("Save", appearance: .primary) {
         save()
     }
 }
@@ -239,8 +231,8 @@ HStack(spacing: SpacingTokens.space2) {
 ```swift
 DSButton(
     "Download PDF",
-    variant: .secondary,
-    icon: .leading(systemName: "arrow.down.doc")
+    appearance: .secondary,
+    icon: .leading(DSSymbol(systemName: "arrow.down.doc")!)
 ) {
     downloadPDF()
 }
@@ -263,7 +255,7 @@ DSCard(
         
         DSText("Unlock advanced features", role: .body)
         
-        DSButton("Upgrade Now", variant: .primary) {
+        DSButton("Upgrade Now", appearance: .primary) {
             showUpgrade()
         }
     }
@@ -350,7 +342,7 @@ var body: some View {
         
         DSButton(
             "Sign In",
-            variant: .primary,
+            appearance: .primary,
             isLoading: isLoading,
             accessibilityHint: "Sign in to your account"
         ) {
@@ -372,7 +364,9 @@ var body: some View {
         DSTextField(
             "Email",
             text: $email,
-            error: emailError,
+            configuration: emailError.map {
+                .filled.message(.error($0))
+            } ?? .filled,
             accessibilityHint: "Enter a valid email address"
         )
         .onChange(of: email) { _, newValue in
@@ -381,7 +375,7 @@ var body: some View {
         
         DSButton(
             "Submit",
-            variant: .primary,
+            appearance: .primary,
             isDisabled: emailError != nil || email.isEmpty
         ) {
             submit()
@@ -421,7 +415,7 @@ ScrollView {
             }
         }
         
-        DSButton("Save Changes", variant: .primary) {
+        DSButton("Save Changes", appearance: .primary) {
             saveChanges()
         }
     }
@@ -452,9 +446,9 @@ ScrollView {
                     Spacer()
                     
                     DSIconButton(
-                        systemName: "chevron.right",
+                        symbol: DSSymbol(systemName: "chevron.right")!,
                         titleForAccessibility: "View details",
-                        variant: .secondary,
+                        appearance: .secondary,
                         size: .small
                     ) {
                         showDetails(item)
@@ -491,7 +485,7 @@ LazyVGrid(
                 DSText(product.name, role: .headline)
                 DSText(product.price, role: .body)
                 
-                DSButton("Add to Cart", variant: .primary) {
+                DSButton("Add to Cart", appearance: .primary) {
                     addToCart(product)
                 }
             }
@@ -538,7 +532,7 @@ var body: some View {
 
 DSButton(
     "Submit",
-    variant: .primary,
+    appearance: .primary,
     isLoading: isSubmitting
 ) {
     Task {
@@ -660,7 +654,9 @@ ScrollView {
 DSTextField(
     "Email",
     text: $email,
-    error: error,
+    configuration: error.map {
+        .filled.message(.error($0))
+    } ?? .filled,
     accessibilityHint: error != nil ? "Fix the error to continue" : nil
 )
 
@@ -685,7 +681,7 @@ DSCard(style: .standard) {
         DSText("Error Loading Data", role: .headline)
         DSText("Unable to fetch content", role: .body)
         
-        DSButton("Retry", variant: .outline) {
+        DSButton("Retry", appearance: .outline) {
             retry()
         }
     }
@@ -710,7 +706,7 @@ VStack(spacing: SpacingTokens.space4) {
     
     // Form fields...
     
-    DSButton("Submit", variant: .primary) {
+    DSButton("Submit", appearance: .primary) {
         if validateForm() {
             submit()
         } else {
@@ -759,16 +755,16 @@ DSCard(
 ```swift
 DSButton(
     "Delete Account",
-    variant: .outline,
+    appearance: .outline,
     accessibilityHint: "This action cannot be undone"
 ) {
     deleteAccount()
 }
 
 DSIconButton(
-    systemName: "trash",
+    symbol: DSSymbol(systemName: "trash")!,
     titleForAccessibility: "Delete item",
-    variant: .secondary,
+    appearance: .secondary,
     accessibilityHint: "Permanently remove this item"
 ) {
     deleteItem()
@@ -781,7 +777,7 @@ DSIconButton(
 // DSButton automatically announces loading state
 DSButton(
     "Save",
-    variant: .primary,
+    appearance: .primary,
     isLoading: isSaving
 ) {
     save()
@@ -855,20 +851,22 @@ struct ProfileScreen: View {
                         DSTextField(
                             "Email",
                             text: $email,
-                            error: saveError
+                            configuration: saveError.map {
+                                .filled.message(.error($0))
+                            } ?? .filled
                         )
                     }
                 }
                 
                 // Actions
                 HStack(spacing: SpacingTokens.space2) {
-                    DSButton("Cancel", variant: .outline) {
+                    DSButton("Cancel", appearance: .outline) {
                         dismiss()
                     }
                     
                     DSButton(
                         "Save Changes",
-                        variant: .primary,
+                        appearance: .primary,
                         isLoading: isLoading
                     ) {
                         Task {

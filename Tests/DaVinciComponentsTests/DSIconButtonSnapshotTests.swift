@@ -13,9 +13,9 @@ struct DSIconButtonSnapshotTests {
 
     @Test func smallIconButton_light() throws {
         let button = DSIconButton(
-            systemName: "heart.fill",
+            symbol: DSSymbol(systemName: "heart.fill")!,
             titleForAccessibility: "Like",
-            variant: .primary,
+            appearance: .primary,
             size: .small
         ) {}
         try SnapshotTester.assertSnapshot(
@@ -29,9 +29,9 @@ struct DSIconButtonSnapshotTests {
 
     @Test func mediumIconButton_light() throws {
         let button = DSIconButton(
-            systemName: "heart.fill",
+            symbol: DSSymbol(systemName: "heart.fill")!,
             titleForAccessibility: "Like",
-            variant: .primary,
+            appearance: .primary,
             size: .medium
         ) {}
         try SnapshotTester.assertSnapshot(
@@ -45,9 +45,9 @@ struct DSIconButtonSnapshotTests {
 
     @Test func largeIconButton_light() throws {
         let button = DSIconButton(
-            systemName: "heart.fill",
+            symbol: DSSymbol(systemName: "heart.fill")!,
             titleForAccessibility: "Like",
-            variant: .primary,
+            appearance: .primary,
             size: .large
         ) {}
         try SnapshotTester.assertSnapshot(
@@ -63,9 +63,9 @@ struct DSIconButtonSnapshotTests {
 
     @Test func primaryIconButton_dark() throws {
         let button = DSIconButton(
-            systemName: "star.fill",
+            symbol: DSSymbol(systemName: "star.fill")!,
             titleForAccessibility: "Favorite",
-            variant: .primary,
+            appearance: .primary,
             size: .medium
         ) {}
         try SnapshotTester.assertSnapshot(
@@ -79,9 +79,9 @@ struct DSIconButtonSnapshotTests {
 
     @Test func secondaryIconButton_light() throws {
         let button = DSIconButton(
-            systemName: "gearshape",
+            symbol: DSSymbol(systemName: "gearshape")!,
             titleForAccessibility: "Settings",
-            variant: .secondary,
+            appearance: .secondary,
             size: .medium
         ) {}
         try SnapshotTester.assertSnapshot(
@@ -95,9 +95,9 @@ struct DSIconButtonSnapshotTests {
 
     @Test func outlineIconButton_light() throws {
         let button = DSIconButton(
-            systemName: "pencil",
+            symbol: DSSymbol(systemName: "pencil")!,
             titleForAccessibility: "Edit",
-            variant: .outline,
+            appearance: .outline,
             size: .medium
         ) {}
         try SnapshotTester.assertSnapshot(
@@ -111,9 +111,9 @@ struct DSIconButtonSnapshotTests {
 
     @Test func accentIconButton_light() throws {
         let button = DSIconButton(
-            systemName: "bell.fill",
+            symbol: DSSymbol(systemName: "bell.fill")!,
             titleForAccessibility: "Notifications",
-            variant: .accent,
+            appearance: .accent,
             size: .medium
         ) {}
         try SnapshotTester.assertSnapshot(
@@ -127,7 +127,7 @@ struct DSIconButtonSnapshotTests {
 
     @Test func ghostIconButton_light() throws {
         let button = DSIconButton(
-            systemName: "ellipsis",
+            symbol: DSSymbol(systemName: "ellipsis")!,
             titleForAccessibility: "More",
             appearance: .ghost,
             size: .medium
@@ -143,7 +143,7 @@ struct DSIconButtonSnapshotTests {
 
     @Test func ghostIconButton_dark() throws {
         let button = DSIconButton(
-            systemName: "ellipsis",
+            symbol: DSSymbol(systemName: "ellipsis")!,
             titleForAccessibility: "More",
             appearance: .ghost,
             size: .medium
@@ -162,9 +162,9 @@ struct DSIconButtonSnapshotTests {
 
     @Test func disabledIconButton_light() throws {
         let button = DSIconButton(
-            systemName: "trash",
+            symbol: DSSymbol(systemName: "trash")!,
             titleForAccessibility: "Delete",
-            variant: .primary,
+            appearance: .primary,
             size: .medium,
             isDisabled: true
         ) {}
@@ -179,9 +179,9 @@ struct DSIconButtonSnapshotTests {
 
     @Test func loadingIconButton_light() throws {
         let button = DSIconButton(
-            systemName: "arrow.clockwise",
+            symbol: DSSymbol(systemName: "arrow.clockwise")!,
             titleForAccessibility: "Refresh",
-            variant: .primary,
+            appearance: .primary,
             size: .medium,
             isLoading: true
         ) {}

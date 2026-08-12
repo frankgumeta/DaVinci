@@ -44,9 +44,9 @@ struct DSBadgeGalleryScreen: View {
                         DSBadge("Large", size: .large)
                     }
                     HStack(spacing: SpacingTokens.space3) {
-                        DSBadge("Error", variant: .error, size: .small)
-                        DSBadge("Error", variant: .error, size: .medium)
-                        DSBadge("Error", variant: .error, size: .large)
+                        DSBadge("Error", tone: .error, size: .small)
+                        DSBadge("Error", tone: .error, size: .medium)
+                        DSBadge("Error", tone: .error, size: .large)
                     }
                 }
 
@@ -59,54 +59,54 @@ struct DSBadgeGalleryScreen: View {
                         DSBadge("999+")
                     }
                     HStack(spacing: SpacingTokens.space3) {
-                        DSBadge("1", variant: .error)
-                        DSBadge("12", variant: .error)
-                        DSBadge("99+", variant: .error)
+                        DSBadge("1", tone: .error)
+                        DSBadge("12", tone: .error)
+                        DSBadge("99+", tone: .error)
                     }
                 }
 
                 GallerySection(title: "Dot Indicators") {
                     HStack(spacing: SpacingTokens.space3) {
-                        DSBadge(variant: .brand)
-                        DSBadge(variant: .success)
-                        DSBadge(variant: .warning)
-                        DSBadge(variant: .error)
-                        DSBadge(variant: .neutral)
+                        DSBadge(tone: .brand)
+                        DSBadge(tone: .success)
+                        DSBadge(tone: .warning)
+                        DSBadge(tone: .error)
+                        DSBadge(tone: .neutral)
                     }
                     DSText(
                         "With custom accessibility label",
                         role: .caption,
                         color: theme.colors.semantic.textSecondary
                     )
-                    DSBadge(variant: .error, accessibilityLabel: "3 unread messages")
+                    DSBadge(tone: .error, accessibilityLabel: "3 unread messages")
                 }
 
                 GallerySection(title: "In Context") {
                     HStack(spacing: SpacingTokens.space3) {
                         DSText("Notifications", role: .body)
                         Spacer()
-                        DSBadge("12", variant: .error)
+                        DSBadge("12", tone: .error)
                     }
                     HStack(spacing: SpacingTokens.space3) {
                         DSText("Status", role: .body)
                         Spacer()
-                        DSBadge("Active", variant: .success)
+                        DSBadge("Active", tone: .success)
                     }
                     HStack(spacing: SpacingTokens.space3) {
                         DSText("Review", role: .body)
                         Spacer()
-                        DSBadge("Pending", variant: .warning)
+                        DSBadge("Pending", tone: .warning)
                     }
                     HStack(spacing: SpacingTokens.space3) {
                         DSText("Build", role: .body)
                         Spacer()
-                        DSBadge("Failed", variant: .error)
+                        DSBadge("Failed", tone: .error)
                     }
                 }
 
                 GallerySection(title: "Edge Cases") {
                     HStack(spacing: SpacingTokens.space3) {
-                        DSBadge("W", variant: .brand)
+                        DSBadge("W", tone: .brand)
                         DSBadge("Long label badge")
                         DSBadge("Very long label that tests wrapping")
                     }

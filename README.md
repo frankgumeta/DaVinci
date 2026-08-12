@@ -91,7 +91,7 @@ struct ContentView: View {
             DSText("Welcome to DaVinci", role: .title)
             DSText("A modern design system", role: .body)
             
-            DSButton("Get Started", variant: .primary) {
+            DSButton("Get Started", appearance: .primary) {
                 print("Button tapped!")
             }
         }
@@ -184,10 +184,14 @@ Supporting text is announced as an accessibility hint. Errors and character
 progress are included in the field's accessibility value. Character limits
 truncate by Swift `Character`, preserving extended grapheme clusters.
 
-The original initializer remains source-compatible:
+Errors are configured through the same typed initializer:
 
 ```swift
-DSTextField("Email", text: $email, error: "Invalid email address")
+DSTextField(
+    "Email",
+    text: $email,
+    configuration: .filled.message(.error("Invalid email address"))
+)
 ```
 
 ### Cards
@@ -466,7 +470,7 @@ struct YourApp: App {
 **Use components when possible:**
 ```swift
 // ✅ Preferred
-DSButton("Submit", variant: .primary) { }
+DSButton("Submit", appearance: .primary) { }
 
 // ❌ Avoid rebuilding components
 Button("Submit") { }
@@ -497,7 +501,7 @@ let trash = DSSymbol(systemName: "trash")!
 DSIconButton(
     symbol: trash,
     titleForAccessibility: "Delete item", // VoiceOver reads this
-    variant: .secondary
+    appearance: .secondary
 ) { deleteItem() }
 
 // Remote images support custom labels

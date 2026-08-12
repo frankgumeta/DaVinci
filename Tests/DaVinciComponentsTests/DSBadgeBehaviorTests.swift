@@ -62,22 +62,9 @@ struct DSBadgeBehaviorTests {
 
     // MARK: - Tone and Appearance
 
-    @Test func variantRemainsAnAliasForTone() {
-        let legacy: DSBadge.Variant = .success
-        let canonical: DSBadge.Tone = legacy
-        #expect(canonical == .success)
-    }
-
     @Test func allTonesAndAppearancesAreAvailable() {
         #expect(DSBadge.Tone.allCases.count == 5)
         #expect(DSBadge.Appearance.allCases == [.filled, .subtle, .outlined])
-    }
-
-    @Test func legacyAndCanonicalInitializersRemainAvailable() {
-        let legacy = DSBadge("Legacy", variant: .warning)
-        let canonical = DSBadge("Canonical", tone: .warning, appearance: .subtle)
-        #expect(type(of: legacy) == DSBadge.self)
-        #expect(type(of: canonical) == DSBadge.self)
     }
 
     // MARK: - Filled Background Colors
@@ -197,7 +184,7 @@ struct DSBadgeBehaviorTests {
     }
 
     @Test @MainActor func dotBadgeUsesDefaultAccessibilityLabel() {
-        let badge = DSBadge(variant: .error)
+        let badge = DSBadge(tone: .error)
         #expect(badge.resolvedAccessibilityLabel == "Notification indicator")
     }
 
@@ -207,7 +194,7 @@ struct DSBadgeBehaviorTests {
     }
 
     @Test @MainActor func customAccessibilityLabelOverridesDotDefault() {
-        let badge = DSBadge(variant: .error, accessibilityLabel: "3 unread messages")
+        let badge = DSBadge(tone: .error, accessibilityLabel: "3 unread messages")
         #expect(badge.resolvedAccessibilityLabel == "3 unread messages")
     }
 
@@ -219,12 +206,12 @@ struct DSBadgeBehaviorTests {
     // MARK: - Variant Hashable / Equatable
 
     @Test func variantConformsToHashable() {
-        let set: Set<DSBadge.Variant> = [.brand, .success, .warning, .error, .neutral]
+        let set: Set<DSBadge.Tone> = [.brand, .success, .warning, .error, .neutral]
         #expect(set.count == 5)
     }
 
     @Test func allVariantsAreDistinct() {
-        let variants: [DSBadge.Variant] = [.brand, .success, .warning, .error, .neutral]
+        let variants: [DSBadge.Tone] = [.brand, .success, .warning, .error, .neutral]
         for i in variants.indices {
             for j in variants.indices where i != j {
                 #expect(variants[i] != variants[j])

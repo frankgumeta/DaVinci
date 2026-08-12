@@ -55,9 +55,6 @@ public struct DSBadge: View, Sendable {
         case neutral
     }
 
-    /// Backward-compatible name for the semantic badge tone.
-    public typealias Variant = Tone
-
     /// Visual emphasis of the badge.
     public enum Appearance: CaseIterable, Hashable, Sendable {
         /// Solid semantic fill with contrast-selected foreground.
@@ -129,22 +126,6 @@ public struct DSBadge: View, Sendable {
         self.accessibilityLabel = accessibilityLabel
     }
 
-    /// Creates a filled badge using the API published before DaVinci 1.4.
-    public init(
-        _ text: String? = nil,
-        variant: Variant,
-        size: Size = .medium,
-        accessibilityLabel: String? = nil
-    ) {
-        self.init(
-            text,
-            tone: variant,
-            appearance: .filled,
-            size: size,
-            accessibilityLabel: accessibilityLabel
-        )
-    }
-
     public var body: some View {
         let style = DSBadgeStyleResolver.resolve(
             tone: tone,
@@ -196,152 +177,21 @@ public struct DSBadge: View, Sendable {
         return "Notification indicator"
     }
 
-    internal static func backgroundColor(for variant: Variant, theme: DSTheme) -> Color {
-        DSBadgeStyleResolver.filledBackgroundColor(for: variant, theme: theme)
+    internal static func backgroundColor(for tone: Tone, theme: DSTheme) -> Color {
+        DSBadgeStyleResolver.filledBackgroundColor(for: tone, theme: theme)
     }
 
     @MainActor
     internal static func foregroundColor(
-        for variant: Variant,
+        for tone: Tone,
         theme: DSTheme,
         colorScheme: ColorScheme
     ) -> Color {
         DSBadgeStyleResolver.resolve(
-            tone: variant,
+            tone: tone,
             appearance: .filled,
             theme: theme,
             colorScheme: colorScheme
         ).foregroundColor
     }
-}
-
-// MARK: - Previews
-
-#Preview("DSBadge - Light") {
-    ScrollView {
-        VStack(alignment: .leading, spacing: SpacingTokens.space5) {
-
-            DSText("Variants — readability check", role: .headline)
-            HStack(spacing: SpacingTokens.space3) {
-                DSBadge("Brand", variant: .brand)
-                DSBadge("Success", variant: .success)
-                DSBadge("Warning", variant: .warning)
-                DSBadge("Error", variant: .error)
-                DSBadge("Neutral", variant: .neutral)
-            }
-
-            DSText("Sizes — all variants", role: .headline)
-            ForEach([DSBadge.Variant.brand, .success, .warning, .error, .neutral], id: \.self) { variant in
-                HStack(spacing: SpacingTokens.space3) {
-                    DSBadge("Small", variant: variant, size: .small)
-                    DSBadge("Medium", variant: variant, size: .medium)
-                    DSBadge("Large", variant: variant, size: .large)
-                }
-            }
-
-            DSText("Numbers", role: .headline)
-            HStack(spacing: SpacingTokens.space3) {
-                DSBadge("1")
-                DSBadge("5")
-                DSBadge("99")
-                DSBadge("999+")
-                DSBadge("1", variant: .error)
-                DSBadge("99+", variant: .error)
-            }
-
-            DSText("Dot indicators — graduated sizes", role: .headline)
-            HStack(alignment: .center, spacing: SpacingTokens.space4) {
-                VStack(spacing: SpacingTokens.space2) {
-                    DSBadge(variant: .error, size: .small)
-                    DSText("small", role: .caption)
-                }
-                VStack(spacing: SpacingTokens.space2) {
-                    DSBadge(variant: .error, size: .medium)
-                    DSText("medium", role: .caption)
-                }
-                VStack(spacing: SpacingTokens.space2) {
-                    DSBadge(variant: .error, size: .large)
-                    DSText("large", role: .caption)
-                }
-            }
-            HStack(spacing: SpacingTokens.space3) {
-                DSBadge(variant: .brand)
-                DSBadge(variant: .success)
-                DSBadge(variant: .warning)
-                DSBadge(variant: .error)
-                DSBadge(variant: .neutral)
-            }
-        }
-        .padding()
-    }
-    .dsTheme(.defaultTheme)
-}
-
-#Preview("DSBadge - Dark") {
-    ScrollView {
-        VStack(alignment: .leading, spacing: SpacingTokens.space5) {
-
-            DSText("Variants — dark mode readability", role: .headline)
-            HStack(spacing: SpacingTokens.space3) {
-                DSBadge("Brand", variant: .brand)
-                DSBadge("Success", variant: .success)
-                DSBadge("Warning", variant: .warning)
-                DSBadge("Error", variant: .error)
-                DSBadge("Neutral", variant: .neutral)
-            }
-
-            DSText("Sizes — all variants", role: .headline)
-            ForEach([DSBadge.Variant.brand, .success, .warning, .error, .neutral], id: \.self) { variant in
-                HStack(spacing: SpacingTokens.space3) {
-                    DSBadge("Small", variant: variant, size: .small)
-                    DSBadge("Medium", variant: variant, size: .medium)
-                    DSBadge("Large", variant: variant, size: .large)
-                }
-            }
-
-            DSText("Numbers", role: .headline)
-            HStack(spacing: SpacingTokens.space3) {
-                DSBadge("1")
-                DSBadge("99")
-                DSBadge("999+")
-                DSBadge("1", variant: .error)
-                DSBadge("99+", variant: .error)
-            }
-
-            DSText("Dot indicators — graduated sizes", role: .headline)
-            HStack(alignment: .center, spacing: SpacingTokens.space4) {
-                VStack(spacing: SpacingTokens.space2) {
-                    DSBadge(variant: .error, size: .small)
-                    DSText("small", role: .caption)
-                }
-                VStack(spacing: SpacingTokens.space2) {
-                    DSBadge(variant: .error, size: .medium)
-                    DSText("medium", role: .caption)
-                }
-                VStack(spacing: SpacingTokens.space2) {
-                    DSBadge(variant: .error, size: .large)
-                    DSText("large", role: .caption)
-                }
-            }
-        }
-        .padding()
-    }
-    .dsTheme(.defaultTheme)
-    .preferredColorScheme(.dark)
-}
-
-#Preview("DSBadge - Accessibility") {
-    VStack(spacing: SpacingTokens.space4) {
-        DSText("Custom a11y label on dot", role: .caption)
-        DSBadge(variant: .error, accessibilityLabel: "3 unread messages")
-
-        DSText("All sizes", role: .caption)
-        HStack(spacing: SpacingTokens.space3) {
-            DSBadge("S", size: .small)
-            DSBadge("M", size: .medium)
-            DSBadge("L", size: .large)
-        }
-    }
-    .padding()
-    .dsTheme(.defaultTheme)
 }

@@ -7,18 +7,13 @@ import DaVinciTokens
 public struct DSSegmentItem: Sendable {
     /// The text label for the segment.
     public let title: String
-    /// Optional SF Symbol name displayed alongside the title.
-    public let iconSystemName: String?
+    /// Optional validated SF Symbol displayed alongside the title.
+    public let icon: DSSymbol?
 
-    /// Creates a segment with a validated `DSSymbol` icon.
-    public init(title: String, icon: DSSymbol) {
+    /// Creates a segment with an optional validated `DSSymbol` icon.
+    public init(title: String, icon: DSSymbol? = nil) {
         self.title = title
-        self.iconSystemName = icon.systemName
-    }
-
-    public init(title: String, iconSystemName: String? = nil) {
-        self.title = title
-        self.iconSystemName = iconSystemName
+        self.icon = icon
     }
 
     internal func accessibilityDescriptor(isSelected: Bool) -> DSAccessibilityDescriptor {
@@ -58,7 +53,7 @@ public struct DSSegmentItem: Sendable {
 /// DSSegmentedControl(
 ///     options: ["List", "Grid"],
 ///     selectedIndex: $selectedIndex,
-///     icons: ["list.bullet", "square.grid.2x2"]
+///     symbols: [DSSymbol(systemName: "list.bullet")!, DSSymbol(systemName: "square.grid.2x2")!]
 /// )
 /// ```
 ///
@@ -104,33 +99,12 @@ public struct DSSegmentedControl: View, Sendable {
     /// - Parameters:
     ///   - options: Array of option labels
     ///   - selectedIndex: Binding to the currently selected index
-    ///   - icons: Optional SF Symbol names; if provided, must align with `options` by index
-    ///   - appearance: Visual emphasis of the container and selected segment
-    public init(
-        options: [String],
-        selectedIndex: Binding<Int>,
-        icons: [String]? = nil,
-        appearance: Appearance = .filled
-    ) {
-        self.segments = options.indices.map { i in
-            let icon = icons.flatMap { arr in arr.indices.contains(i) ? arr[i] : nil }
-            return DSSegmentItem(title: options[i], iconSystemName: icon)
-        }
-        self._selectedIndex = selectedIndex
-        self.appearance = appearance
-    }
-
-    /// Convenience initializer using plain string arrays with validated symbols.
-    ///
-    /// - Parameters:
-    ///   - options: Array of option labels
-    ///   - selectedIndex: Binding to the currently selected index
     ///   - symbols: Optional validated `DSSymbol` icons; if provided, must align with `options` by index
     ///   - appearance: Visual emphasis of the container and selected segment
     public init(
         options: [String],
         selectedIndex: Binding<Int>,
-        symbols: [DSSymbol]?,
+        symbols: [DSSymbol]? = nil,
         appearance: Appearance = .filled
     ) {
         self.segments = options.indices.map { i in
@@ -153,8 +127,8 @@ public struct DSSegmentedControl: View, Sendable {
                     }
                 } label: {
                     HStack(spacing: SpacingTokens.space2) {
-                        if let icon = segment.iconSystemName {
-                            Image(systemName: icon)
+                        if let icon = segment.icon {
+                            icon.image
                         }
 
                         Text(segment.title)
@@ -211,104 +185,4 @@ public struct DSSegmentedControl: View, Sendable {
             colorScheme: colorScheme
         )
     }
-}
-
-// MARK: - Previews
-
-#Preview("DSSegmentedControl - Light") {
-    @Previewable @State var itemSelection = 1
-    @Previewable @State var subtleSelection = 1
-    @Previewable @State var iconSelection = 0
-    @Previewable @State var filterSelection = 2
-    @Previewable @State var mapSelection = 0
-
-    VStack(spacing: SpacingTokens.space5) {
-        VStack(alignment: .leading, spacing: SpacingTokens.space3) {
-            DSText("DSSegmentItem API", role: .headline)
-            DSSegmentedControl(
-                segments: [
-                    DSSegmentItem(title: "Day"),
-                    DSSegmentItem(title: "Week"),
-                    DSSegmentItem(title: "Month")
-                ],
-                selectedIndex: $itemSelection
-            )
-        }
-
-        VStack(alignment: .leading, spacing: SpacingTokens.space3) {
-            DSText("Subtle", role: .headline)
-            DSSegmentedControl(
-                options: ["Day", "Week", "Month"],
-                selectedIndex: $subtleSelection,
-                appearance: .subtle
-            )
-        }
-
-        VStack(alignment: .leading, spacing: SpacingTokens.space3) {
-            DSText("With Icons", role: .headline)
-            DSSegmentedControl(
-                segments: [
-                    DSSegmentItem(title: "List", icon: DSSymbol(systemName: "list.bullet")!),
-                    DSSegmentItem(title: "Grid", icon: DSSymbol(systemName: "square.grid.2x2")!),
-                    DSSegmentItem(title: "Calendar", icon: DSSymbol(systemName: "calendar")!)
-                ],
-                selectedIndex: $iconSelection
-            )
-        }
-
-        VStack(alignment: .leading, spacing: SpacingTokens.space3) {
-            DSText("Convenience init (compat)", role: .headline)
-            DSSegmentedControl(
-                options: ["All", "Active", "Pending", "Closed"],
-                selectedIndex: $filterSelection
-            )
-        }
-
-        VStack(alignment: .leading, spacing: SpacingTokens.space3) {
-            DSText("Two options", role: .headline)
-            DSSegmentedControl(
-                options: ["Map", "List"],
-                selectedIndex: $mapSelection,
-                symbols: [DSSymbol(systemName: "map")!, DSSymbol(systemName: "list.bullet")!]
-            )
-        }
-    }
-    .padding()
-    .dsTheme(.defaultTheme)
-}
-
-#Preview("DSSegmentedControl - Dark") {
-    @Previewable @State var itemSelection = 1
-    @Previewable @State var iconSelection = 0
-    @Previewable @State var subtleSelection = 2
-
-    VStack(spacing: SpacingTokens.space5) {
-        DSSegmentedControl(
-            segments: [
-                DSSegmentItem(title: "Day"),
-                DSSegmentItem(title: "Week"),
-                DSSegmentItem(title: "Month")
-            ],
-            selectedIndex: $itemSelection
-        )
-
-        DSSegmentedControl(
-            options: ["List", "Grid", "Calendar"],
-            selectedIndex: $iconSelection,
-            symbols: [
-                DSSymbol(systemName: "list.bullet")!,
-                DSSymbol(systemName: "square.grid.2x2")!,
-                DSSymbol(systemName: "calendar")!
-            ]
-        )
-
-        DSSegmentedControl(
-            options: ["All", "Active", "Pending", "Closed"],
-            selectedIndex: $subtleSelection,
-            appearance: .subtle
-        )
-    }
-    .padding()
-    .dsTheme(.defaultTheme)
-    .preferredColorScheme(.dark)
 }

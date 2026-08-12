@@ -14,9 +14,6 @@ public struct DSIconButton: View {
         case ghost
     }
 
-    /// Backward-compatible name for the visual appearance.
-    public typealias Variant = Appearance
-
     public enum Size: Sendable {
         case small
         case medium
@@ -33,7 +30,7 @@ public struct DSIconButton: View {
 
     @Environment(\.dsTheme) private var theme
 
-    private let systemName: String
+    private let symbol: DSSymbol
     private let accessibilityTitle: String
     private let accessibilityHint: String?
     private let appearance: Appearance
@@ -53,29 +50,7 @@ public struct DSIconButton: View {
         accessibilityHint: String? = nil,
         action: @escaping @MainActor () -> Void
     ) {
-        self.init(
-            systemName: symbol.systemName,
-            titleForAccessibility: titleForAccessibility,
-            appearance: appearance,
-            size: size,
-            isLoading: isLoading,
-            isDisabled: isDisabled,
-            accessibilityHint: accessibilityHint,
-            action: action
-        )
-    }
-
-    public init(
-        systemName: String,
-        titleForAccessibility: String,
-        appearance: Appearance = .secondary,
-        size: Size = .medium,
-        isLoading: Bool = false,
-        isDisabled: Bool = false,
-        accessibilityHint: String? = nil,
-        action: @escaping @MainActor () -> Void
-    ) {
-        self.systemName = systemName
+        self.symbol = symbol
         self.accessibilityTitle = titleForAccessibility
         self.accessibilityHint = accessibilityHint
         self.appearance = appearance
@@ -83,52 +58,6 @@ public struct DSIconButton: View {
         self.isLoading = isLoading
         self.isDisabled = isDisabled
         self.action = action
-    }
-
-    /// Creates a typed icon button using the API published before DaVinci 1.4.
-    public init(
-        symbol: DSSymbol,
-        titleForAccessibility: String,
-        variant: Variant,
-        size: Size = .medium,
-        isLoading: Bool = false,
-        isDisabled: Bool = false,
-        accessibilityHint: String? = nil,
-        action: @escaping @MainActor () -> Void
-    ) {
-        self.init(
-            symbol: symbol,
-            titleForAccessibility: titleForAccessibility,
-            appearance: variant,
-            size: size,
-            isLoading: isLoading,
-            isDisabled: isDisabled,
-            accessibilityHint: accessibilityHint,
-            action: action
-        )
-    }
-
-    /// Creates a string-based icon button using the API published before DaVinci 1.4.
-    public init(
-        systemName: String,
-        titleForAccessibility: String,
-        variant: Variant,
-        size: Size = .medium,
-        isLoading: Bool = false,
-        isDisabled: Bool = false,
-        accessibilityHint: String? = nil,
-        action: @escaping @MainActor () -> Void
-    ) {
-        self.init(
-            systemName: systemName,
-            titleForAccessibility: titleForAccessibility,
-            appearance: variant,
-            size: size,
-            isLoading: isLoading,
-            isDisabled: isDisabled,
-            accessibilityHint: accessibilityHint,
-            action: action
-        )
     }
 
     public var body: some View {
@@ -140,7 +69,7 @@ public struct DSIconButton: View {
                     ProgressView()
                         .tint(style.foregroundColor)
                 } else {
-                    Image(systemName: systemName)
+                    symbol.image
                         .font(.system(size: iconFontSize, weight: .medium))
                 }
             }
@@ -183,73 +112,4 @@ public struct DSIconButton: View {
         size.dimension * Self.iconSizeRatio
     }
 
-}
-
-// MARK: - Previews
-
-private let previewPlus = DSSymbol(systemName: "plus")!
-private let previewGearshape = DSSymbol(systemName: "gearshape")!
-private let previewPencil = DSSymbol(systemName: "pencil")!
-private let previewStarFill = DSSymbol(systemName: "star.fill")!
-private let previewHeartFill = DSSymbol(systemName: "heart.fill")!
-private let previewTrash = DSSymbol(systemName: "trash")!
-
-#Preview("DSIconButton — Variants") {
-    HStack(spacing: 12) {
-        DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .primary) {}
-        DSIconButton(symbol: previewGearshape, titleForAccessibility: "Settings", variant: .secondary) {}
-        DSIconButton(symbol: previewPencil, titleForAccessibility: "Edit", variant: .outline) {}
-        DSIconButton(symbol: previewStarFill, titleForAccessibility: "Accent", variant: .accent) {}
-        DSIconButton(symbol: previewHeartFill, titleForAccessibility: "Ghost", appearance: .ghost) {}
-    }
-    .padding()
-}
-
-#Preview("DSIconButton — Sizes") {
-    HStack(spacing: 12) {
-        DSIconButton(symbol: previewHeartFill, titleForAccessibility: "Like", variant: .primary, size: .small) {}
-        DSIconButton(symbol: previewHeartFill, titleForAccessibility: "Like", variant: .primary, size: .medium) {}
-        DSIconButton(symbol: previewHeartFill, titleForAccessibility: "Like", variant: .primary, size: .large) {}
-    }
-    .padding()
-}
-
-#Preview("DSIconButton — States") {
-    HStack(spacing: 12) {
-        DSIconButton(symbol: previewTrash, titleForAccessibility: "Delete", variant: .primary) {}
-        DSIconButton(symbol: previewTrash, titleForAccessibility: "Delete", variant: .primary, isDisabled: true) {}
-        DSIconButton(symbol: previewTrash, titleForAccessibility: "Delete", variant: .primary, isLoading: true) {}
-    }
-    .padding()
-}
-
-#Preview("DSIconButton — All Variants + Sizes") {
-    VStack(spacing: 16) {
-        HStack(spacing: 12) {
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .primary, size: .small) {}
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .secondary, size: .small) {}
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .outline, size: .small) {}
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .accent, size: .small) {}
-        }
-        HStack(spacing: 12) {
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .primary, size: .large) {}
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .secondary, size: .large) {}
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .outline, size: .large) {}
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .accent, size: .large) {}
-        }
-    }
-    .padding()
-}
-
-#Preview("DSIconButton — Dark") {
-    HStack(spacing: 12) {
-        DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .primary) {}
-        DSIconButton(symbol: previewGearshape, titleForAccessibility: "Settings", variant: .secondary) {}
-        DSIconButton(symbol: previewPencil, titleForAccessibility: "Edit", variant: .outline) {}
-        DSIconButton(symbol: previewStarFill, titleForAccessibility: "Accent", variant: .accent) {}
-        DSIconButton(symbol: previewTrash, titleForAccessibility: "Delete", variant: .primary, isDisabled: true) {}
-    }
-    .padding()
-    .dsTheme(.defaultTheme)
-    .preferredColorScheme(.dark)
 }

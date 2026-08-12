@@ -211,20 +211,6 @@ struct DSTextFieldConfigurationInitTests {
         #expect(field.accessibilityDescriptor.hint == "Enter your email. Required for receipts")
     }
 
-    @Test func legacyErrorInitMatchesConfigurationErrorInit() {
-        let legacy = DSTextField(
-            "Email",
-            text: .constant("bad@"),
-            error: "Invalid"
-        )
-        let withConfig = DSTextField(
-            "Email",
-            text: .constant("bad@"),
-            configuration: .filled.message(.error("Invalid"))
-        )
-        #expect(legacy.resolvedAccessibilityValue == withConfig.resolvedAccessibilityValue)
-    }
-
     @Test func configurationInitHiddenLabelRetainsAccessibleLabel() {
         let field = DSTextField(
             "Search",

@@ -27,7 +27,7 @@ struct DSIconButtonGalleryScreen: View {
                             DSIconButton(
                                 symbol: DSSymbol(systemName: "heart.fill")!,
                                 titleForAccessibility: "Like (Small)",
-                                variant: .primary,
+                                appearance: .primary,
                                 size: .small
                             ) {}
                             DSText("small", role: .caption, color: theme.colors.semantic.textTertiary)
@@ -36,7 +36,7 @@ struct DSIconButtonGalleryScreen: View {
                             DSIconButton(
                                 symbol: DSSymbol(systemName: "heart.fill")!,
                                 titleForAccessibility: "Like (Medium)",
-                                variant: .primary,
+                                appearance: .primary,
                                 size: .medium
                             ) {}
                             DSText("medium", role: .caption, color: theme.colors.semantic.textTertiary)
@@ -45,7 +45,7 @@ struct DSIconButtonGalleryScreen: View {
                             DSIconButton(
                                 symbol: DSSymbol(systemName: "heart.fill")!,
                                 titleForAccessibility: "Like (Large)",
-                                variant: .primary,
+                                appearance: .primary,
                                 size: .large
                             ) {}
                             DSText("large", role: .caption, color: theme.colors.semantic.textTertiary)
@@ -55,17 +55,17 @@ struct DSIconButtonGalleryScreen: View {
 
                 GallerySection(title: "States") {
                     HStack(spacing: SpacingTokens.space3) {
-                        DSIconButton(symbol: DSSymbol(systemName: "trash")!, titleForAccessibility: "Delete", variant: .primary) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "trash")!, titleForAccessibility: "Delete", appearance: .primary) {}
                         DSIconButton(
                             symbol: DSSymbol(systemName: "trash")!,
                             titleForAccessibility: "Delete (disabled)",
-                            variant: .primary,
+                            appearance: .primary,
                             isDisabled: true
                         ) {}
                         DSIconButton(
                             symbol: DSSymbol(systemName: "trash")!,
                             titleForAccessibility: "Delete (loading)",
-                            variant: .primary,
+                            appearance: .primary,
                             isLoading: true
                         ) {}
                     }
@@ -79,9 +79,9 @@ struct DSIconButtonGalleryScreen: View {
                 GallerySection(title: "Common Actions") {
                     HStack(spacing: SpacingTokens.space3) {
                         DSIconButton(symbol: DSSymbol(systemName: "xmark")!, titleForAccessibility: "Close", appearance: .ghost) {}
-                        DSIconButton(symbol: DSSymbol(systemName: "arrow.left")!, titleForAccessibility: "Back", variant: .outline) {}
-                        DSIconButton(symbol: DSSymbol(systemName: "square.and.arrow.up")!, titleForAccessibility: "Share", variant: .secondary) {}
-                        DSIconButton(symbol: DSSymbol(systemName: "bookmark")!, titleForAccessibility: "Save", variant: .outline) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "arrow.left")!, titleForAccessibility: "Back", appearance: .outline) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "square.and.arrow.up")!, titleForAccessibility: "Share", appearance: .secondary) {}
+                        DSIconButton(symbol: DSSymbol(systemName: "bookmark")!, titleForAccessibility: "Save", appearance: .outline) {}
                         DSIconButton(symbol: DSSymbol(systemName: "ellipsis")!, titleForAccessibility: "More", appearance: .ghost) {}
                     }
                 }

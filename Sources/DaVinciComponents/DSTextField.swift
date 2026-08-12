@@ -18,7 +18,11 @@ import DaVinciTokens
 /// ## Error State
 ///
 /// ```swift
-/// DSTextField("Email", text: $email, error: "Invalid email format")
+/// DSTextField(
+///     "Email",
+///     text: $email,
+///     configuration: .filled.message(.error("Invalid email format"))
+/// )
 /// ```
 ///
 /// ## Reusable Configuration
@@ -39,7 +43,7 @@ import DaVinciTokens
 /// ## Topics
 ///
 /// ### Creating a Text Field
-/// - ``init(_:text:prompt:showsLabel:accessibilityLabel:accessibilityHint:error:)``
+/// - ``init(_:text:prompt:configuration:accessibilityLabel:accessibilityHint:)``
 /// - ``init(_:text:prompt:configuration:accessibilityLabel:accessibilityHint:)``
 ///
 /// ### Appearance
@@ -94,32 +98,6 @@ public struct DSTextField: View {
 
     @FocusState private var isFocused: Bool
 
-    // MARK: - v1.2.0 Initializer (forwarding)
-
-    public init(
-        _ label: String,
-        text: Binding<String>,
-        prompt: String? = nil,
-        showsLabel: Bool = true,
-        accessibilityLabel: String? = nil,
-        accessibilityHint: String? = nil,
-        error: String? = nil
-    ) {
-        self.init(
-            label,
-            text: text,
-            prompt: prompt,
-            labelVisibility: showsLabel ? .visible : .hidden,
-            accessibilityLabel: accessibilityLabel,
-            accessibilityHint: accessibilityHint,
-            fieldMessage: error.map { .error($0) },
-            appearance: .filled,
-            leadingSymbol: nil,
-            trailingAction: nil,
-            characterLimit: nil
-        )
-    }
-
     /// Creates a configured field with a deterministic visual state for
     /// internal previews and snapshot coverage.
     internal init(
@@ -151,7 +129,7 @@ public struct DSTextField: View {
         _ label: String,
         text: Binding<String>,
         prompt: String? = nil,
-        configuration: Configuration,
+        configuration: Configuration = .filled,
         accessibilityLabel: String? = nil,
         accessibilityHint: String? = nil
     ) {

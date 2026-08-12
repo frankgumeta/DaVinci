@@ -13,9 +13,9 @@ struct DSTypographyAccessibilitySnapshotTests {
             DSText("Accessible controls with longer content", role: .body)
             DSButton(
                 "Continue with accessible text",
-                icon: .trailing(systemName: "arrow.right")
+                icon: .trailing(DSSymbol(systemName: "arrow.right")!)
             ) {}
-            DSBadge("Accessible status", variant: .success, size: .large)
+            DSBadge("Accessible status", tone: .success, size: .large)
             DSSegmentedControl(
                 options: ["Overview", "Activity"],
                 selectedIndex: .constant(0)

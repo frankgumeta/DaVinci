@@ -8,7 +8,12 @@ import DaVinciTokens
     VStack(spacing: 16) {
         DSTextField("Email", text: $text, prompt: "you@example.com")
         DSTextField("Name", text: .constant("Frank Gumeta"))
-        DSTextField("Search", text: $text, prompt: "Search…", showsLabel: false)
+        DSTextField(
+            "Search",
+            text: $text,
+            prompt: "Search…",
+            configuration: .filled.labelVisibility(.hidden)
+        )
     }
     .padding()
 }
@@ -26,7 +31,11 @@ import DaVinciTokens
 
 #Preview("DSTextField — Error") {
     @Previewable @State var text = "invalid@"
-    DSTextField("Email", text: $text, error: "Invalid email format")
+    DSTextField(
+        "Email",
+        text: $text,
+        configuration: .filled.message(.error("Invalid email format"))
+    )
         .padding()
 }
 

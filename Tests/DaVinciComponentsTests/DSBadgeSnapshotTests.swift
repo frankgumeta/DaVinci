@@ -12,7 +12,7 @@ struct DSBadgeSnapshotTests {
     // MARK: - Variant Snapshots
 
     @Test func brandBadge_light() throws {
-        let badge = DSBadge("New", variant: .brand)
+        let badge = DSBadge("New", tone: .brand)
         try SnapshotTester.assertSnapshot(
             badge,
             named: "badge-brand",
@@ -23,7 +23,7 @@ struct DSBadgeSnapshotTests {
     }
 
     @Test func brandBadge_dark() throws {
-        let badge = DSBadge("New", variant: .brand)
+        let badge = DSBadge("New", tone: .brand)
         try SnapshotTester.assertSnapshot(
             badge,
             named: "badge-brand",
@@ -34,7 +34,7 @@ struct DSBadgeSnapshotTests {
     }
 
     @Test func successBadge_light() throws {
-        let badge = DSBadge("Active", variant: .success)
+        let badge = DSBadge("Active", tone: .success)
         try SnapshotTester.assertSnapshot(
             badge,
             named: "badge-success",
@@ -45,7 +45,7 @@ struct DSBadgeSnapshotTests {
     }
 
     @Test func warningBadge_light() throws {
-        let badge = DSBadge("Pending", variant: .warning)
+        let badge = DSBadge("Pending", tone: .warning)
         try SnapshotTester.assertSnapshot(
             badge,
             named: "badge-warning",
@@ -56,7 +56,7 @@ struct DSBadgeSnapshotTests {
     }
 
     @Test func errorBadge_light() throws {
-        let badge = DSBadge("Error", variant: .error)
+        let badge = DSBadge("Error", tone: .error)
         try SnapshotTester.assertSnapshot(
             badge,
             named: "badge-error",
@@ -67,7 +67,7 @@ struct DSBadgeSnapshotTests {
     }
 
     @Test func neutralBadge_light() throws {
-        let badge = DSBadge("Draft", variant: .neutral)
+        let badge = DSBadge("Draft", tone: .neutral)
         try SnapshotTester.assertSnapshot(
             badge,
             named: "badge-neutral",
@@ -80,7 +80,7 @@ struct DSBadgeSnapshotTests {
     // MARK: - Dot Badge
 
     @Test func dotBadge_light() throws {
-        let badge = DSBadge(variant: .error)
+        let badge = DSBadge(tone: .error)
         try SnapshotTester.assertSnapshot(
             badge,
             named: "badge-dot",
@@ -91,7 +91,7 @@ struct DSBadgeSnapshotTests {
     }
 
     @Test func dotBadge_dark() throws {
-        let badge = DSBadge(variant: .error)
+        let badge = DSBadge(tone: .error)
         try SnapshotTester.assertSnapshot(
             badge,
             named: "badge-dot",
@@ -104,7 +104,7 @@ struct DSBadgeSnapshotTests {
     // MARK: - Size Variants
 
     @Test func smallBadge_light() throws {
-        let badge = DSBadge("SM", variant: .brand, size: .small)
+        let badge = DSBadge("SM", tone: .brand, size: .small)
         try SnapshotTester.assertSnapshot(
             badge,
             named: "badge-small",
@@ -115,7 +115,7 @@ struct DSBadgeSnapshotTests {
     }
 
     @Test func mediumBadge_light() throws {
-        let badge = DSBadge("MD", variant: .brand, size: .medium)
+        let badge = DSBadge("MD", tone: .brand, size: .medium)
         try SnapshotTester.assertSnapshot(
             badge,
             named: "badge-medium",
@@ -126,7 +126,7 @@ struct DSBadgeSnapshotTests {
     }
 
     @Test func largeBadge_light() throws {
-        let badge = DSBadge("LG", variant: .brand, size: .large)
+        let badge = DSBadge("LG", tone: .brand, size: .large)
         try SnapshotTester.assertSnapshot(
             badge,
             named: "badge-large",
@@ -139,7 +139,7 @@ struct DSBadgeSnapshotTests {
     // MARK: - Dot Size Variants
 
     @Test func smallDot_light() throws {
-        let badge = DSBadge(variant: .brand, size: .small)
+        let badge = DSBadge(tone: .brand, size: .small)
         try SnapshotTester.assertSnapshot(
             badge,
             named: "badge-dot-small",
@@ -150,7 +150,7 @@ struct DSBadgeSnapshotTests {
     }
 
     @Test func largeDot_light() throws {
-        let badge = DSBadge(variant: .brand, size: .large)
+        let badge = DSBadge(tone: .brand, size: .large)
         try SnapshotTester.assertSnapshot(
             badge,
             named: "badge-dot-large",

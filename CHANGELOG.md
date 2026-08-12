@@ -18,11 +18,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Low-emphasis `DSSegmentedControl.Appearance.subtle` with a transparent container and tinted selection capsule
 
 ### Changed
-- The pre-1.4 `DSBadge.Variant` and `variant:` API now forward compatibly to a filled semantic tone
-- `DSButton.Appearance` and `DSIconButton.Appearance` are now the canonical visual-style names; `Variant` remains an alias
+- Component previews now live in dedicated `Component+Previews.swift` files
+- `Appearance` is the sole visual-style API for `DSButton` and `DSIconButton`
+- `DSBadge` now separates semantic `Tone` from visual `Appearance` without a `Variant` alias
+- SF Symbol component APIs now accept only runtime-validated `DSSymbol` values
+- `DSTextField` uses one configuration-based initializer, with `.filled` as its default configuration
 
 ### Removed
 - `DSRemoteImage` initializers based on independent `width`/`height` or `size`; migrate to the required `geometry:` parameter
+- Compatibility initializers and aliases based on `variant:`, raw SF Symbol strings, and the v1.2 text-field `showsLabel:` / `error:` parameters
 
 ## [1.3.0] - 2026-08-09
 

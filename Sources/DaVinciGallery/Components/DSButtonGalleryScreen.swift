@@ -19,32 +19,32 @@ struct DSButtonGalleryScreen: View {
                 }
 
                 GallerySection(title: "Icons") {
-                    DSButton("Add Item", variant: .primary, icon: .leading(DSSymbol(systemName: "plus")!)) {}
-                    DSButton("Continue", variant: .outline, icon: .trailing(DSSymbol(systemName: "arrow.right")!)) {}
-                    DSButton("Share", variant: .secondary, icon: .leading(DSSymbol(systemName: "square.and.arrow.up")!)) {}
+                    DSButton("Add Item", appearance: .primary, icon: .leading(DSSymbol(systemName: "plus")!)) {}
+                    DSButton("Continue", appearance: .outline, icon: .trailing(DSSymbol(systemName: "arrow.right")!)) {}
+                    DSButton("Share", appearance: .secondary, icon: .leading(DSSymbol(systemName: "square.and.arrow.up")!)) {}
                 }
 
                 GallerySection(title: "States") {
                     DSText("Loading", role: .caption, color: theme.colors.semantic.textSecondary)
-                    DSButton("Saving…", variant: .primary, isLoading: true) {}
-                    DSButton("Loading…", variant: .secondary, isLoading: true) {}
+                    DSButton("Saving…", appearance: .primary, isLoading: true) {}
+                    DSButton("Loading…", appearance: .secondary, isLoading: true) {}
 
                     DSText("Disabled", role: .caption, color: theme.colors.semantic.textSecondary)
-                    DSButton("Primary", variant: .primary, isDisabled: true) {}
-                    DSButton("Secondary", variant: .secondary, isDisabled: true) {}
-                    DSButton("Outline", variant: .outline, isDisabled: true) {}
+                    DSButton("Primary", appearance: .primary, isDisabled: true) {}
+                    DSButton("Secondary", appearance: .secondary, isDisabled: true) {}
+                    DSButton("Outline", appearance: .outline, isDisabled: true) {}
                     DSButton("Ghost", appearance: .ghost, isDisabled: true) {}
                 }
 
                 GallerySection(title: "Edge Cases") {
-                    DSButton("Short", variant: .primary) {}
+                    DSButton("Short", appearance: .primary) {}
                     DSButton(
                         "This is a very long button label that should expand or wrap naturally",
-                        variant: .primary
+                        appearance: .primary
                     ) {}
                     DSButton(
                         "Loading + Icon",
-                        variant: .primary,
+                        appearance: .primary,
                         icon: .leading(DSSymbol(systemName: "checkmark")!),
                         isLoading: true
                     ) {}

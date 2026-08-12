@@ -5,79 +5,42 @@ import SwiftUI
 
 // MARK: - DSSymbol Adoption Tests
 
-/// Validates that components which accept SF Symbols correctly bridge between
-/// the validated `DSSymbol` API and the legacy `String` API, producing
-/// identical internal state.
 @Suite("DSSymbol Adoption")
 struct DSSymbolAdoptionTests {
+    @Test func buttonIconStoresValidatedSymbols() throws {
+        let leading = try #require(DSSymbol(systemName: "plus"))
+        let trailing = try #require(DSSymbol(systemName: "arrow.right"))
 
-    // MARK: - DSButtonIcon
+        if case .leading(let storedLeading) = DSButtonIcon.leading(leading) {
+            #expect(storedLeading == leading)
+        } else {
+            Issue.record("Expected a leading symbol")
+        }
 
-    @Test func buttonIconLeadingFactoryMatchesStringCase() throws {
-        let symbol = try #require(DSSymbol(systemName: "plus"))
-        let fromSymbol: DSButtonIcon = .leading(symbol)
-        let fromString: DSButtonIcon = .leading(systemName: "plus")
-
-        // Both should produce the same internal systemName when pattern-matched.
-        switch (fromSymbol, fromString) {
-        case (.leading(let a), .leading(let b)):
-            #expect(a == b)
-        default:
-            Issue.record("Both should be .leading")
+        if case .trailing(let storedTrailing) = DSButtonIcon.trailing(trailing) {
+            #expect(storedTrailing == trailing)
+        } else {
+            Issue.record("Expected a trailing symbol")
         }
     }
 
-    @Test func buttonIconTrailingFactoryMatchesStringCase() throws {
-        let symbol = try #require(DSSymbol(systemName: "arrow.right"))
-        let fromSymbol: DSButtonIcon = .trailing(symbol)
-        let fromString: DSButtonIcon = .trailing(systemName: "arrow.right")
-
-        switch (fromSymbol, fromString) {
-        case (.trailing(let a), .trailing(let b)):
-            #expect(a == b)
-        default:
-            Issue.record("Both should be .trailing")
-        }
-    }
-
-    // MARK: - DSIconButton
-
-    @Test @MainActor func iconButtonSymbolInitMatchesSystemNameInit() throws {
+    @Test @MainActor func iconButtonAcceptsValidatedSymbol() throws {
         let symbol = try #require(DSSymbol(systemName: "plus"))
-        let fromSymbol = DSIconButton(
+        let button = DSIconButton(
             symbol: symbol,
             titleForAccessibility: "Add",
-            variant: .primary
-        ) {}
-        let fromString = DSIconButton(
-            systemName: "plus",
-            titleForAccessibility: "Add",
-            variant: .primary
+            appearance: .primary
         ) {}
 
-        // Both should report the same accessibility label (proves they're
-        // constructed equivalently for the consumer's perspective).
-        #expect(fromSymbol.accessibilityDescriptor.label == fromString.accessibilityDescriptor.label)
+        #expect(button.accessibilityDescriptor.label == "Add")
     }
 
-    // MARK: - DSSegmentItem
-
-    @Test func segmentItemSymbolInitMatchesStringInit() throws {
+    @Test func segmentItemAcceptsOptionalValidatedSymbol() throws {
         let symbol = try #require(DSSymbol(systemName: "list.bullet"))
-        let fromSymbol = DSSegmentItem(title: "List", icon: symbol)
-        let fromString = DSSegmentItem(title: "List", iconSystemName: "list.bullet")
 
-        #expect(fromSymbol.iconSystemName == fromString.iconSystemName)
+        #expect(DSSegmentItem(title: "List", icon: symbol).icon == symbol)
+        #expect(DSSegmentItem(title: "Day").icon == nil)
     }
-
-    @Test func segmentItemNilSymbolMatchesNilString() {
-        let fromSymbol = DSSegmentItem(title: "Day")
-        let fromString = DSSegmentItem(title: "Day", iconSystemName: nil)
-
-        #expect(fromSymbol.iconSystemName == fromString.iconSystemName)
-    }
-
-    // MARK: - DSRemoteImage
 
     @Test @MainActor func remoteImageAcceptsTypedPlaceholderWithCircleGeometry() throws {
         let symbol = try #require(DSSymbol(systemName: "person"))
