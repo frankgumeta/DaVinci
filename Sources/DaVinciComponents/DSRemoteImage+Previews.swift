@@ -1,10 +1,17 @@
 import SwiftUI
 import DaVinciTokens
+import Foundation
+
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 // MARK: - Preview Loaders
 
 /// A preview loader that sleeps to simulate network latency, then succeeds.
-private struct SlowPreviewImageLoader: DSImageLoading {
+struct SlowPreviewImageLoader: DSImageLoading {
     func loadImageData(from url: URL) async throws -> Data {
         try await Task.sleep(for: .seconds(2))
         return generateSolidImageData(color: .systemBlue)
@@ -12,14 +19,14 @@ private struct SlowPreviewImageLoader: DSImageLoading {
 }
 
 /// A preview loader that returns image data immediately.
-private struct SuccessPreviewImageLoader: DSImageLoading {
+struct SuccessPreviewImageLoader: DSImageLoading {
     func loadImageData(from url: URL) async throws -> Data {
         generateSolidImageData(color: .systemTeal)
     }
 }
 
 /// A preview loader that always fails.
-private struct FailingPreviewImageLoader: DSImageLoading {
+struct FailingPreviewImageLoader: DSImageLoading {
     func loadImageData(from url: URL) async throws -> Data {
         throw URLError(.badServerResponse)
     }
@@ -28,7 +35,7 @@ private struct FailingPreviewImageLoader: DSImageLoading {
 // MARK: - Preview Helpers
 
 /// Generate a solid-color 100×100 PNG for previews.
-private func generateSolidImageData(color: PlatformColor) -> Data {
+func generateSolidImageData(color: PlatformColor) -> Data {
     #if canImport(UIKit)
     let renderer = UIGraphicsImageRenderer(size: CGSize(width: 100, height: 100))
     return renderer.pngData { ctx in
@@ -53,9 +60,9 @@ private func generateSolidImageData(color: PlatformColor) -> Data {
 }
 
 #if canImport(UIKit)
-private typealias PlatformColor = UIColor
+typealias PlatformColor = UIColor
 #elseif canImport(AppKit)
-private typealias PlatformColor = NSColor
+typealias PlatformColor = NSColor
 #endif
 
 // MARK: - Preview Blocks
