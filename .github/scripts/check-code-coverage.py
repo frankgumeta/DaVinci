@@ -11,6 +11,9 @@ import sys
 from pathlib import Path
 
 
+PREVIEW_FILE_SUFFIX = "+Previews.swift"
+
+
 def parse_minimum(value: str) -> tuple[str, float]:
     try:
         target, percentage = value.rsplit("=", 1)
@@ -50,6 +53,26 @@ def load_report(result_bundle: Path) -> dict:
         raise RuntimeError("xccov returned invalid JSON") from error
 
 
+def production_line_totals(target: dict) -> tuple[int, int]:
+    """Return covered and executable lines, excluding Xcode preview sources."""
+    files = target.get("files")
+    if not isinstance(files, list):
+        return (
+            int(target.get("coveredLines", 0)),
+            int(target.get("executableLines", 0)),
+        )
+
+    production_files = [
+        file
+        for file in files
+        if not file.get("name", "").endswith(PREVIEW_FILE_SUFFIX)
+    ]
+    return (
+        sum(int(file.get("coveredLines", 0)) for file in production_files),
+        sum(int(file.get("executableLines", 0)) for file in production_files),
+    )
+
+
 def markdown_report(targets: list[dict], minimums: dict[str, float]) -> tuple[str, bool]:
     rows = [
         "# DaVinci code coverage",
@@ -67,9 +90,8 @@ def markdown_report(targets: list[dict], minimums: dict[str, float]) -> tuple[st
     ]
     for target in sorted(product_targets, key=lambda item: item["name"]):
         name = target["name"]
-        coverage = float(target.get("lineCoverage", 0)) * 100
-        covered = int(target.get("coveredLines", 0))
-        executable = int(target.get("executableLines", 0))
+        covered, executable = production_line_totals(target)
+        coverage = (covered / executable * 100) if executable else 0
         minimum = minimums.get(name)
         meets_minimum = minimum is None or coverage + 1e-9 >= minimum
         passed = passed and meets_minimum
@@ -91,7 +113,8 @@ def markdown_report(targets: list[dict], minimums: dict[str, float]) -> tuple[st
     rows.extend(
         [
             "",
-            "Only production targets are reported. Test bundle coverage is intentionally excluded.",
+            "Only production targets are reported. Test bundles and dedicated "
+            "`*+Previews.swift` sources are intentionally excluded.",
         ]
     )
     return "\n".join(rows) + "\n", passed

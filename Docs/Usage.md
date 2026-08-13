@@ -67,8 +67,9 @@ DSIconButton(symbol: gear, titleForAccessibility: "Settings", appearance: .secon
 }
 
 // DSButtonIcon cases accept DSSymbol directly.
-let plus = DSSymbol(systemName: "plus")!
-DSButton("Add Item", icon: .leading(plus)) { addItem() }
+if let plus = DSSymbol(systemName: "plus") {
+    DSButton("Add Item", icon: .leading(plus)) { addItem() }
+}
 
 // DSSegmentItem accepts a validated DSSymbol icon.
 if let list = DSSymbol(systemName: "list.bullet") {
@@ -229,12 +230,14 @@ HStack(spacing: SpacingTokens.space2) {
 ### 3. Icon + Text Button
 
 ```swift
-DSButton(
-    "Download PDF",
-    appearance: .secondary,
-    icon: .leading(DSSymbol(systemName: "arrow.down.doc")!)
-) {
-    downloadPDF()
+if let download = DSSymbol(systemName: "arrow.down.doc") {
+    DSButton(
+        "Download PDF",
+        appearance: .secondary,
+        icon: .leading(download)
+    ) {
+        downloadPDF()
+    }
 }
 ```
 
@@ -445,13 +448,15 @@ ScrollView {
                     
                     Spacer()
                     
-                    DSIconButton(
-                        symbol: DSSymbol(systemName: "chevron.right")!,
-                        titleForAccessibility: "View details",
-                        appearance: .secondary,
-                        size: .small
-                    ) {
-                        showDetails(item)
+                    if let disclosure = DSSymbol(systemName: "chevron.right") {
+                        DSIconButton(
+                            symbol: disclosure,
+                            titleForAccessibility: "View details",
+                            appearance: .secondary,
+                            size: .small
+                        ) {
+                            showDetails(item)
+                        }
                     }
                 }
             }
@@ -761,13 +766,15 @@ DSButton(
     deleteAccount()
 }
 
-DSIconButton(
-    symbol: DSSymbol(systemName: "trash")!,
-    titleForAccessibility: "Delete item",
-    appearance: .secondary,
-    accessibilityHint: "Permanently remove this item"
-) {
-    deleteItem()
+if let trash = DSSymbol(systemName: "trash") {
+    DSIconButton(
+        symbol: trash,
+        titleForAccessibility: "Delete item",
+        appearance: .secondary,
+        accessibilityHint: "Permanently remove this item"
+    ) {
+        deleteItem()
+    }
 }
 ```
 

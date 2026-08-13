@@ -133,9 +133,10 @@ DSButton("Submit", appearance: .primary) {
 }
 
 // With icon (validated DSSymbol)
-let plus = DSSymbol(systemName: "plus")!
-DSButton("Add Item", appearance: .secondary, icon: .leading(plus)) {
-    addItem()
+if let plus = DSSymbol(systemName: "plus") {
+    DSButton("Add Item", appearance: .secondary, icon: .leading(plus)) {
+        addItem()
+    }
 }
 
 // Loading state
@@ -144,13 +145,14 @@ DSButton("Saving...", appearance: .primary, isLoading: true) {
 }
 
 // Icon-only button
-let gear = DSSymbol(systemName: "gear")!
-DSIconButton(
-    symbol: gear,
-    titleForAccessibility: "Settings",
-    appearance: .ghost
-) {
-    openSettings()
+if let gear = DSSymbol(systemName: "gear") {
+    DSIconButton(
+        symbol: gear,
+        titleForAccessibility: "Settings",
+        appearance: .ghost
+    ) {
+        openSettings()
+    }
 }
 ```
 
@@ -370,13 +372,14 @@ xcodebuild build \
 
 ### Test Coverage
 
-Coverage is reported only for production targets; test bundles are deliberately
-excluded from the metric. With Xcode 26.6, the current reproducible line coverage is:
+Coverage is reported only for production targets; test bundles and dedicated
+`*+Previews.swift` sources are deliberately excluded from the metric. With Xcode
+26.6, the current reproducible line coverage is:
 
 | Product target | Covered lines | Executable lines | Coverage | CI policy |
 |---|---:|---:|---:|---|
 | `DaVinciTokens` | 238 | 238 | 100.00% | Minimum 100% |
-| `DaVinciComponents` | 2866 | 2995 | 95.69% | Minimum 95% |
+| `DaVinciComponents` | 2763 | 2870 | 96.27% | Minimum 95% |
 | `DaVinciGallery` | 0 | 5827 | 0.00% | Reported, not currently gated |
 
 There is no aggregate “overall” claim: including test targets would inflate it,
@@ -497,12 +500,13 @@ announcements, and keyboard navigation still require manual validation in the ho
 
 ```swift
 // Icon buttons require accessibility labels
-let trash = DSSymbol(systemName: "trash")!
-DSIconButton(
-    symbol: trash,
-    titleForAccessibility: "Delete item", // VoiceOver reads this
-    appearance: .secondary
-) { deleteItem() }
+if let trash = DSSymbol(systemName: "trash") {
+    DSIconButton(
+        symbol: trash,
+        titleForAccessibility: "Delete item", // VoiceOver reads this
+        appearance: .secondary
+    ) { deleteItem() }
+}
 
 // Remote images support custom labels
 DSRemoteImage(

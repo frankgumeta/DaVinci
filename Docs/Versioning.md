@@ -2,6 +2,13 @@
 
 DaVinci follows Semantic Versioning for its public Swift products.
 
+## Pre-adoption exception
+
+Version 1.4.0 contains a one-time source-breaking cleanup approved before the
+design system had known external consumers. Its migration is documented in
+`CHANGELOG.md`. Starting immediately after 1.4.0, the major-version rules below
+apply without this exception.
+
 ## Change classification
 
 ### Major

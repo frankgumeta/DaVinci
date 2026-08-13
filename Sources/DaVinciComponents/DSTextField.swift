@@ -31,13 +31,15 @@ import DaVinciTokens
 /// ``Configuration`` once and pass it to multiple fields:
 ///
 /// ```swift
-/// let accountField: DSTextField.Configuration = .outlined
-///     .labelVisibility(.hidden)
-///     .leading(DSSymbol(systemName: "person")!)
-///     .trailing(.clear)
-///     .message(.supporting("Helper text"))
+/// if let person = DSSymbol(systemName: "person") {
+///     let accountField: DSTextField.Configuration = .outlined
+///         .labelVisibility(.hidden)
+///         .leading(person)
+///         .trailing(.clear)
+///         .message(.supporting("Helper text"))
 ///
-/// DSTextField("Email", text: $email, configuration: accountField)
+///     DSTextField("Email", text: $email, configuration: accountField)
+/// }
 /// ```
 ///
 /// ## Topics
@@ -224,9 +226,16 @@ public struct DSTextField: View {
     }
 
     private var showsTrailingAction: Bool {
-        switch trailingAction {
-        case .clear: return !text.isEmpty
-        case .none: return false
+        Self.shouldShowTrailingAction(trailingAction, text: text)
+    }
+
+    nonisolated internal static func shouldShowTrailingAction(
+        _ action: DSTextFieldTrailingAction?,
+        text: String
+    ) -> Bool {
+        switch action {
+        case .clear: !text.isEmpty
+        case .none: false
         }
     }
 

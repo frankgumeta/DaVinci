@@ -46,11 +46,13 @@ public enum DSButtonIcon: Sendable {
 /// `DSSymbol` API — it validates the symbol at construction time:
 ///
 /// ```swift
-/// let plus = DSSymbol(systemName: "plus")!
-/// DSButton("Add Item", icon: .leading(plus)) { }
+/// if let plus = DSSymbol(systemName: "plus") {
+///     DSButton("Add Item", icon: .leading(plus)) { }
+/// }
 ///
-/// let arrow = DSSymbol(systemName: "arrow.right")!
-/// DSButton("Continue", icon: .trailing(arrow)) { }
+/// if let arrow = DSSymbol(systemName: "arrow.right") {
+///     DSButton("Continue", icon: .trailing(arrow)) { }
+/// }
 /// ```
 ///
 /// ## States

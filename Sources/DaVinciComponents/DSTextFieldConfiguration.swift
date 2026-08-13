@@ -23,11 +23,13 @@ extension DSTextField {
     /// leaving the original unchanged.
     ///
     /// ```swift
-    /// let account: DSTextField.Configuration = .outlined
-    ///     .labelVisibility(.hidden)
-    ///     .leading(DSSymbol(systemName: "person")!)
-    ///     .trailing(.clear)
-    ///     .message(.supporting("Enter your account email"))
+    /// if let person = DSSymbol(systemName: "person") {
+    ///     let account: DSTextField.Configuration = .outlined
+    ///         .labelVisibility(.hidden)
+    ///         .leading(person)
+    ///         .trailing(.clear)
+    ///         .message(.supporting("Enter your account email"))
+    /// }
     /// ```
     ///
     /// `DSFieldMessage` is an enum, so ``DSFieldMessage/supporting(_:)`` and

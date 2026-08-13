@@ -50,11 +50,14 @@ public struct DSSegmentItem: Sendable {
 /// ## Convenience Init (string arrays)
 ///
 /// ```swift
-/// DSSegmentedControl(
-///     options: ["List", "Grid"],
-///     selectedIndex: $selectedIndex,
-///     symbols: [DSSymbol(systemName: "list.bullet")!, DSSymbol(systemName: "square.grid.2x2")!]
-/// )
+/// if let list = DSSymbol(systemName: "list.bullet"),
+///    let grid = DSSymbol(systemName: "square.grid.2x2") {
+///     DSSegmentedControl(
+///         options: ["List", "Grid"],
+///         selectedIndex: $selectedIndex,
+///         symbols: [list, grid]
+///     )
+/// }
 /// ```
 ///
 /// ## Accessibility

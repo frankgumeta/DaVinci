@@ -62,6 +62,9 @@ jobs:
       run: |
         xcodebuild -version | grep -F 'Xcode 26.6'
         xcrun swift --version | grep -F 'Apple Swift version 6.3'
+
+    - name: Test Coverage Reporter
+      run: python3 -m unittest discover -s .github/scripts/tests -v
         
     - name: Create iOS Simulator
       id: simulator
@@ -120,12 +123,13 @@ jobs:
         xcodebuild -version | grep -F 'Xcode 26.6'
         xcrun swift --version | grep -F 'Apple Swift version 6.3'
         
-    - name: Build iOS Package
+    - name: Build iOS Package and Previews
       run: |
         xcodebuild build \
           -scheme DaVinci-Package \
           -destination 'generic/platform=iOS Simulator' \
           IPHONEOS_DEPLOYMENT_TARGET=17.0 \
+          ENABLE_PREVIEWS=YES \
           -derivedDataPath .build
 
     - name: Build API Documentation
