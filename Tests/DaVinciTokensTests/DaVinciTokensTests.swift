@@ -256,6 +256,8 @@ struct OpacityTokensTests {
         #expect(OpacityTokens.disabled == 0.4)
         #expect(OpacityTokens.pressed == 0.85)
         #expect(OpacityTokens.scrim == 0.35)
+        #expect(OpacityTokens.subtleFill == 0.14)
+        #expect(OpacityTokens.subtleStroke == 0.4)
         #expect(OpacityTokens.shimmerHighlight == 0.55)
         #expect(OpacityTokens.shimmerStatic == 0.30)
     }
@@ -372,6 +374,8 @@ struct StrokeTokensTests {
     #expect(OpacityTokens.disabled >= 0 && OpacityTokens.disabled <= 1)
     #expect(OpacityTokens.pressed >= 0 && OpacityTokens.pressed <= 1)
     #expect(OpacityTokens.scrim >= 0 && OpacityTokens.scrim <= 1)
+    #expect(OpacityTokens.subtleFill >= 0 && OpacityTokens.subtleFill <= 1)
+    #expect(OpacityTokens.subtleStroke >= 0 && OpacityTokens.subtleStroke <= 1)
     #expect(OpacityTokens.shimmerHighlight >= 0 && OpacityTokens.shimmerHighlight <= 1)
     #expect(OpacityTokens.shimmerStatic >= 0 && OpacityTokens.shimmerStatic <= 1)
 }
@@ -380,6 +384,8 @@ struct StrokeTokensTests {
     #expect(OpacityTokens.disabled == 0.4)
     #expect(OpacityTokens.pressed == 0.85)
     #expect(OpacityTokens.scrim == 0.35)
+    #expect(OpacityTokens.subtleFill == 0.14)
+    #expect(OpacityTokens.subtleStroke == 0.4)
     #expect(OpacityTokens.shimmerHighlight == 0.55)
     #expect(OpacityTokens.shimmerStatic == 0.30)
 }
@@ -425,35 +431,6 @@ struct StrokeTokensTests {
     #expect(custom.radius == 10)
     #expect(custom.x == 2)
     #expect(custom.y == 3)
-}
-
-// MARK: - Card Style tokens
-@Test func cardStylePaddingIsAscending() {
-    #expect(DSCardStyle.compact.padding < DSCardStyle.standard.padding)
-    #expect(DSCardStyle.standard.padding < DSCardStyle.prominent.padding)
-}
-
-@Test func cardStyleCompactHasCorrectTokens() {
-    #expect(DSCardStyle.compact.padding == SpacingTokens.space3)
-    #expect(DSCardStyle.compact.cornerRadius == RadiusTokens.medium)
-    #expect(DSCardStyle.compact.elevation.radius == 0)
-}
-
-@Test func cardStyleStandardHasCorrectTokens() {
-    #expect(DSCardStyle.standard.padding == SpacingTokens.space4)
-    #expect(DSCardStyle.standard.cornerRadius == RadiusTokens.large)
-    #expect(DSCardStyle.standard.elevation.radius == 4)
-}
-
-@Test func cardStyleProminentHasCorrectTokens() {
-    #expect(DSCardStyle.prominent.padding == SpacingTokens.space5)
-    #expect(DSCardStyle.prominent.cornerRadius == RadiusTokens.large)
-    #expect(DSCardStyle.prominent.elevation.radius == 8)
-}
-
-@Test func cardStyleElevationIsAscending() {
-    #expect(DSCardStyle.compact.elevation.radius < DSCardStyle.standard.elevation.radius)
-    #expect(DSCardStyle.standard.elevation.radius < DSCardStyle.prominent.elevation.radius)
 }
 
 // MARK: - List Spacing tokens

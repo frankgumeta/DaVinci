@@ -30,6 +30,10 @@ struct ComponentsListScreen: View {
                 NavigationLink("Divider") { DSDividerGalleryScreen() }
                 NavigationLink("Card") { DSCardGalleryScreen() }
             }
+
+            Section("Media") {
+                NavigationLink("Remote Image") { DSRemoteImageGalleryScreen() }
+            }
         }
         .navigationTitle("Components")
     }

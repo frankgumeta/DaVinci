@@ -12,7 +12,7 @@ struct DSButtonSnapshotTests {
     // MARK: - Primary Variant
 
     @Test func primaryButton_light() throws {
-        let button = DSButton("Submit", variant: .primary) {}
+        let button = DSButton("Submit", appearance: .primary) {}
         try SnapshotTester.assertSnapshot(
             button,
             named: "button-primary",
@@ -23,7 +23,7 @@ struct DSButtonSnapshotTests {
     }
 
     @Test func primaryButton_dark() throws {
-        let button = DSButton("Submit", variant: .primary) {}
+        let button = DSButton("Submit", appearance: .primary) {}
         try SnapshotTester.assertSnapshot(
             button,
             named: "button-primary",
@@ -36,7 +36,7 @@ struct DSButtonSnapshotTests {
     // MARK: - Secondary Variant
 
     @Test func secondaryButton_light() throws {
-        let button = DSButton("Cancel", variant: .secondary) {}
+        let button = DSButton("Cancel", appearance: .secondary) {}
         try SnapshotTester.assertSnapshot(
             button,
             named: "button-secondary",
@@ -47,7 +47,7 @@ struct DSButtonSnapshotTests {
     }
 
     @Test func secondaryButton_dark() throws {
-        let button = DSButton("Cancel", variant: .secondary) {}
+        let button = DSButton("Cancel", appearance: .secondary) {}
         try SnapshotTester.assertSnapshot(
             button,
             named: "button-secondary",
@@ -60,7 +60,7 @@ struct DSButtonSnapshotTests {
     // MARK: - Outline Variant
 
     @Test func outlineButton_light() throws {
-        let button = DSButton("Details", variant: .outline) {}
+        let button = DSButton("Details", appearance: .outline) {}
         try SnapshotTester.assertSnapshot(
             button,
             named: "button-outline",
@@ -71,7 +71,7 @@ struct DSButtonSnapshotTests {
     }
 
     @Test func outlineButton_dark() throws {
-        let button = DSButton("Details", variant: .outline) {}
+        let button = DSButton("Details", appearance: .outline) {}
         try SnapshotTester.assertSnapshot(
             button,
             named: "button-outline",
@@ -81,10 +81,35 @@ struct DSButtonSnapshotTests {
         )
     }
 
+    // MARK: - Ghost Appearance
+
+    @Test func ghostButton_light() throws {
+        let button = DSButton("Dismiss", appearance: .ghost) {}
+        try SnapshotTester.assertSnapshot(
+            button,
+            named: "button-ghost",
+            size: CGSize(width: 200, height: 60),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    @Test func ghostButton_dark() throws {
+        let button = DSButton("Dismiss", appearance: .ghost) {}
+            .environment(\.dsTheme, DSTheme.defaultTheme.resolved(for: .dark))
+        try SnapshotTester.assertSnapshot(
+            button,
+            named: "button-ghost",
+            size: CGSize(width: 200, height: 60),
+            colorScheme: .dark,
+            record: recordMode
+        )
+    }
+
     // MARK: - Disabled State
 
     @Test func disabledButton_light() throws {
-        let button = DSButton("Submit", variant: .primary, isDisabled: true) {}
+        let button = DSButton("Submit", appearance: .primary, isDisabled: true) {}
         try SnapshotTester.assertSnapshot(
             button,
             named: "button-disabled",
@@ -95,7 +120,7 @@ struct DSButtonSnapshotTests {
     }
 
     @Test func disabledButton_dark() throws {
-        let button = DSButton("Submit", variant: .primary, isDisabled: true) {}
+        let button = DSButton("Submit", appearance: .primary, isDisabled: true) {}
         try SnapshotTester.assertSnapshot(
             button,
             named: "button-disabled",
@@ -108,7 +133,7 @@ struct DSButtonSnapshotTests {
     // MARK: - Loading State
 
     @Test func loadingButton_light() throws {
-        let button = DSButton("Submit", variant: .primary, isLoading: true) {}
+        let button = DSButton("Submit", appearance: .primary, isLoading: true) {}
         try SnapshotTester.assertSnapshot(
             button,
             named: "button-loading",
@@ -119,7 +144,7 @@ struct DSButtonSnapshotTests {
     }
 
     @Test func loadingButton_dark() throws {
-        let button = DSButton("Submit", variant: .primary, isLoading: true) {}
+        let button = DSButton("Submit", appearance: .primary, isLoading: true) {}
         try SnapshotTester.assertSnapshot(
             button,
             named: "button-loading",
@@ -134,8 +159,8 @@ struct DSButtonSnapshotTests {
     @Test func buttonWithLeadingIcon_light() throws {
         let button = DSButton(
             "Download",
-            variant: .primary,
-            icon: .leading(systemName: "arrow.down.circle")
+            appearance: .primary,
+            icon: .leading(DSSymbol(systemName: "arrow.down.circle")!)
         ) {}
         try SnapshotTester.assertSnapshot(
             button,
@@ -149,8 +174,8 @@ struct DSButtonSnapshotTests {
     @Test func buttonWithTrailingIcon_light() throws {
         let button = DSButton(
             "Next",
-            variant: .primary,
-            icon: .trailing(systemName: "arrow.right")
+            appearance: .primary,
+            icon: .trailing(DSSymbol(systemName: "arrow.right")!)
         ) {}
         try SnapshotTester.assertSnapshot(
             button,

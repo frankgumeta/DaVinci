@@ -38,12 +38,12 @@ struct DSAccessibilityTests {
 
     @Test func iconButtonExposesRequiredLabelHintAndLoadingState() {
         let normal = DSIconButton(
-            systemName: "heart",
+            symbol: DSSymbol(systemName: "heart")!,
             titleForAccessibility: "Like",
             accessibilityHint: "Adds to favorites"
         ) {}.accessibilityDescriptor
         let loading = DSIconButton(
-            systemName: "heart",
+            symbol: DSSymbol(systemName: "heart")!,
             titleForAccessibility: "Like",
             isLoading: true
         ) {}.accessibilityDescriptor
@@ -58,7 +58,7 @@ struct DSAccessibilityTests {
 
     @Test func disabledIconButtonIsNotActionable() {
         let descriptor = DSIconButton(
-            systemName: "trash",
+            symbol: DSSymbol(systemName: "trash")!,
             titleForAccessibility: "Delete",
             isDisabled: true
         ) {}.accessibilityDescriptor
@@ -116,7 +116,7 @@ struct DSAccessibilityTests {
         let entered = DSTextField(
             "Email",
             text: .constant("invalid"),
-            error: "Invalid email format"
+            configuration: .filled.message(.error("Invalid email format"))
         ).accessibilityDescriptor
 
         #expect(empty.label == "Email")
@@ -129,7 +129,7 @@ struct DSAccessibilityTests {
         let descriptor = DSTextField(
             "Search",
             text: .constant(""),
-            showsLabel: false
+            configuration: .filled.labelVisibility(.hidden)
         ).accessibilityDescriptor
 
         #expect(descriptor.label == "Search")
@@ -210,7 +210,7 @@ struct DSAccessibilityTests {
     @Test func primaryControlsRenderAtLeastFortyFourPointsTall() throws {
         let iconButton = try renderedSize(
             DSIconButton(
-                systemName: "heart",
+                symbol: DSSymbol(systemName: "heart")!,
                 titleForAccessibility: "Like",
                 size: .small
             ) {}

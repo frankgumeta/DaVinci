@@ -57,6 +57,16 @@ struct DSTextFieldConfigurationTests {
         #expect(config.characterLimit == nil)
     }
 
+    @Test func underlinedPresetDefaults() {
+        let config = DSTextField.Configuration.underlined
+        #expect(config.appearance == .underlined)
+        #expect(config.labelVisibility == .visible)
+        #expect(config.leading == nil)
+        #expect(config.trailingAction == nil)
+        #expect(config.message == nil)
+        #expect(config.characterLimit == nil)
+    }
+
     // MARK: - Builder immutability
 
     @Test func labelVisibilityBuilderReturnsCopy() {
@@ -199,20 +209,6 @@ struct DSTextFieldConfigurationInitTests {
             accessibilityHint: "Enter your email"
         )
         #expect(field.accessibilityDescriptor.hint == "Enter your email. Required for receipts")
-    }
-
-    @Test func legacyErrorInitMatchesConfigurationErrorInit() {
-        let legacy = DSTextField(
-            "Email",
-            text: .constant("bad@"),
-            error: "Invalid"
-        )
-        let withConfig = DSTextField(
-            "Email",
-            text: .constant("bad@"),
-            configuration: .filled.message(.error("Invalid"))
-        )
-        #expect(legacy.resolvedAccessibilityValue == withConfig.resolvedAccessibilityValue)
     }
 
     @Test func configurationInitHiddenLabelRetainsAccessibleLabel() {

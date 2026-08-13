@@ -4,48 +4,40 @@ import DaVinciTokens
 // MARK: - DSButtonIcon
 
 /// Icon placement for `DSButton`.
-/// Stores a SF Symbol name; the `Image` is created internally by `DSButton`.
+/// Stores a validated SF Symbol and its placement.
 public enum DSButtonIcon: Sendable {
-    case leading(systemName: String)
-    case trailing(systemName: String)
-
-    /// Creates a leading icon from a validated `DSSymbol`.
-    public static func leading(_ symbol: DSSymbol) -> DSButtonIcon {
-        .leading(systemName: symbol.systemName)
-    }
-
-    /// Creates a trailing icon from a validated `DSSymbol`.
-    public static func trailing(_ symbol: DSSymbol) -> DSButtonIcon {
-        .trailing(systemName: symbol.systemName)
-    }
+    case leading(DSSymbol)
+    case trailing(DSSymbol)
 }
 
 // MARK: - DSButton
 
-/// A themed button component with multiple variants and states.
+/// A themed button component with multiple appearances and states.
 ///
 /// `DSButton` provides a consistent button interface that automatically adapts to
-/// your theme. It supports three visual variants, icon placement, loading states,
+/// your theme. It supports four visual appearances, icon placement, loading states,
 /// and disabled states.
 ///
 /// ## Basic Usage
 ///
 /// ```swift
-/// DSButton("Submit", variant: .primary) {
+/// DSButton("Submit", appearance: .primary) {
 ///     submitForm()
 /// }
 /// ```
 ///
-/// ## Variants
+/// ## Appearances
 ///
 /// - **Primary**: Filled with brand color, high emphasis
 /// - **Secondary**: Subtle surface color, medium emphasis
 /// - **Outline**: Transparent with brand border, low emphasis
+/// - **Ghost**: Transparent without a border, minimal emphasis
 ///
 /// ```swift
-/// DSButton("Primary", variant: .primary) { }
-/// DSButton("Secondary", variant: .secondary) { }
-/// DSButton("Outline", variant: .outline) { }
+/// DSButton("Primary", appearance: .primary) { }
+/// DSButton("Secondary", appearance: .secondary) { }
+/// DSButton("Outline", appearance: .outline) { }
+/// DSButton("Ghost", appearance: .ghost) { }
 /// ```
 ///
 /// ## Icons
@@ -54,17 +46,13 @@ public enum DSButtonIcon: Sendable {
 /// `DSSymbol` API — it validates the symbol at construction time:
 ///
 /// ```swift
-/// let plus = DSSymbol(systemName: "plus")!
-/// DSButton("Add Item", icon: .leading(plus)) { }
+/// if let plus = DSSymbol(systemName: "plus") {
+///     DSButton("Add Item", icon: .leading(plus)) { }
+/// }
 ///
-/// let arrow = DSSymbol(systemName: "arrow.right")!
-/// DSButton("Continue", icon: .trailing(arrow)) { }
-/// ```
-///
-/// The string-based API from v1.2.0 remains available:
-///
-/// ```swift
-/// DSButton("Add Item", icon: .leading(systemName: "plus")) { }
+/// if let arrow = DSSymbol(systemName: "arrow.right") {
+///     DSButton("Continue", icon: .trailing(arrow)) { }
+/// }
 /// ```
 ///
 /// ## States
@@ -87,30 +75,32 @@ public enum DSButtonIcon: Sendable {
 /// ## Topics
 ///
 /// ### Creating Buttons
-/// - ``init(_:variant:icon:isLoading:isDisabled:accessibilityLabel:accessibilityHint:action:)``
+/// - ``init(_:appearance:icon:isLoading:isDisabled:accessibilityLabel:accessibilityHint:action:)``
 ///
-/// ### Button Variants
-/// - ``Variant``
+/// ### Button Appearances
+/// - ``Appearance``
 ///
 /// ### Icon Configuration
 /// - ``DSButtonIcon``
 public struct DSButton: View {
 
     /// Visual style for the button.
-    public enum Variant: Sendable {
+    public enum Appearance: CaseIterable, Hashable, Sendable {
         /// Filled background with brand primary color.
         case primary
         /// Filled background with surface secondary color.
         case secondary
         /// Transparent background with brand border.
         case outline
+        /// Transparent background without a border.
+        case ghost
     }
 
     @Environment(\.dsTheme) private var theme
     @Environment(\.colorScheme) private var colorScheme
 
     private let title: String
-    private let variant: Variant
+    private let appearance: Appearance
     private let icon: DSButtonIcon?
     private let isLoading: Bool
     private let isDisabled: Bool
@@ -120,7 +110,7 @@ public struct DSButton: View {
 
     public init(
         _ title: String,
-        variant: Variant = .primary,
+        appearance: Appearance = .primary,
         icon: DSButtonIcon? = nil,
         isLoading: Bool = false,
         isDisabled: Bool = false,
@@ -129,7 +119,7 @@ public struct DSButton: View {
         action: @escaping @MainActor () -> Void
     ) {
         self.title = title
-        self.variant = variant
+        self.appearance = appearance
         self.icon = icon
         self.isLoading = isLoading
         self.isDisabled = isDisabled
@@ -139,6 +129,12 @@ public struct DSButton: View {
     }
 
     public var body: some View {
+        let style = DSButtonStyleResolver.resolve(
+            appearance: appearance,
+            theme: theme,
+            colorScheme: colorScheme
+        )
+
         Button(action: action) {
             ZStack {
                 // Keep sizing stable by rendering content invisibly when loading
@@ -147,20 +143,20 @@ public struct DSButton: View {
 
                 if isLoading {
                     ProgressView()
-                        .tint(foregroundColor)
+                        .tint(style.foregroundColor)
                 }
             }
             .padding(.horizontal, SpacingTokens.space5)
             .padding(.vertical, SpacingTokens.space3)
             .frame(maxWidth: .infinity)
             .frame(minHeight: ControlHeightTokens.medium)
-            .foregroundStyle(foregroundColor)
-            .background(backgroundColor)
+            .foregroundStyle(style.foregroundColor)
+            .background(style.backgroundColor)
             .clipShape(RoundedRectangle(cornerRadius: RadiusTokens.medium))
             .overlay {
-                if variant == .outline {
+                if style.borderWidth > 0 {
                     RoundedRectangle(cornerRadius: RadiusTokens.medium)
-                        .stroke(theme.colors.brand.primary, lineWidth: StrokeTokens.default)
+                        .stroke(style.borderColor, lineWidth: style.borderWidth)
                 }
             }
         }
@@ -182,8 +178,8 @@ public struct DSButton: View {
 
     private var buttonContent: some View {
         HStack(spacing: SpacingTokens.space2) {
-            if case .leading(let name) = icon {
-                Image(systemName: name)
+            if case .leading(let symbol) = icon {
+                symbol.image
                     .dsTextStyle(iconTextStyle, family: theme.typography.family)
             }
 
@@ -191,8 +187,8 @@ public struct DSButton: View {
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
 
-            if case .trailing(let name) = icon {
-                Image(systemName: name)
+            if case .trailing(let symbol) = icon {
+                symbol.image
                     .dsTextStyle(iconTextStyle, family: theme.typography.family)
             }
         }
@@ -208,86 +204,4 @@ public struct DSButton: View {
         )
     }
 
-    // MARK: - Private
-
-    private var foregroundColor: Color {
-        switch variant {
-        case .primary:
-            DSColorContrast.preferredForeground(
-                on: theme.colors.brand.primary,
-                candidates: [
-                    theme.colors.semantic.textPrimary,
-                    theme.colors.semantic.textOnBrand,
-                    theme.colors.semantic.textInverse
-                ],
-                colorScheme: colorScheme
-            )
-        case .secondary:
-            theme.colors.semantic.textPrimary
-        case .outline:
-            theme.colors.brand.primary
-        }
-    }
-
-    private var backgroundColor: Color {
-        switch variant {
-        case .primary:
-            theme.colors.brand.primary
-        case .secondary:
-            theme.colors.semantic.surfaceSecondary
-        case .outline:
-            .clear
-        }
-    }
-}
-
-// MARK: - Previews
-
-#Preview("DSButton — Variants") {
-    VStack(spacing: 12) {
-        DSButton("Primary", variant: .primary) {}
-        DSButton("Secondary", variant: .secondary) {}
-        DSButton("Outline", variant: .outline) {}
-    }
-    .padding()
-}
-
-#Preview("DSButton — Leading Icon") {
-    VStack(spacing: 12) {
-        DSButton("Add Item", variant: .primary, icon: .leading(DSSymbol(systemName: "plus")!)) {}
-        DSButton("Settings", variant: .secondary, icon: .leading(DSSymbol(systemName: "gearshape")!)) {}
-        DSButton("Edit", variant: .outline, icon: .leading(DSSymbol(systemName: "pencil")!)) {}
-    }
-    .padding()
-}
-
-#Preview("DSButton — Trailing Icon") {
-    VStack(spacing: 12) {
-        DSButton("Continue", variant: .primary, icon: .trailing(DSSymbol(systemName: "arrow.right")!)) {}
-        DSButton("Download", variant: .secondary, icon: .trailing(DSSymbol(systemName: "arrow.down.circle")!)) {}
-        DSButton("Share", variant: .outline, icon: .trailing(DSSymbol(systemName: "square.and.arrow.up")!)) {}
-    }
-    .padding()
-}
-
-#Preview("DSButton — Loading") {
-    VStack(spacing: 12) {
-        DSButton("Primary", variant: .primary, isLoading: true) {}
-        DSButton("Secondary", variant: .secondary, isLoading: true) {}
-        DSButton("Outline", variant: .outline, isLoading: true) {}
-        DSButton("With Icon", variant: .primary, icon: .leading(systemName: "plus"), isLoading: true) {}
-    }
-    .padding()
-}
-
-#Preview("DSButton — Dark") {
-    VStack(spacing: 12) {
-        DSButton("Primary", variant: .primary) {}
-        DSButton("Secondary", variant: .secondary) {}
-        DSButton("Outline", variant: .outline) {}
-        DSButton("Disabled", variant: .primary, isDisabled: true) {}
-    }
-    .padding()
-    .dsTheme(.defaultTheme)
-    .preferredColorScheme(.dark)
 }

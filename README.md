@@ -91,7 +91,7 @@ struct ContentView: View {
             DSText("Welcome to DaVinci", role: .title)
             DSText("A modern design system", role: .body)
             
-            DSButton("Get Started", variant: .primary) {
+            DSButton("Get Started", appearance: .primary) {
                 print("Button tapped!")
             }
         }
@@ -128,36 +128,38 @@ ContentView()
 
 ```swift
 // Primary button
-DSButton("Submit", variant: .primary) {
+DSButton("Submit", appearance: .primary) {
     submitForm()
 }
 
 // With icon (validated DSSymbol)
-let plus = DSSymbol(systemName: "plus")!
-DSButton("Add Item", variant: .secondary, icon: .leading(plus)) {
-    addItem()
+if let plus = DSSymbol(systemName: "plus") {
+    DSButton("Add Item", appearance: .secondary, icon: .leading(plus)) {
+        addItem()
+    }
 }
 
 // Loading state
-DSButton("Saving...", variant: .primary, isLoading: true) {
+DSButton("Saving...", appearance: .primary, isLoading: true) {
     // Action disabled during loading
 }
 
 // Icon-only button
-let gear = DSSymbol(systemName: "gear")!
-DSIconButton(
-    symbol: gear,
-    titleForAccessibility: "Settings",
-    variant: .secondary
-) {
-    openSettings()
+if let gear = DSSymbol(systemName: "gear") {
+    DSIconButton(
+        symbol: gear,
+        titleForAccessibility: "Settings",
+        appearance: .ghost
+    ) {
+        openSettings()
+    }
 }
 ```
 
 ### Text Fields
 
-`DSTextField` keeps the v1.2 filled appearance by default and adds a reusable
-configuration for outlined fields, validated leading symbols, clear actions,
+`DSTextField` keeps the v1.2 filled appearance by default and adds reusable
+configurations for outlined and underlined fields, validated leading symbols, clear actions,
 supporting or error messages, and character limits.
 
 ```swift
@@ -177,14 +179,21 @@ if let search = DSSymbol(systemName: "magnifyingglass") {
 }
 ```
 
+Use `.underlined` for a transparent field with state-aware emphasis along its
+bottom edge only.
+
 Supporting text is announced as an accessibility hint. Errors and character
 progress are included in the field's accessibility value. Character limits
 truncate by Swift `Character`, preserving extended grapheme clusters.
 
-The original initializer remains source-compatible:
+Errors are configured through the same typed initializer:
 
 ```swift
-DSTextField("Email", text: $email, error: "Invalid email address")
+DSTextField(
+    "Email",
+    text: $email,
+    configuration: .filled.message(.error("Invalid email address"))
+)
 ```
 
 ### Cards
@@ -203,10 +212,17 @@ DSCard(style: .standard) {
 ```swift
 DSRemoteImage(
     url: URL(string: "https://example.com/image.jpg"),
-    width: 120,
-    height: 120,
-    cornerRadius: RadiusTokens.large,
+    geometry: .rounded(
+        size: CGSize(width: 120, height: 80),
+        cornerRadius: RadiusTokens.large
+    ),
     contentMode: .fill
+)
+
+DSRemoteImage(
+    url: avatarURL,
+    geometry: .circle(diameter: 80),
+    accessibilityLabel: "User avatar"
 )
 ```
 
@@ -250,7 +266,7 @@ The foundational layer of the design system. Contains **immutable, value-driven,
 | `DSRadius` | Corner radius scale (`extraSmall` through `large`) |
 | `DSElevation` | Shadow parameters (`none`, `small`, `medium`) |
 | `DSMotion` | Animation duration and curve tokens (`fast`, `normal`, `slow`) |
-| `DSOpacity` | Interaction opacity tokens (`disabled`, `pressed`, `scrim`) |
+| `DSOpacity` | Interaction and surface opacity tokens (`disabled`, `pressed`, `scrim`, `subtleFill`, `subtleStroke`) |
 | `DSControlHeight` | Control height scale (`small`, `medium`, `large`) |
 | `DSStroke` | Stroke width tokens |
 | `DSTheme` | Root theme container with SwiftUI `EnvironmentValues` integration |
@@ -263,17 +279,17 @@ Reusable SwiftUI components that consume tokens from `DaVinciTokens`.
 
 | Component | Description |
 |---|---|
-| `DSButton` | Themed button with `.primary`, `.secondary`, `.outline` variants, leading/trailing SF Symbol icons, loading and disabled states |
-| `DSIconButton` | Icon-only button with variant, size, loading, and disabled support |
+| `DSButton` | Themed button with primary, secondary, outline, and ghost appearances, icons, loading, and disabled states |
+| `DSIconButton` | Icon-only button with aligned appearances, size, loading, and disabled support |
 | `DSText` | Semantic text component mapping roles (`.display`, `.title`, `.headline`, `.body`, `.callout`, `.caption`, `.overline`) to typography tokens |
-| `DSCard` | Container view with surface styling, padding, radius, and elevation shadow |
+| `DSCard` | Compact, standard, prominent, and outlined surface containers |
 | `DSTextField` | Themed text field with label and prompt |
 | `DSSwitch` | Themed toggle with label, disabled state, and accessibility value |
-| `DSSegmentedControl` | Text or icon segments with animated selection |
-| `DSProgressBar` | Determinate and indeterminate progress in three sizes |
-| `DSBadge` | Text and dot badges with semantic variants and sizes |
+| `DSSegmentedControl` | Text or icon segments with filled and subtle appearances |
+| `DSProgressBar` | Continuous, stepped, striped, and shimmer progress in three sizes |
+| `DSBadge` | Text and dot badges with independent semantic tones, visual appearances, and sizes |
 | `DSDivider` | Horizontal or vertical semantic divider |
-| `DSRemoteImage` | Validated remote loading, deduplication, decoding, and bounded cache |
+| `DSRemoteImage` | Validated remote loading with rectangle, rounded, and circle geometry |
 | `DSSkeletonBlock`, `DSSkeletonRow`, `DSSkeletonCard`, `DSSkeletonList` | Loading placeholders with optional shimmer |
 | `dsShimmering(_:)` | Reduce-Motion-aware shimmer modifier |
 | `DSPressableButtonStyle` | Shared `ButtonStyle` applying `OpacityTokens.pressed` with configurable duration |
@@ -356,14 +372,15 @@ xcodebuild build \
 
 ### Test Coverage
 
-Coverage is reported only for production targets; test bundles are deliberately
-excluded from the metric. With Xcode 26.6, the current reproducible line coverage is:
+Coverage is reported only for production targets; test bundles and dedicated
+`*+Previews.swift` sources are deliberately excluded from the metric. With Xcode
+26.6, the current reproducible line coverage is:
 
 | Product target | Covered lines | Executable lines | Coverage | CI policy |
 |---|---:|---:|---:|---|
-| `DaVinciTokens` | 232 | 232 | 100.00% | Minimum 100% |
-| `DaVinciComponents` | 2459 | 2577 | 95.42% | Minimum 95% |
-| `DaVinciGallery` | 0 | 4982 | 0.00% | Reported, not currently gated |
+| `DaVinciTokens` | 238 | 238 | 100.00% | Minimum 100% |
+| `DaVinciComponents` | 2763 | 2870 | 96.27% | Minimum 95% |
+| `DaVinciGallery` | 0 | 5827 | 0.00% | Reported, not currently gated |
 
 There is no aggregate “overall” claim: including test targets would inflate it,
 while including the currently unexercised gallery would conceal the actual gap.
@@ -456,7 +473,7 @@ struct YourApp: App {
 **Use components when possible:**
 ```swift
 // ✅ Preferred
-DSButton("Submit", variant: .primary) { }
+DSButton("Submit", appearance: .primary) { }
 
 // ❌ Avoid rebuilding components
 Button("Submit") { }
@@ -483,24 +500,25 @@ announcements, and keyboard navigation still require manual validation in the ho
 
 ```swift
 // Icon buttons require accessibility labels
-let trash = DSSymbol(systemName: "trash")!
-DSIconButton(
-    symbol: trash,
-    titleForAccessibility: "Delete item", // VoiceOver reads this
-    variant: .secondary
-) { deleteItem() }
+if let trash = DSSymbol(systemName: "trash") {
+    DSIconButton(
+        symbol: trash,
+        titleForAccessibility: "Delete item", // VoiceOver reads this
+        appearance: .secondary
+    ) { deleteItem() }
+}
 
 // Remote images support custom labels
 DSRemoteImage(
     url: avatarURL,
-    size: CGSize(width: 80, height: 80),
+    geometry: .circle(diameter: 80),
     accessibilityLabel: "User profile picture"
 )
 
 // Decorative images are removed from the accessibility tree
 DSRemoteImage(
     url: backgroundURL,
-    size: CGSize(width: 120, height: 80),
+    geometry: .rectangle(size: CGSize(width: 120, height: 80)),
     isDecorative: true
 )
 ```
@@ -519,10 +537,10 @@ For complete accessibility guidelines, color contrast ratios, and testing proced
 **DSRemoteImage** uses a shared validated image pipeline:
 ```swift
 // First load: fetches from network
-DSRemoteImage(url: imageURL, width: 100, height: 100)
+DSRemoteImage(url: imageURL, geometry: .circle(diameter: 100))
 
 // Subsequent loads: instant from cache
-DSRemoteImage(url: imageURL, width: 100, height: 100)
+DSRemoteImage(url: imageURL, geometry: .circle(diameter: 100))
 ```
 
 Concurrent requests for the same URL and loader share one load. The default loader

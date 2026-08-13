@@ -6,11 +6,12 @@ import DaVinciTokens
 /// A themed icon-only button component that reads tokens from the `DSTheme` environment.
 public struct DSIconButton: View {
 
-    public enum Variant: Sendable {
+    public enum Appearance: CaseIterable, Hashable, Sendable {
         case primary
         case secondary
         case outline
         case accent
+        case ghost
     }
 
     public enum Size: Sendable {
@@ -29,10 +30,10 @@ public struct DSIconButton: View {
 
     @Environment(\.dsTheme) private var theme
 
-    private let systemName: String
+    private let symbol: DSSymbol
     private let accessibilityTitle: String
     private let accessibilityHint: String?
-    private let variant: Variant
+    private let appearance: Appearance
     private let size: Size
     private let isLoading: Bool
     private let isDisabled: Bool
@@ -42,39 +43,17 @@ public struct DSIconButton: View {
     public init(
         symbol: DSSymbol,
         titleForAccessibility: String,
-        variant: Variant = .secondary,
+        appearance: Appearance = .secondary,
         size: Size = .medium,
         isLoading: Bool = false,
         isDisabled: Bool = false,
         accessibilityHint: String? = nil,
         action: @escaping @MainActor () -> Void
     ) {
-        self.init(
-            systemName: symbol.systemName,
-            titleForAccessibility: titleForAccessibility,
-            variant: variant,
-            size: size,
-            isLoading: isLoading,
-            isDisabled: isDisabled,
-            accessibilityHint: accessibilityHint,
-            action: action
-        )
-    }
-
-    public init(
-        systemName: String,
-        titleForAccessibility: String,
-        variant: Variant = .secondary,
-        size: Size = .medium,
-        isLoading: Bool = false,
-        isDisabled: Bool = false,
-        accessibilityHint: String? = nil,
-        action: @escaping @MainActor () -> Void
-    ) {
-        self.systemName = systemName
+        self.symbol = symbol
         self.accessibilityTitle = titleForAccessibility
         self.accessibilityHint = accessibilityHint
-        self.variant = variant
+        self.appearance = appearance
         self.size = size
         self.isLoading = isLoading
         self.isDisabled = isDisabled
@@ -82,30 +61,26 @@ public struct DSIconButton: View {
     }
 
     public var body: some View {
+        let style = DSButtonStyleResolver.resolve(appearance: appearance, theme: theme)
+
         Button(action: action) {
             ZStack {
                 if isLoading {
                     ProgressView()
-                        .tint(foregroundColor)
+                        .tint(style.foregroundColor)
                 } else {
-                    Image(systemName: systemName)
+                    symbol.image
                         .font(.system(size: iconFontSize, weight: .medium))
                 }
             }
             .frame(width: size.dimension, height: size.dimension)
-            .foregroundStyle(foregroundColor)
-            .background(backgroundColor)
+            .foregroundStyle(style.foregroundColor)
+            .background(style.backgroundColor)
             .clipShape(RoundedRectangle(cornerRadius: RadiusTokens.medium))
             .overlay {
-                switch variant {
-                case .outline:
+                if style.borderWidth > 0 {
                     RoundedRectangle(cornerRadius: RadiusTokens.medium)
-                        .stroke(theme.colors.brand.primary, lineWidth: StrokeTokens.default)
-                case .accent:
-                    RoundedRectangle(cornerRadius: RadiusTokens.medium)
-                        .stroke(theme.colors.accent.strokeAccent, lineWidth: StrokeTokens.default)
-                default:
-                    EmptyView()
+                        .stroke(style.borderColor, lineWidth: style.borderWidth)
                 }
             }
         }
@@ -137,97 +112,4 @@ public struct DSIconButton: View {
         size.dimension * Self.iconSizeRatio
     }
 
-    private var foregroundColor: Color {
-        switch variant {
-        case .primary:
-            theme.colors.semantic.textOnBrand
-        case .secondary:
-            theme.colors.semantic.textPrimary
-        case .outline:
-            theme.colors.brand.primary
-        case .accent:
-            theme.colors.accent.strokeAccent
-        }
-    }
-
-    private var backgroundColor: Color {
-        switch variant {
-        case .primary:
-            theme.colors.brand.primary
-        case .secondary:
-            theme.colors.semantic.surfaceSecondary
-        case .outline:
-            .clear
-        case .accent:
-            theme.colors.accent.bgAccent
-        }
-    }
-}
-
-// MARK: - Previews
-
-private let previewPlus = DSSymbol(systemName: "plus")!
-private let previewGearshape = DSSymbol(systemName: "gearshape")!
-private let previewPencil = DSSymbol(systemName: "pencil")!
-private let previewStarFill = DSSymbol(systemName: "star.fill")!
-private let previewHeartFill = DSSymbol(systemName: "heart.fill")!
-private let previewTrash = DSSymbol(systemName: "trash")!
-
-#Preview("DSIconButton — Variants") {
-    HStack(spacing: 12) {
-        DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .primary) {}
-        DSIconButton(symbol: previewGearshape, titleForAccessibility: "Settings", variant: .secondary) {}
-        DSIconButton(symbol: previewPencil, titleForAccessibility: "Edit", variant: .outline) {}
-        DSIconButton(symbol: previewStarFill, titleForAccessibility: "Accent", variant: .accent) {}
-    }
-    .padding()
-}
-
-#Preview("DSIconButton — Sizes") {
-    HStack(spacing: 12) {
-        DSIconButton(symbol: previewHeartFill, titleForAccessibility: "Like", variant: .primary, size: .small) {}
-        DSIconButton(symbol: previewHeartFill, titleForAccessibility: "Like", variant: .primary, size: .medium) {}
-        DSIconButton(symbol: previewHeartFill, titleForAccessibility: "Like", variant: .primary, size: .large) {}
-    }
-    .padding()
-}
-
-#Preview("DSIconButton — States") {
-    HStack(spacing: 12) {
-        DSIconButton(symbol: previewTrash, titleForAccessibility: "Delete", variant: .primary) {}
-        DSIconButton(symbol: previewTrash, titleForAccessibility: "Delete", variant: .primary, isDisabled: true) {}
-        DSIconButton(symbol: previewTrash, titleForAccessibility: "Delete", variant: .primary, isLoading: true) {}
-    }
-    .padding()
-}
-
-#Preview("DSIconButton — All Variants + Sizes") {
-    VStack(spacing: 16) {
-        HStack(spacing: 12) {
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .primary, size: .small) {}
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .secondary, size: .small) {}
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .outline, size: .small) {}
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .accent, size: .small) {}
-        }
-        HStack(spacing: 12) {
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .primary, size: .large) {}
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .secondary, size: .large) {}
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .outline, size: .large) {}
-            DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .accent, size: .large) {}
-        }
-    }
-    .padding()
-}
-
-#Preview("DSIconButton — Dark") {
-    HStack(spacing: 12) {
-        DSIconButton(symbol: previewPlus, titleForAccessibility: "Add", variant: .primary) {}
-        DSIconButton(symbol: previewGearshape, titleForAccessibility: "Settings", variant: .secondary) {}
-        DSIconButton(symbol: previewPencil, titleForAccessibility: "Edit", variant: .outline) {}
-        DSIconButton(symbol: previewStarFill, titleForAccessibility: "Accent", variant: .accent) {}
-        DSIconButton(symbol: previewTrash, titleForAccessibility: "Delete", variant: .primary, isDisabled: true) {}
-    }
-    .padding()
-    .dsTheme(.defaultTheme)
-    .preferredColorScheme(.dark)
 }

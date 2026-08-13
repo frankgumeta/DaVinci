@@ -21,16 +21,18 @@ import DaVinciTokens
 ///
 /// ## Styles
 ///
-/// Three preset styles are available via `DSCardStyle`:
+/// Four preset styles are available via `DSCardStyle`:
 ///
 /// - **Compact**: Tight padding (12pt), no shadow, small radius (10pt)
 /// - **Standard**: Default padding (16pt), small shadow, medium radius (14pt)
 /// - **Prominent**: Generous padding (20pt), medium shadow, large radius (20pt)
+/// - **Outlined**: Standard padding, no shadow, semantic border
 ///
 /// ```swift
 /// DSCard(style: .compact) { /* content */ }
 /// DSCard(style: .standard) { /* content */ }  // default
 /// DSCard(style: .prominent) { /* content */ }
+/// DSCard(style: .outlined) { /* content */ }
 /// ```
 ///
 /// ## Topics
@@ -61,14 +63,31 @@ public struct DSCard<Content: View>: View {
         self.content = content()
     }
 
+    @ViewBuilder
     public var body: some View {
         let elevation = style.elevation
-        content
-            .padding(style.padding)
-            .background(theme.colors.semantic.surfacePrimary)
-            .clipShape(RoundedRectangle(cornerRadius: style.cornerRadius))
+
+        switch style {
+        case .compact, .standard, .prominent:
+            content
+                .padding(style.padding)
+                .background(theme.colors.semantic.surfacePrimary)
+                .clipShape(RoundedRectangle(cornerRadius: style.cornerRadius))
+                .shadow(color: elevation.color, radius: elevation.radius, x: elevation.x, y: elevation.y)
+                .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
+
+        case .outlined:
+            content
+                .padding(style.padding)
+                .background(theme.colors.semantic.surfacePrimary)
+                .clipShape(RoundedRectangle(cornerRadius: style.cornerRadius))
+                .overlay {
+                    RoundedRectangle(cornerRadius: style.cornerRadius)
+                        .strokeBorder(theme.colors.semantic.stroke, lineWidth: style.borderWidth)
+                }
             .shadow(color: elevation.color, radius: elevation.radius, x: elevation.x, y: elevation.y)
             .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
+        }
     }
 
     internal var accessibilityDescriptor: DSAccessibilityDescriptor {
@@ -79,92 +98,4 @@ public struct DSCard<Content: View>: View {
             children: .combine
         )
     }
-}
-
-// MARK: - Previews
-
-#Preview("DSCard — Styles") {
-    VStack(spacing: 16) {
-        DSCard(style: .compact) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Compact").font(.headline)
-                Text("Tighter padding, no shadow.").font(.body)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        DSCard(style: .standard) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Standard").font(.headline)
-                Text("Default card style.").font(.body)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        DSCard(style: .prominent) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Prominent").font(.headline)
-                Text("Generous padding, medium shadow.").font(.body)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-    .padding()
-}
-
-#Preview("DSCard — Dark") {
-    VStack(spacing: 16) {
-        DSCard(style: .compact) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Compact").font(.headline)
-                Text("Tighter padding, no shadow.").font(.body)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        DSCard(style: .standard) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Standard").font(.headline)
-                Text("Default card style.").font(.body)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        DSCard(style: .prominent) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Prominent").font(.headline)
-                Text("Generous padding, medium shadow.").font(.body)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-    .padding()
-    .dsTheme(.defaultTheme)
-    .preferredColorScheme(.dark)
-}
-
-#Preview("DSCard — Accessibility") {
-    VStack(spacing: 16) {
-        DSCard(
-            style: .standard,
-            accessibilityLabel: "Product card",
-            accessibilityHint: "Double tap to view product details"
-        ) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Premium Headphones").font(.headline)
-                Text("$299.99").font(.body).foregroundColor(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-
-        DSCard(
-            style: .standard,
-            accessibilityLabel: "Settings card",
-            accessibilityTraits: .isButton
-        ) {
-            HStack {
-                Image(systemName: "gear")
-                Text("Account Settings").font(.body)
-                Spacer()
-                Image(systemName: "chevron.right").foregroundColor(.secondary)
-            }
-        }
-    }
-    .padding()
 }

@@ -9,9 +9,9 @@ import SwiftUI
 struct DSButtonTests {
 
     @Test @MainActor func allVariantsCreate() {
-        let variants: [DSButton.Variant] = [.primary, .secondary, .outline]
+        let variants: [DSButton.Appearance] = [.primary, .secondary, .outline, .ghost]
         for variant in variants {
-            let button = DSButton("Test", variant: variant) {}
+            let button = DSButton("Test", appearance: variant) {}
             #expect(type(of: button) == DSButton.self)
         }
     }
@@ -19,8 +19,8 @@ struct DSButtonTests {
     @Test @MainActor func buttonWithLeadingIcon() {
         let button = DSButton(
             "Test",
-            variant: .primary,
-            icon: .leading(systemName: "plus")
+            appearance: .primary,
+            icon: .leading(DSSymbol(systemName: "plus")!)
         ) {}
         #expect(type(of: button) == DSButton.self)
     }
@@ -28,8 +28,8 @@ struct DSButtonTests {
     @Test @MainActor func buttonWithTrailingIcon() {
         let button = DSButton(
             "Test",
-            variant: .secondary,
-            icon: .trailing(systemName: "arrow.right")
+            appearance: .secondary,
+            icon: .trailing(DSSymbol(systemName: "arrow.right")!)
         ) {}
         #expect(type(of: button) == DSButton.self)
     }
@@ -47,15 +47,15 @@ struct DSButtonTests {
     @Test @MainActor func buttonWithLoadingAndIcon() {
         let button = DSButton(
             "Processing",
-            variant: .primary,
-            icon: .leading(systemName: "arrow.clockwise"),
+            appearance: .primary,
+            icon: .leading(DSSymbol(systemName: "arrow.clockwise")!),
             isLoading: true
         ) {}
         #expect(type(of: button) == DSButton.self)
     }
 
     @Test @MainActor func allVariantsWithAllStates() {
-        let variants: [DSButton.Variant] = [.primary, .secondary, .outline]
+        let variants: [DSButton.Appearance] = [.primary, .secondary, .outline, .ghost]
         let states: [(loading: Bool, disabled: Bool)] = [
             (false, false),
             (true, false),
@@ -67,7 +67,7 @@ struct DSButtonTests {
             for state in states {
                 let button = DSButton(
                     "Test",
-                    variant: variant,
+                    appearance: variant,
                     isLoading: state.loading,
                     isDisabled: state.disabled
                 ) {}
@@ -83,12 +83,12 @@ struct DSButtonTests {
 struct DSIconButtonTests {
 
     @Test @MainActor func allVariantsCreate() {
-        let variants: [DSIconButton.Variant] = [.primary, .secondary, .outline, .accent]
+        let variants: [DSIconButton.Appearance] = [.primary, .secondary, .outline, .accent, .ghost]
         for variant in variants {
             let button = DSIconButton(
-                systemName: "gear",
+                symbol: DSSymbol(systemName: "gear")!,
                 titleForAccessibility: "Settings",
-                variant: variant
+                appearance: variant
             ) {}
             #expect(type(of: button) == DSIconButton.self)
         }
@@ -98,7 +98,7 @@ struct DSIconButtonTests {
         let sizes: [DSIconButton.Size] = [.small, .medium, .large]
         for size in sizes {
             let button = DSIconButton(
-                systemName: "gear",
+                symbol: DSSymbol(systemName: "gear")!,
                 titleForAccessibility: "Settings",
                 size: size
             ) {}
@@ -108,7 +108,7 @@ struct DSIconButtonTests {
 
     @Test @MainActor func iconButtonInLoadingState() {
         let button = DSIconButton(
-            systemName: "gear",
+            symbol: DSSymbol(systemName: "gear")!,
             titleForAccessibility: "Settings",
             isLoading: true
         ) {}
@@ -117,7 +117,7 @@ struct DSIconButtonTests {
 
     @Test @MainActor func iconButtonInDisabledState() {
         let button = DSIconButton(
-            systemName: "gear",
+            symbol: DSSymbol(systemName: "gear")!,
             titleForAccessibility: "Settings",
             isDisabled: true
         ) {}
@@ -125,15 +125,15 @@ struct DSIconButtonTests {
     }
 
     @Test @MainActor func allCombinationsCreate() {
-        let variants: [DSIconButton.Variant] = [.primary, .secondary, .outline, .accent]
+        let variants: [DSIconButton.Appearance] = [.primary, .secondary, .outline, .accent, .ghost]
         let sizes: [DSIconButton.Size] = [.small, .medium, .large]
 
         for variant in variants {
             for size in sizes {
                 let button = DSIconButton(
-                    systemName: "star",
+                    symbol: DSSymbol(systemName: "star")!,
                     titleForAccessibility: "Favorite",
-                    variant: variant,
+                    appearance: variant,
                     size: size
                 ) {}
                 #expect(type(of: button) == DSIconButton.self)
@@ -215,6 +215,13 @@ struct DSCardTests {
         #expect(type(of: card) == DSCard<Text>.self)
     }
 
+    @Test @MainActor func cardWithOutlinedStyle() {
+        let card = DSCard(style: .outlined) {
+            Text("Content")
+        }
+        #expect(type(of: card) == DSCard<Text>.self)
+    }
+
     @Test @MainActor func cardWithComplexContent() {
         let card = DSCard {
             VStack {
@@ -252,7 +259,7 @@ struct DSCardTests {
     }
 
     @Test @MainActor func allCardStylesCreate() {
-        let styles: [DSCardStyle] = [.compact, .standard, .prominent]
+        let styles: [DSCardStyle] = [.compact, .standard, .prominent, .outlined]
 
         for style in styles {
             let card = DSCard(style: style) {
@@ -279,7 +286,11 @@ struct DSTextFieldTests {
     }
 
     @Test @MainActor func textFieldWithoutLabelShown() {
-        let field = DSTextField("Hidden Label", text: .constant(""), showsLabel: false)
+        let field = DSTextField(
+            "Hidden Label",
+            text: .constant(""),
+            configuration: .filled.labelVisibility(.hidden)
+        )
         #expect(type(of: field) == DSTextField.self)
     }
 
@@ -287,8 +298,7 @@ struct DSTextFieldTests {
         let field = DSTextField(
             "Username",
             text: .constant(""),
-            prompt: "Choose a username",
-            showsLabel: true
+            prompt: "Choose a username"
         )
         #expect(type(of: field) == DSTextField.self)
     }
@@ -318,8 +328,7 @@ struct DSRemoteImageTests {
     @Test @MainActor func remoteImageWithURL() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            width: 100,
-            height: 100
+            geometry: .circle(diameter: 100)
         )
         #expect(type(of: image) == DSRemoteImage.self)
     }
@@ -327,26 +336,26 @@ struct DSRemoteImageTests {
     @Test @MainActor func remoteImageWithNilURL() {
         let image = DSRemoteImage(
             url: nil,
-            width: 100,
-            height: 100
+            geometry: .circle(diameter: 100)
         )
         #expect(type(of: image) == DSRemoteImage.self)
     }
 
-    @Test @MainActor func remoteImageWithSize() {
+    @Test @MainActor func remoteImageWithRectangleGeometry() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            size: CGSize(width: 120, height: 120)
+            geometry: .rectangle(size: CGSize(width: 120, height: 80))
         )
         #expect(type(of: image) == DSRemoteImage.self)
     }
 
-    @Test @MainActor func remoteImageWithCustomRadius() {
+    @Test @MainActor func remoteImageWithRoundedGeometry() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            width: 80,
-            height: 80,
-            cornerRadius: RadiusTokens.large
+            geometry: .rounded(
+                size: CGSize(width: 80, height: 80),
+                cornerRadius: RadiusTokens.large
+            )
         )
         #expect(type(of: image) == DSRemoteImage.self)
     }
@@ -354,8 +363,7 @@ struct DSRemoteImageTests {
     @Test @MainActor func remoteImageWithoutShimmer() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            width: 100,
-            height: 100,
+            geometry: .circle(diameter: 100),
             showsShimmer: false
         )
         #expect(type(of: image) == DSRemoteImage.self)
@@ -364,9 +372,8 @@ struct DSRemoteImageTests {
     @Test @MainActor func remoteImageWithCustomPlaceholder() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            width: 100,
-            height: 100,
-            placeholderSystemImage: "person.circle"
+            geometry: .circle(diameter: 100),
+            placeholder: DSSymbol(systemName: "person.circle")!
         )
         #expect(type(of: image) == DSRemoteImage.self)
     }
@@ -374,8 +381,7 @@ struct DSRemoteImageTests {
     @Test @MainActor func remoteImageWithAccessibilityLabel() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            width: 100,
-            height: 100,
+            geometry: .circle(diameter: 100),
             accessibilityLabel: "Profile picture"
         )
         #expect(type(of: image) == DSRemoteImage.self)
@@ -384,8 +390,7 @@ struct DSRemoteImageTests {
     @Test @MainActor func remoteImageFillMode() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            width: 100,
-            height: 100,
+            geometry: .circle(diameter: 100),
             contentMode: .fill
         )
         #expect(type(of: image) == DSRemoteImage.self)
@@ -394,8 +399,7 @@ struct DSRemoteImageTests {
     @Test @MainActor func remoteImageFitMode() {
         let image = DSRemoteImage(
             url: URL(string: "https://example.com/image.jpg"),
-            width: 100,
-            height: 100,
+            geometry: .circle(diameter: 100),
             contentMode: .fit
         )
         #expect(type(of: image) == DSRemoteImage.self)
@@ -474,9 +478,9 @@ struct DSSkeletonTests {
 struct DSBadgeTests {
 
     @Test @MainActor func allVariantsCreate() {
-        let variants: [DSBadge.Variant] = [.brand, .success, .warning, .error, .neutral]
+        let variants: [DSBadge.Tone] = [.brand, .success, .warning, .error, .neutral]
         for variant in variants {
-            let badge = DSBadge("Test", variant: variant)
+            let badge = DSBadge("Test", tone: variant)
             #expect(type(of: badge) == DSBadge.self)
         }
     }
@@ -490,12 +494,12 @@ struct DSBadgeTests {
     }
 
     @Test @MainActor func dotBadgeCreatesWithoutText() {
-        let badge = DSBadge(variant: .error)
+        let badge = DSBadge(tone: .error)
         #expect(type(of: badge) == DSBadge.self)
     }
 
     @Test @MainActor func accessibilityLabelOverride() {
-        let badge = DSBadge(variant: .error, accessibilityLabel: "3 unread messages")
+        let badge = DSBadge(tone: .error, accessibilityLabel: "3 unread messages")
         #expect(type(of: badge) == DSBadge.self)
     }
 
@@ -599,13 +603,13 @@ struct DSSegmentedControlTests {
     @Test @MainActor func segmentItemCreatesWithTitle() {
         let item = DSSegmentItem(title: "Day")
         #expect(item.title == "Day")
-        #expect(item.iconSystemName == nil)
+        #expect(item.icon?.systemName == nil)
     }
 
     @Test @MainActor func segmentItemCreatesWithIcon() {
-        let item = DSSegmentItem(title: "List", iconSystemName: "list.bullet")
+        let item = DSSegmentItem(title: "List", icon: DSSymbol(systemName: "list.bullet")!)
         #expect(item.title == "List")
-        #expect(item.iconSystemName == "list.bullet")
+        #expect(item.icon?.systemName == "list.bullet")
     }
 
     @Test @MainActor func primaryInitCreates() {
@@ -632,7 +636,7 @@ struct DSSegmentedControlTests {
         let control = DSSegmentedControl(
             options: ["List", "Grid"],
             selectedIndex: .constant(0),
-            icons: ["list.bullet", "square.grid.2x2"]
+            symbols: [DSSymbol(systemName: "list.bullet")!, DSSymbol(systemName: "square.grid.2x2")!]
         )
         #expect(type(of: control) == DSSegmentedControl.self)
     }
@@ -642,7 +646,7 @@ struct DSSegmentedControlTests {
         let control = DSSegmentedControl(
             options: ["A", "B", "C"],
             selectedIndex: .constant(0),
-            icons: ["star"]
+            symbols: [DSSymbol(systemName: "star")!]
         )
         #expect(type(of: control) == DSSegmentedControl.self)
     }
@@ -703,7 +707,7 @@ struct ThemeIntegrationTests {
     @Test @MainActor func componentsWorkWithDefaultTheme() {
         let theme = DSTheme.defaultTheme
 
-        let button = DSButton("Test", variant: .primary) {}
+        let button = DSButton("Test", appearance: .primary) {}
         let text = DSText("Test", role: .body)
         let card = DSCard { Text("Content") }
 
@@ -730,7 +734,7 @@ struct ThemeIntegrationTests {
             VStack {
                 DSText("Title", role: .headline)
                 DSText("Body text", role: .body)
-                DSButton("Action", variant: .primary) {}
+                DSButton("Action", appearance: .primary) {}
             }
         }
 
@@ -739,9 +743,9 @@ struct ThemeIntegrationTests {
 
     @Test @MainActor func multipleButtonVariantsInSameView() {
         let buttons = VStack {
-            DSButton("Primary", variant: .primary) {}
-            DSButton("Secondary", variant: .secondary) {}
-            DSButton("Outline", variant: .outline) {}
+            DSButton("Primary", appearance: .primary) {}
+            DSButton("Secondary", appearance: .secondary) {}
+            DSButton("Outline", appearance: .outline) {}
         }
 
         #expect(String(describing: type(of: buttons)).contains("VStack"))
@@ -752,14 +756,13 @@ struct ThemeIntegrationTests {
             VStack(spacing: 12) {
                 DSRemoteImage(
                     url: URL(string: "https://example.com/image.jpg"),
-                    width: 100,
-                    height: 100
+                    geometry: .circle(diameter: 100)
                 )
                 DSText("Image Title", role: .headline)
                 DSText("Description text", role: .body)
                 HStack {
-                    DSButton("Like", variant: .secondary) {}
-                    DSButton("Share", variant: .outline) {}
+                    DSButton("Like", appearance: .secondary) {}
+                    DSButton("Share", appearance: .outline) {}
                 }
             }
         }

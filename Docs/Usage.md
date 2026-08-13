@@ -25,19 +25,25 @@ Practical patterns and best practices for using DaVinci components in real-world
 
 ```swift
 // Text-based primary action
-DSButton("Create Account", variant: .primary) {
+DSButton("Create Account", appearance: .primary) {
     createAccount()
 }
 
 // Icon-only action in toolbar
-DSIconButton(
-    systemName: "gear",
-    titleForAccessibility: "Settings",
-    variant: .secondary
-) {
-    showSettings()
+if let gear = DSSymbol(systemName: "gear") {
+    DSIconButton(
+        symbol: gear,
+        titleForAccessibility: "Settings",
+        appearance: .ghost
+    ) {
+        showSettings()
+    }
 }
 ```
+
+Use `.ghost` for low-emphasis actions placed directly on an existing surface,
+such as dismiss, overflow, or toolbar actions. Ghost buttons keep the same
+interaction and accessibility frames while removing fill and border.
 
 **Rule of Thumb**: If the action needs a visible text label for clarity, use `DSButton`. If the icon is universally recognized (settings, close, share), use `DSIconButton`.
 
@@ -56,13 +62,14 @@ guard let gear = DSSymbol(systemName: "gear") else {
 }
 
 // Pass to any component that accepts DSSymbol.
-DSIconButton(symbol: gear, titleForAccessibility: "Settings", variant: .secondary) {
+DSIconButton(symbol: gear, titleForAccessibility: "Settings", appearance: .secondary) {
     showSettings()
 }
 
-// DSButtonIcon factories accept DSSymbol directly.
-let plus = DSSymbol(systemName: "plus")!
-DSButton("Add Item", icon: .leading(plus)) { addItem() }
+// DSButtonIcon cases accept DSSymbol directly.
+if let plus = DSSymbol(systemName: "plus") {
+    DSButton("Add Item", icon: .leading(plus)) { addItem() }
+}
 
 // DSSegmentItem accepts a validated DSSymbol icon.
 if let list = DSSymbol(systemName: "list.bullet") {
@@ -70,19 +77,15 @@ if let list = DSSymbol(systemName: "list.bullet") {
 }
 
 // DSRemoteImage accepts an optional DSSymbol placeholder.
-DSRemoteImage(url: url, width: 120, height: 120, placeholder: DSSymbol(systemName: "person"))
+DSRemoteImage(
+    url: url,
+    geometry: .circle(diameter: 120),
+    placeholder: DSSymbol(systemName: "person")
+)
 ```
 
-The string-based APIs from v1.2.0 remain available for backward compatibility:
-
-```swift
-DSIconButton(systemName: "gear", titleForAccessibility: "Settings") {}
-DSButton("Add", icon: .leading(systemName: "plus")) {}
-```
-
-**When to use which**: Prefer `DSSymbol` in new code — it catches typos and
-unavailable symbols at construction time. Use the `String` API only when
-migrating existing call sites incrementally.
+All component icon APIs require `DSSymbol`, so invalid or unavailable names are
+handled before a component is constructed.
 
 ---
 
@@ -119,6 +122,11 @@ DSCard(style: .standard) {
     }
 }
 
+// Standard density without elevation
+DSCard(style: .outlined) {
+    DSText("Account summary", role: .headline)
+}
+
 // Loading state
 DSSkeletonList(count: 5)
 ```
@@ -138,10 +146,37 @@ DSSkeletonList(count: 5)
 ```swift
 DSSwitch(isOn: $notificationsEnabled, label: "Notifications")
 DSSegmentedControl(options: ["Day", "Week"], selectedIndex: $period)
+DSSegmentedControl(
+    options: ["List", "Grid"],
+    selectedIndex: $viewMode,
+    appearance: .subtle
+)
 DSProgressBar(value: uploadProgress, label: "Uploading")
-DSBadge("New", variant: .brand)
+DSProgressBar(value: onboardingProgress, style: .stepped(count: 5))
+DSProgressBar(value: uploadProgress, size: .large, style: .striped)
+DSProgressBar(value: downloadProgress, size: .large, style: .shimmer)
+DSBadge("New", tone: .brand, appearance: .filled)
+DSBadge("Active", tone: .success, appearance: .subtle)
+DSBadge("Failed", tone: .error, appearance: .outlined)
 DSDivider()
 ```
+
+`DSSegmentedControl.Appearance.filled` remains the default for a prominent
+selection. Use `.subtle` when the control should sit directly on its parent
+surface with a low-emphasis tinted selection capsule. Both appearances retain
+button and selected accessibility traits; neither represents tab navigation.
+
+`DSProgressBar.Style.continuous` preserves the original presentation.
+`.stepped(count:)` divides determinate progress into segments and can partially
+fill the active segment; nonpositive counts normalize to one. `.striped` uses
+moving diagonal bands clipped to determinate progress, or fills the complete
+track while indeterminate. With Reduce Motion enabled, the bands remain static.
+`.shimmer` keeps the solid fill and adds one sweeping reflective highlight;
+it also becomes static when Reduce Motion is enabled.
+
+`DSBadge.Tone` communicates status (`brand`, `success`, `warning`, `error`,
+or `neutral`) while `DSBadge.Appearance` controls emphasis (`filled`, `subtle`,
+or `outlined`). Tone and appearance are independent axes of the canonical initializer.
 
 ### Remote Media
 
@@ -152,12 +187,14 @@ Mark purely decorative content so it is omitted from the accessibility tree.
 ```swift
 DSRemoteImage(
     url: avatarURL,
-    width: 80,
-    height: 80,
-    cornerRadius: RadiusTokens.large,
+    geometry: .circle(diameter: 80),
     accessibilityLabel: "Profile photo"
 )
 ```
+
+Use `.rectangle(size:)` for edge-to-edge media and
+`.rounded(size:cornerRadius:)` for cards or thumbnails. Geometry is required so
+dimensions and clipping remain one coherent configuration.
 
 ---
 
@@ -169,7 +206,7 @@ DSRemoteImage(
 VStack {
     Spacer()
     
-    DSButton("Continue", variant: .primary) {
+    DSButton("Continue", appearance: .primary) {
         onContinue()
     }
     .padding(.horizontal, SpacingTokens.space4)
@@ -180,11 +217,11 @@ VStack {
 
 ```swift
 HStack(spacing: SpacingTokens.space2) {
-    DSButton("Cancel", variant: .outline) {
+    DSButton("Cancel", appearance: .outline) {
         dismiss()
     }
     
-    DSButton("Save", variant: .primary) {
+    DSButton("Save", appearance: .primary) {
         save()
     }
 }
@@ -193,12 +230,14 @@ HStack(spacing: SpacingTokens.space2) {
 ### 3. Icon + Text Button
 
 ```swift
-DSButton(
-    "Download PDF",
-    variant: .secondary,
-    icon: .leading(systemName: "arrow.down.doc")
-) {
-    downloadPDF()
+if let download = DSSymbol(systemName: "arrow.down.doc") {
+    DSButton(
+        "Download PDF",
+        appearance: .secondary,
+        icon: .leading(download)
+    ) {
+        downloadPDF()
+    }
 }
 ```
 
@@ -219,7 +258,7 @@ DSCard(
         
         DSText("Unlock advanced features", role: .body)
         
-        DSButton("Upgrade Now", variant: .primary) {
+        DSButton("Upgrade Now", appearance: .primary) {
             showUpgrade()
         }
     }
@@ -232,9 +271,10 @@ DSCard(
 
 ### Reusable Text Field Configuration
 
-Use `.filled` to preserve the original DaVinci appearance or `.outlined` for a
-transparent field with a semantic border. Builder calls return copies, so a
-configuration can be reused safely.
+Use `.filled` to preserve the original DaVinci appearance, `.outlined` for a
+transparent field with a semantic container border, or `.underlined` for a
+transparent field with a border along its bottom edge only. Builder calls
+return copies, so a configuration can be reused safely.
 
 ```swift
 let accountField: DSTextField.Configuration = .outlined
@@ -267,6 +307,17 @@ DSTextField(
 )
 ```
 
+```swift
+DSTextField(
+    "Search",
+    text: $query,
+    prompt: "Search…",
+    configuration: .underlined
+        .trailing(.clear)
+        .message(.supporting("Search by title or author"))
+)
+```
+
 ### Basic Form
 
 ```swift
@@ -294,7 +345,7 @@ var body: some View {
         
         DSButton(
             "Sign In",
-            variant: .primary,
+            appearance: .primary,
             isLoading: isLoading,
             accessibilityHint: "Sign in to your account"
         ) {
@@ -316,7 +367,9 @@ var body: some View {
         DSTextField(
             "Email",
             text: $email,
-            error: emailError,
+            configuration: emailError.map {
+                .filled.message(.error($0))
+            } ?? .filled,
             accessibilityHint: "Enter a valid email address"
         )
         .onChange(of: email) { _, newValue in
@@ -325,7 +378,7 @@ var body: some View {
         
         DSButton(
             "Submit",
-            variant: .primary,
+            appearance: .primary,
             isDisabled: emailError != nil || email.isEmpty
         ) {
             submit()
@@ -365,7 +418,7 @@ ScrollView {
             }
         }
         
-        DSButton("Save Changes", variant: .primary) {
+        DSButton("Save Changes", appearance: .primary) {
             saveChanges()
         }
     }
@@ -395,13 +448,15 @@ ScrollView {
                     
                     Spacer()
                     
-                    DSIconButton(
-                        systemName: "chevron.right",
-                        titleForAccessibility: "View details",
-                        variant: .secondary,
-                        size: .small
-                    ) {
-                        showDetails(item)
+                    if let disclosure = DSSymbol(systemName: "chevron.right") {
+                        DSIconButton(
+                            symbol: disclosure,
+                            titleForAccessibility: "View details",
+                            appearance: .secondary,
+                            size: .small
+                        ) {
+                            showDetails(item)
+                        }
                     }
                 }
             }
@@ -435,7 +490,7 @@ LazyVGrid(
                 DSText(product.name, role: .headline)
                 DSText(product.price, role: .body)
                 
-                DSButton("Add to Cart", variant: .primary) {
+                DSButton("Add to Cart", appearance: .primary) {
                     addToCart(product)
                 }
             }
@@ -482,7 +537,7 @@ var body: some View {
 
 DSButton(
     "Submit",
-    variant: .primary,
+    appearance: .primary,
     isLoading: isSubmitting
 ) {
     Task {
@@ -498,8 +553,10 @@ DSButton(
 ```swift
 DSRemoteImage(
     url: imageURL,
-    width: 300,
-    height: 200,
+    geometry: .rounded(
+        size: CGSize(width: 300, height: 200),
+        cornerRadius: RadiusTokens.medium
+    ),
     showsShimmer: true,
     accessibilityLabel: "Product photo"
 )
@@ -541,8 +598,7 @@ If an image conveys no information, remove it from the accessibility tree:
 ```swift
 DSRemoteImage(
     url: decorativeBackgroundURL,
-    width: 300,
-    height: 120,
+    geometry: .rectangle(size: CGSize(width: 300, height: 120)),
     isDecorative: true
 )
 ```
@@ -603,7 +659,9 @@ ScrollView {
 DSTextField(
     "Email",
     text: $email,
-    error: error,
+    configuration: error.map {
+        .filled.message(.error($0))
+    } ?? .filled,
     accessibilityHint: error != nil ? "Fix the error to continue" : nil
 )
 
@@ -628,7 +686,7 @@ DSCard(style: .standard) {
         DSText("Error Loading Data", role: .headline)
         DSText("Unable to fetch content", role: .body)
         
-        DSButton("Retry", variant: .outline) {
+        DSButton("Retry", appearance: .outline) {
             retry()
         }
     }
@@ -653,7 +711,7 @@ VStack(spacing: SpacingTokens.space4) {
     
     // Form fields...
     
-    DSButton("Submit", variant: .primary) {
+    DSButton("Submit", appearance: .primary) {
         if validateForm() {
             submit()
         } else {
@@ -702,19 +760,21 @@ DSCard(
 ```swift
 DSButton(
     "Delete Account",
-    variant: .outline,
+    appearance: .outline,
     accessibilityHint: "This action cannot be undone"
 ) {
     deleteAccount()
 }
 
-DSIconButton(
-    systemName: "trash",
-    titleForAccessibility: "Delete item",
-    variant: .secondary,
-    accessibilityHint: "Permanently remove this item"
-) {
-    deleteItem()
+if let trash = DSSymbol(systemName: "trash") {
+    DSIconButton(
+        symbol: trash,
+        titleForAccessibility: "Delete item",
+        appearance: .secondary,
+        accessibilityHint: "Permanently remove this item"
+    ) {
+        deleteItem()
+    }
 }
 ```
 
@@ -724,7 +784,7 @@ DSIconButton(
 // DSButton automatically announces loading state
 DSButton(
     "Save",
-    variant: .primary,
+    appearance: .primary,
     isLoading: isSaving
 ) {
     save()
@@ -785,10 +845,8 @@ struct ProfileScreen: View {
                 // Profile Image
                 DSRemoteImage(
                     url: profileImageURL,
-                    width: 120,
-                    height: 120,
-                    cornerRadius: 60,
-                    label: "Profile photo"
+                    geometry: .circle(diameter: 120),
+                    accessibilityLabel: "Profile photo"
                 )
                 
                 // Form
@@ -800,20 +858,22 @@ struct ProfileScreen: View {
                         DSTextField(
                             "Email",
                             text: $email,
-                            error: saveError
+                            configuration: saveError.map {
+                                .filled.message(.error($0))
+                            } ?? .filled
                         )
                     }
                 }
                 
                 // Actions
                 HStack(spacing: SpacingTokens.space2) {
-                    DSButton("Cancel", variant: .outline) {
+                    DSButton("Cancel", appearance: .outline) {
                         dismiss()
                     }
                     
                     DSButton(
                         "Save Changes",
-                        variant: .primary,
+                        appearance: .primary,
                         isLoading: isLoading
                     ) {
                         Task {

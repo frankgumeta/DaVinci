@@ -23,11 +23,13 @@ extension DSTextField {
     /// leaving the original unchanged.
     ///
     /// ```swift
-    /// let account: DSTextField.Configuration = .outlined
-    ///     .labelVisibility(.hidden)
-    ///     .leading(DSSymbol(systemName: "person")!)
-    ///     .trailing(.clear)
-    ///     .message(.supporting("Enter your account email"))
+    /// if let person = DSSymbol(systemName: "person") {
+    ///     let account: DSTextField.Configuration = .outlined
+    ///         .labelVisibility(.hidden)
+    ///         .leading(person)
+    ///         .trailing(.clear)
+    ///         .message(.supporting("Enter your account email"))
+    /// }
     /// ```
     ///
     /// `DSFieldMessage` is an enum, so ``DSFieldMessage/supporting(_:)`` and
@@ -62,6 +64,9 @@ extension DSTextField {
 
         /// Outlined appearance with a visible label.
         public static let outlined = Configuration(appearance: .outlined, labelVisibility: .visible)
+
+        /// Underlined appearance with a visible label.
+        public static let underlined = Configuration(appearance: .underlined, labelVisibility: .visible)
 
         public func labelVisibility(_ visibility: DSTextFieldLabelVisibility) -> Configuration {
             copy(labelVisibility: visibility)

@@ -35,6 +35,15 @@ import DaVinciTokens
 /// DSProgressBar(value: 0.5, size: .large)
 /// ```
 ///
+/// ## Styles
+///
+/// ```swift
+/// DSProgressBar(value: 0.5, style: .continuous)
+/// DSProgressBar(value: 0.5, style: .stepped(count: 5))
+/// DSProgressBar(value: 0.5, style: .striped)
+/// DSProgressBar(value: 0.5, style: .shimmer)
+/// ```
+///
 /// ## Accessibility
 ///
 /// The progress bar automatically provides:
@@ -50,6 +59,7 @@ public struct DSProgressBar: View, Sendable {
     private let size: Size
     private let label: String?
     internal let isIndeterminate: Bool
+    internal let style: Style
     private let accessibilityLabel: String?
 
     /// Semantic height of the progress bar.
@@ -70,6 +80,23 @@ public struct DSProgressBar: View, Sendable {
         }
     }
 
+    /// Visual presentation of the progress track.
+    public enum Style: Sendable, Equatable {
+        /// A single uninterrupted fill (default, preserves the original API).
+        case continuous
+        /// Discrete segments with partial fill in the active segment.
+        case stepped(count: Int)
+        /// Animated diagonal bands clipped to the current progress.
+        case striped
+        /// A sweeping reflective highlight clipped to the current progress.
+        case shimmer
+
+        internal var normalized: Style {
+            guard case .stepped(let count) = self else { return self }
+            return .stepped(count: max(1, count))
+        }
+    }
+
     /// Creates a themed progress bar.
     ///
     /// - Parameters:
@@ -78,18 +105,21 @@ public struct DSProgressBar: View, Sendable {
     ///   - label: Optional label text displayed above the bar
     ///   - isIndeterminate: If true, shows an animated loading state
     ///   - accessibilityLabel: Optional custom accessibility label
+    ///   - style: Track presentation (default: `.continuous`)
     public init(
         value: Double = 0.0,
         size: Size = .small,
         label: String? = nil,
         isIndeterminate: Bool = false,
-        accessibilityLabel: String? = nil
+        accessibilityLabel: String? = nil,
+        style: Style = .continuous
     ) {
         self.value = min(max(value, 0.0), 1.0)
         self.size = size
         self.label = label
         self.isIndeterminate = isIndeterminate
         self.accessibilityLabel = accessibilityLabel
+        self.style = style.normalized
     }
 
     public var body: some View {
@@ -100,29 +130,62 @@ public struct DSProgressBar: View, Sendable {
             }
 
             GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: size.height / 2)
-                        .fill(theme.colors.semantic.bgTertiary)
-                        .frame(height: size.height)
-
-                    if isIndeterminate {
-                        IndeterminateBar(
-                            theme: theme,
-                            height: size.height,
-                            width: geometry.size.width,
-                            reduceMotion: reduceMotion
-                        )
-                    } else {
-                        RoundedRectangle(cornerRadius: size.height / 2)
-                            .fill(theme.colors.brand.primary)
-                            .frame(width: geometry.size.width * value, height: size.height)
-                            .animation(theme.motion.easeInOutNormal, value: value)
-                    }
-                }
+                progressTrack(width: geometry.size.width)
             }
             .frame(height: size.height)
         }
         .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
+    }
+
+    @ViewBuilder
+    private func progressTrack(width: CGFloat) -> some View {
+        if case .stepped(let count) = style, !isIndeterminate {
+            SteppedProgressBar(
+                value: value,
+                count: count,
+                height: size.height,
+                theme: theme
+            )
+        } else {
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: size.height / 2)
+                    .fill(theme.colors.semantic.bgTertiary)
+                    .frame(height: size.height)
+
+                progressFill(width: width)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func progressFill(width: CGFloat) -> some View {
+        if style == .striped {
+            StripedProgressBar(
+                value: isIndeterminate ? 1 : value,
+                height: size.height,
+                width: width,
+                theme: theme,
+                reduceMotion: reduceMotion
+            )
+        } else if style == .shimmer {
+            RoundedRectangle(cornerRadius: size.height / 2)
+                .fill(theme.colors.brand.primary)
+                .frame(width: width * (isIndeterminate ? 1 : value), height: size.height)
+                .dsShimmering()
+                .animation(theme.motion.easeInOutNormal, value: value)
+        } else if isIndeterminate {
+            IndeterminateBar(
+                theme: theme,
+                height: size.height,
+                width: width,
+                reduceMotion: reduceMotion
+            )
+        } else {
+            RoundedRectangle(cornerRadius: size.height / 2)
+                .fill(theme.colors.brand.primary)
+                .frame(width: width * value, height: size.height)
+                .animation(theme.motion.easeInOutNormal, value: value)
+        }
     }
 
     internal var resolvedAccessibilityLabel: String {
@@ -177,37 +240,4 @@ private struct IndeterminateBar: View {
                 }
         }
     }
-}
-
-// MARK: - Previews
-
-#Preview("DSProgressBar - Light") {
-    VStack(spacing: SpacingTokens.space5) {
-        DSProgressBar(value: 0.0, label: "Not started")
-        DSProgressBar(value: 0.25, label: "25% complete")
-        DSProgressBar(value: 0.5, label: "Half way")
-        DSProgressBar(value: 0.75, label: "Almost done")
-        DSProgressBar(value: 1.0, label: "Complete")
-        DSProgressBar(label: "Loading...", isIndeterminate: true)
-
-        DSText("Sizes", role: .caption)
-        DSProgressBar(value: 0.6, size: .small, label: "Small")
-        DSProgressBar(value: 0.6, size: .medium, label: "Medium")
-        DSProgressBar(value: 0.6, size: .large, label: "Large")
-    }
-    .padding()
-    .dsTheme(.defaultTheme)
-}
-
-#Preview("DSProgressBar - Dark") {
-    VStack(spacing: SpacingTokens.space5) {
-        DSProgressBar(value: 0.0, label: "Not started")
-        DSProgressBar(value: 0.5, label: "Half way")
-        DSProgressBar(value: 1.0, label: "Complete")
-        DSProgressBar(label: "Loading...", isIndeterminate: true)
-        DSProgressBar(value: 0.6, size: .large, label: "Large")
-    }
-    .padding()
-    .dsTheme(.defaultTheme)
-    .preferredColorScheme(.dark)
 }

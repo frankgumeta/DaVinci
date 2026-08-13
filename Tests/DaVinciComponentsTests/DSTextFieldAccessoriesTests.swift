@@ -11,16 +11,15 @@ struct DSTextFieldAccessoriesTests {
     // MARK: - Clear action visibility
 
     @Test func clearActionHiddenWhenTextIsEmpty() {
-        let field = DSTextField(
-            "Search",
-            text: .constant(""),
-            configuration: .filled.trailing(.clear)
-        )
-        // showsTrailingAction is internal, but we can verify via the
-        // field's state: clear only shows when text is non-empty.
-        // We test the logic indirectly through the configuration.
-        let config = DSTextField.Configuration.filled.trailing(.clear)
-        #expect(config.trailingAction == .clear)
+        #expect(!DSTextField.shouldShowTrailingAction(.clear, text: ""))
+    }
+
+    @Test func clearActionVisibleWhenTextIsNotEmpty() {
+        #expect(DSTextField.shouldShowTrailingAction(.clear, text: "query"))
+    }
+
+    @Test func absentActionRemainsHidden() {
+        #expect(!DSTextField.shouldShowTrailingAction(nil, text: "query"))
     }
 
     @Test func clearActionConfigured() {

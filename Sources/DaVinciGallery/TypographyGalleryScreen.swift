@@ -52,7 +52,7 @@ struct TypographyGalleryScreen: View {
                         role: .body
                     )
                     DSButton("Continue with accessible text", icon: .trailing(DSSymbol(systemName: "arrow.right")!)) {}
-                    DSBadge("Accessible status", variant: .success, size: .large)
+                    DSBadge("Accessible status", tone: .success, size: .large)
                     DSSegmentedControl(
                         options: ["Overview", "Activity"],
                         selectedIndex: $accessibilitySelection

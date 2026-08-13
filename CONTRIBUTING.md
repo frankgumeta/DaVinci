@@ -387,6 +387,10 @@ When adding significant features, update the README:
 
 We follow [Semantic Versioning](https://semver.org/):
 
+Version 1.4.0 records a one-time pre-adoption exception in
+`Docs/Versioning.md` and `CHANGELOG.md`. These rules apply to every subsequent
+release.
+
 - **MAJOR** (X.0.0): Breaking changes
 - **MINOR** (0.X.0): New features, backwards compatible
 - **PATCH** (0.0.X): Bug fixes, backwards compatible

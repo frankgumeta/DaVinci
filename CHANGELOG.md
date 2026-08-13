@@ -3,9 +3,141 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html),
+except where a release documents an explicit pre-adoption exception.
 
 ## [Unreleased]
+
+### Added
+- `DSBadge.Tone` and independent filled, subtle, and outlined badge appearances
+- `OpacityTokens.subtleFill` and `subtleStroke` for consistent low-emphasis tinted surfaces
+- Borderless ghost appearances for `DSButton` and `DSIconButton`
+- Outlined `DSCardStyle` with standard density, no elevation, and a semantic border
+- Underlined `DSTextField` appearance with a transparent background and state-aware bottom border
+- Stepped, animated striped, and reflective shimmer `DSProgressBar` styles, including Reduce Motion support
+- Typed `DSRemoteImage.Geometry` presets for rectangular, rounded, and guaranteed-square circular media
+- Low-emphasis `DSSegmentedControl.Appearance.subtle` with a transparent container and tinted selection capsule
+
+### Changed
+- Component previews now live in dedicated `Component+Previews.swift` files
+- `Appearance` is the sole visual-style API for `DSButton` and `DSIconButton`
+- `DSBadge` now separates semantic `Tone` from visual `Appearance` without a `Variant` alias
+- SF Symbol component APIs now accept only runtime-validated `DSSymbol` values
+- `DSTextField` uses one configuration-based initializer, with `.filled` as its default configuration
+- Coverage continues to enforce 95% for `DaVinciComponents` while excluding dedicated
+  `*+Previews.swift` sources from production-line totals
+- CI and release builds explicitly compile with `ENABLE_PREVIEWS=YES`
+
+### Removed
+- `DSRemoteImage` initializers based on independent `width`/`height` or `size`; migrate to the required `geometry:` parameter
+- Compatibility initializers and aliases based on `variant:`, raw SF Symbol strings, and the v1.2 text-field `showsLabel:` / `error:` parameters
+
+### Fixed
+- Standalone `DSRemoteImage` and `DSSegmentedControl` previews now compile and render
+  reliably with the `DaVinciComponents` scheme
+- Clear-action visibility tests now exercise empty, populated, and unconfigured states
+  without producing compiler warnings
+
+### Versioning Exception
+
+This release intentionally contains source-breaking API cleanup under version 1.4.0.
+The project has no known external consumers at the time of release, so the maintainers
+approved one pre-adoption exception to the normal major-version rule. This exception
+does not establish a precedent: after 1.4.0, source-breaking public API changes require
+a major version according to `Docs/Versioning.md`.
+
+### Migration
+
+#### Badge tone and appearance
+
+```swift
+// Before
+DSBadge("Active", variant: .success)
+
+// After
+DSBadge("Active", tone: .success, appearance: .filled)
+```
+
+#### Button appearances and validated symbols
+
+```swift
+// Before
+DSButton("Add", variant: .primary, icon: .leading(systemName: "plus")) { }
+
+// After
+if let plus = DSSymbol(systemName: "plus") {
+    DSButton("Add", appearance: .primary, icon: .leading(plus)) { }
+}
+```
+
+`DSIconButton` follows the same migration: replace `variant:` with `appearance:` and
+construct the required icon with `DSSymbol(systemName:)` before creating the control.
+
+#### Text-field configuration
+
+```swift
+// Before
+DSTextField(
+    "Email",
+    text: $email,
+    showsLabel: false,
+    error: "Invalid email"
+)
+
+// After
+DSTextField(
+    "Email",
+    text: $email,
+    configuration: .filled
+        .labelVisibility(.hidden)
+        .message(.error("Invalid email"))
+)
+```
+
+#### Remote-image geometry and placeholder
+
+```swift
+// Before
+DSRemoteImage(
+    url: avatarURL,
+    width: 80,
+    height: 80,
+    cornerRadius: 40,
+    placeholderSystemImage: "person.crop.circle"
+)
+
+// After
+DSRemoteImage(
+    url: avatarURL,
+    geometry: .circle(diameter: 80),
+    placeholder: DSSymbol(systemName: "person.crop.circle")
+)
+```
+
+Use `.rectangle(size:)` or `.rounded(size:cornerRadius:)` when the image is not circular.
+
+#### Segmented-control symbols
+
+```swift
+// Before
+DSSegmentedControl(
+    options: ["List", "Grid"],
+    selectedIndex: $selection,
+    icons: ["list.bullet", "square.grid.2x2"]
+)
+
+// After
+guard let list = DSSymbol(systemName: "list.bullet"),
+      let grid = DSSymbol(systemName: "square.grid.2x2") else {
+    return
+}
+DSSegmentedControl(
+    options: ["List", "Grid"],
+    selectedIndex: $selection,
+    symbols: [list, grid],
+    appearance: .filled
+)
+```
 
 ## [1.3.0] - 2026-08-09
 

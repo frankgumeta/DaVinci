@@ -96,15 +96,6 @@ struct DSTextFieldMessageRenderingTests {
         #expect(field.resolvedAccessibilityValue == "bad@. Error: Invalid")
     }
 
-    @Test func legacyErrorInitStillIncludesErrorInAccessibilityValue() {
-        let field = DSTextField(
-            "Email",
-            text: .constant("bad@"),
-            error: "Invalid"
-        )
-        #expect(field.resolvedAccessibilityValue == "bad@. Error: Invalid")
-    }
-
     @Test func supportingAndErrorAreMutuallyExclusive() {
         // DSFieldMessage is an enum, so only one can be present.
         let supporting: DSFieldMessage = .supporting("A")

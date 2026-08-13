@@ -326,7 +326,7 @@ struct ContentView: View {
                     : .defaultTheme
             }
             
-            DSButton("Themed Button", variant: .primary) {}
+            DSButton("Themed Button", appearance: .primary) {}
         }
         .dsTheme(currentTheme)
     }
@@ -384,7 +384,7 @@ Keep brand-specific colors in the `brand` namespace, not `semantic`:
 
 ```swift
 // ✅ Good
-DSButton("Sign Up", variant: .primary) {}
+DSButton("Sign Up", appearance: .primary) {}
 // Uses theme.colors.brand.primary
 
 // ✅ Good  

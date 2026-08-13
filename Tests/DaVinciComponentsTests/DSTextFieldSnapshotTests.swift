@@ -34,7 +34,12 @@ struct DSTextFieldSnapshotTests {
     }
 
     @Test func textField_withoutLabel_light() throws {
-        let field = DSTextField("Search", text: .constant(""), prompt: "Search…", showsLabel: false)
+        let field = DSTextField(
+            "Search",
+            text: .constant(""),
+            prompt: "Search…",
+            configuration: .filled.labelVisibility(.hidden)
+        )
         try SnapshotTester.assertSnapshot(
             field,
             named: "textfield-without-label",
@@ -63,7 +68,7 @@ struct DSTextFieldSnapshotTests {
         let field = DSTextField(
             "Email",
             text: .constant("invalid@"),
-            error: "Invalid email format"
+            configuration: .filled.message(.error("Invalid email format"))
         )
         try SnapshotTester.assertSnapshot(
             field,
@@ -78,7 +83,7 @@ struct DSTextFieldSnapshotTests {
         let field = DSTextField(
             "Email",
             text: .constant("invalid@"),
-            error: "Invalid email format"
+            configuration: .filled.message(.error("Invalid email format"))
         )
         try SnapshotTester.assertSnapshot(
             field,
@@ -243,6 +248,7 @@ struct DSTextFieldSnapshotTests {
             record: recordMode
         )
     }
+
     // MARK: - RTL and Dynamic Type
 
     @Test func textField_outlinedAccessories_rtl() throws {

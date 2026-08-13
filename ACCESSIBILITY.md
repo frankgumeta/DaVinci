@@ -45,10 +45,12 @@ The following opaque pairs are calculated from sRGB values in automated tests.
 ### Feedback Colors
 
 Feedback and brand fills are not assumed to work with one fixed text color.
-`DSButton`, `DSBadge`, and `DSSegmentedControl` select the highest-contrast option
-from the theme's semantic foregrounds. Tests require at least 4.5:1 for badge and
-control text across default/alternate themes and both color schemes. Custom themes
-must run the same tests with their own palette.
+`DSButton`, filled `DSBadge`, and `DSSegmentedControl` select the highest-contrast
+option from the theme's semantic foregrounds. Subtle and outlined badges use the
+primary semantic text color over the surrounding surface while tone remains visible
+through tint and border. Tests require at least 4.5:1 for badge and control text
+across supported color schemes. Custom themes must run the same tests with their
+own palette.
 
 ## Component Accessibility Features
 
@@ -61,7 +63,7 @@ must run the same tests with their own palette.
 
 **Usage:**
 ```swift
-DSButton("Submit Form", variant: .primary) {
+DSButton("Submit Form", appearance: .primary) {
     submitForm()
 }
 // VoiceOver: "Submit Form, button"
@@ -78,10 +80,14 @@ DSButton("Submit Form", variant: .primary) {
 DSIconButton(
     systemName: "trash",
     titleForAccessibility: "Delete item", // Required!
-    variant: .secondary
+    appearance: .ghost
 ) { deleteItem() }
 // VoiceOver: "Delete item, button"
 ```
+
+Ghost buttons use the primary semantic text color over the surrounding surface,
+preserving text contrast while fill and border are removed. Their interaction
+frames remain identical to the other appearances.
 
 **⚠️ Important:** Always provide descriptive labels, not just icon names:
 - ✅ Good: "Delete item", "Add to favorites", "Share post"
@@ -113,7 +119,7 @@ DSText("Body content", role: .body)       // Regular text
 ```swift
 DSRemoteImage(
     url: profileImageURL,
-    size: CGSize(width: 80, height: 80),
+    geometry: .circle(diameter: 80),
     accessibilityLabel: "Profile picture of John Doe"
 )
 // VoiceOver: "Profile picture of John Doe, image"

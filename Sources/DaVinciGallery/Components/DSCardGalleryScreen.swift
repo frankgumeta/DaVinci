@@ -24,6 +24,18 @@ struct DSCardGalleryScreen: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
+                    DSCard(style: .outlined) {
+                        VStack(alignment: .leading, spacing: SpacingTokens.space2) {
+                            DSText("Outlined", role: .headline)
+                            DSText(
+                                "Standard density with a semantic border instead of elevation.",
+                                role: .body,
+                                color: theme.colors.semantic.textSecondary
+                            )
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
                     DSCard(style: .compact) {
                         HStack(spacing: SpacingTokens.space3) {
                             Circle()
@@ -60,7 +72,7 @@ struct DSCardGalleryScreen: View {
                             HStack {
                                 DSText("Codex Tutela", role: .headline)
                                 Spacer()
-                                DSBadge("New", variant: .brand)
+                                DSBadge("New", tone: .brand)
                             }
                             DSText(
                                 "Deterministic placeholders, bounded image transfers, per-loader caching.",
@@ -68,7 +80,7 @@ struct DSCardGalleryScreen: View {
                                 color: theme.colors.semantic.textSecondary
                             )
                             DSDivider(style: .hairline)
-                            DSButton("View Changelog", variant: .outline) {}
+                            DSButton("View Changelog", appearance: .outline) {}
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -77,7 +89,7 @@ struct DSCardGalleryScreen: View {
                         HStack(spacing: SpacingTokens.space3) {
                             DSText("Upload complete", role: .body)
                             Spacer()
-                            DSBadge("Done", variant: .success)
+                            DSBadge("Done", tone: .success)
                         }
                     }
                 }

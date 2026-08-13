@@ -117,6 +117,44 @@ struct DSCardSnapshotTests {
         )
     }
 
+    // MARK: - Outlined Style
+
+    @Test func outlinedCard_light() throws {
+        let card = DSCard(style: .outlined) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Outlined Card").font(.headline)
+                Text("Standard density with semantic border").font(.body)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        try SnapshotTester.assertSnapshot(
+            card,
+            named: "card-outlined",
+            size: CGSize(width: 300, height: 100),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    @Test func outlinedCard_dark() throws {
+        let card = DSCard(style: .outlined) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Outlined Card").font(.headline)
+                Text("Standard density with semantic border").font(.body)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .environment(\.dsTheme, DSTheme.defaultTheme.resolved(for: .dark))
+        .environment(\.colorScheme, .dark)
+        try SnapshotTester.assertSnapshot(
+            card,
+            named: "card-outlined",
+            size: CGSize(width: 300, height: 100),
+            colorScheme: .dark,
+            record: recordMode
+        )
+    }
+
     // MARK: - Complex Content
 
     @Test func cardWithComplexContent_light() throws {

@@ -40,7 +40,7 @@ internal enum DSTextFieldStyleResolver {
                     borderColor: theme.colors.brand.primary,
                     borderWidth: StrokeTokens.hairline
                 )
-            case .outlined:
+            case .outlined, .underlined:
                 return ResolvedStyle(
                     borderColor: theme.colors.brand.primary,
                     borderWidth: StrokeTokens.hairline * 1.5
@@ -53,7 +53,7 @@ internal enum DSTextFieldStyleResolver {
                     borderColor: theme.colors.semantic.textTertiary,
                     borderWidth: StrokeTokens.hairline
                 )
-            case .outlined:
+            case .outlined, .underlined:
                 return ResolvedStyle(
                     borderColor: theme.colors.semantic.textTertiary,
                     borderWidth: StrokeTokens.hairline
