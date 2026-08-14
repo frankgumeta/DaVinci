@@ -8,6 +8,10 @@ except where a release documents an explicit pre-adoption exception.
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-08-14
+
+> **Codex Variatio**
+
 ### Added
 - `DSBadge.Tone` and independent filled, subtle, and outlined badge appearances
 - `OpacityTokens.subtleFill` and `subtleStroke` for consistent low-emphasis tinted surfaces
