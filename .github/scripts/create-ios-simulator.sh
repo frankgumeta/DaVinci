@@ -7,64 +7,12 @@ trap 'rm -f "$simctl_json"' EXIT
 
 xcrun simctl list --json > "$simctl_json"
 
-selection="$({ python3 - "$simctl_json" <<'PY'
-import json
-import re
-import sys
+selector_arguments=("$simctl_json")
+if [[ -n "${DAVINCI_IOS_RUNTIME_MAJOR:-}" ]]; then
+    selector_arguments+=(--runtime-major "$DAVINCI_IOS_RUNTIME_MAJOR")
+fi
 
-with open(sys.argv[1], encoding="utf-8") as file:
-    data = json.load(file)
-
-
-def version_key(runtime):
-    version = runtime.get("version", "0")
-    return tuple(int(part) for part in re.findall(r"\d+", version))
-
-
-runtimes = [
-    runtime
-    for runtime in data.get("runtimes", [])
-    if runtime.get("isAvailable", False)
-    and (
-        runtime.get("platform") == "iOS"
-        or "SimRuntime.iOS" in runtime.get("identifier", "")
-    )
-]
-if not runtimes:
-    raise SystemExit("No available iOS Simulator runtime found")
-
-runtime = max(runtimes, key=version_key)
-
-device_types = [
-    device
-    for device in data.get("devicetypes", [])
-    if "SimDeviceType.iPhone" in device.get("identifier", "")
-]
-if not device_types:
-    raise SystemExit("No iPhone Simulator device type found")
-
-preferred_names = (
-    "iPhone 17 Pro",
-    "iPhone 17",
-    "iPhone 16 Pro",
-    "iPhone 16",
-)
-device_type = next(
-    (
-        device
-        for name in preferred_names
-        for device in device_types
-        if device.get("name") == name
-    ),
-    device_types[0],
-)
-
-print(runtime["identifier"])
-print(device_type["identifier"])
-print(runtime.get("name", runtime["identifier"]))
-print(device_type.get("name", device_type["identifier"]))
-PY
-} 2>&1)" || {
+selection="$(python3 "$(dirname "$0")/select-ios-simulator.py" "${selector_arguments[@]}" 2>&1)" || {
     echo "$selection" >&2
     exit 1
 }

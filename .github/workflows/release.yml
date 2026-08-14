@@ -32,6 +32,9 @@ jobs:
 
     - name: Test Coverage Reporter
       run: python3 -m unittest discover -s .github/scripts/tests -v
+
+    - name: Validate Documentation Examples
+      run: python3 .github/scripts/check-documentation.py
         
     - name: Create iOS Simulator
       id: simulator
@@ -52,6 +55,24 @@ jobs:
           .build/TestResults.xcresult \
           --minimum DaVinciTokens=100 \
           --minimum DaVinciComponents=95
+
+    - name: Install Minimum iOS Simulator Runtime
+      run: |
+        if ! xcrun simctl list runtimes | grep -q 'iOS 17'; then
+          xcodebuild -downloadPlatform iOS -buildVersion 17.5
+        fi
+
+    - name: Create Minimum iOS Simulator
+      id: minimum-simulator
+      env:
+        DAVINCI_IOS_RUNTIME_MAJOR: '17'
+      run: echo "udid=$(bash .github/scripts/create-ios-simulator.sh)" >> "$GITHUB_OUTPUT"
+
+    - name: Run Tests on Minimum iOS Runtime
+      run: |
+        bash .github/scripts/run-minimum-runtime-tests.sh \
+          '${{ steps.minimum-simulator.outputs.udid }}' \
+          .build/MinimumRuntimeResults.xcresult
       
     - name: Build Package and Previews
       run: |
@@ -60,6 +81,16 @@ jobs:
           -destination 'generic/platform=iOS Simulator' \
           IPHONEOS_DEPLOYMENT_TARGET=17.0 \
           ENABLE_PREVIEWS=YES \
+          -derivedDataPath .build
+
+    - name: Enforce Stable Public API Baseline
+      run: bash .github/scripts/check-api-baseline.sh --check
+
+    - name: Build API Documentation
+      run: |
+        xcodebuild docbuild \
+          -scheme DaVinci-Package \
+          -destination 'generic/platform=iOS Simulator' \
           -derivedDataPath .build
         
     - name: Create Release
@@ -71,6 +102,7 @@ jobs:
           README.md
           CONTRIBUTING.md
           ACCESSIBILITY.md
+          SECURITY.md
         generate_release_notes: true
         draft: false
         prerelease: false

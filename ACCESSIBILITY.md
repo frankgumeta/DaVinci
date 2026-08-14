@@ -77,11 +77,13 @@ DSButton("Submit Form", appearance: .primary) {
 
 **Usage:**
 ```swift
-DSIconButton(
-    systemName: "trash",
-    titleForAccessibility: "Delete item", // Required!
-    appearance: .ghost
-) { deleteItem() }
+if let trash = DSSymbol(systemName: "trash") {
+    DSIconButton(
+        symbol: trash,
+        titleForAccessibility: "Delete item", // Required!
+        appearance: .ghost
+    ) { deleteItem() }
+}
 // VoiceOver: "Delete item, button"
 ```
 
@@ -92,6 +94,10 @@ frames remain identical to the other appearances.
 **⚠️ Important:** Always provide descriptive labels, not just icon names:
 - ✅ Good: "Delete item", "Add to favorites", "Share post"
 - ❌ Bad: "Trash icon", "Star", "Square and arrow"
+
+DaVinci-owned accessibility states and actions are localized in English and
+Spanish. Consumer-provided labels, hints, validation messages, and visible text
+must be localized by the host application.
 
 ### DSText
 

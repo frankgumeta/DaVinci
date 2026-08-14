@@ -6,6 +6,7 @@ DaVinci provides a powerful theming system that allows you to customize the visu
 - [Core Concepts](#core-concepts)
 - [Using the Default Theme](#using-the-default-theme)
 - [Creating Custom Themes](#creating-custom-themes)
+- [Validating Custom Themes](#validating-custom-themes)
 - [Color System](#color-system)
 - [Typography Customization](#typography-customization)
 - [Motion Customization](#motion-customization)
@@ -121,8 +122,7 @@ let myBrandPalette = DSPalette(
             success: Color(red: 0.13, green: 0.77, blue: 0.25),
             warning: Color(red: 1.0, green: 0.58, blue: 0.0),
             error: Color(red: 0.95, green: 0.27, blue: 0.21)
-        ),
-        emphasis: TextEmphasisColors.default
+        )
     ),
     // Dark mode colors (automatically inverted semantics)
     dark: DSColors(
@@ -153,8 +153,7 @@ let myBrandPalette = DSPalette(
             success: Color(red: 0.19, green: 0.82, blue: 0.35),
             warning: Color(red: 1.0, green: 0.62, blue: 0.04),
             error: Color(red: 0.98, green: 0.37, blue: 0.33)
-        ),
-        emphasis: TextEmphasisColors.defaultDark
+        )
     )
 )
 ```
@@ -183,6 +182,23 @@ struct MyApp: App {
     }
 }
 ```
+
+## Validating Custom Themes
+
+Run `DSThemeValidator` in the consuming application's tests before publishing a
+custom theme. It checks both color schemes, normal-text and outline contrast,
+typography dimensions, motion durations, and theme identity.
+
+```swift
+let issues = DSThemeValidator.validate(myTheme)
+let errors = issues.filter { $0.severity == .error }
+
+precondition(errors.isEmpty, errors.map(\.message).joined(separator: "\n"))
+```
+
+An unresolved dynamic or translucent color produces a warning because an opaque
+sRGB contrast ratio cannot be calculated reliably. Theme validation supplements,
+but does not replace, testing the complete application with assistive technologies.
 
 ---
 
@@ -404,34 +420,41 @@ Text("CTA text")
 import SwiftUI
 import DaVinciTokens
 
-// 1. Define brand palette
+// 1. Define brand colors and palette
+let acmeBrand = BrandColors(
+    primary: Color(red: 1.0, green: 0.42, blue: 0.21),
+    secondary: Color(red: 0.97, green: 0.58, blue: 0.12),
+    tertiary: Color(red: 0.99, green: 0.78, blue: 0.19)
+)
+
 let acmePalette = DSPalette(
     light: DSColors(
-        semantic: /* ... light mode semantics ... */,
-        brand: BrandColors(
-            primary: Color(hex: "FF6B35"),    // Acme orange
-            secondary: Color(hex: "F7931E"),
-            tertiary: Color(hex: "FDC830")
-        ),
+        brand: acmeBrand,
         accent: AccentColors(
-            bgAccent: Color(hex: "FF6B35").opacity(0.1),
-            strokeAccent: Color(hex: "FF6B35")
-        ),
-        feedback: .default,
-        emphasis: .default
+            bgAccent: acmeBrand.tertiary.opacity(0.1),
+            strokeAccent: acmeBrand.primary
+        )
     ),
-    dark: /* ... dark mode colors ... */
+    dark: DSColors(
+        semantic: .darkDefaults,
+        brand: acmeBrand,
+        accent: AccentColors(
+            bgAccent: acmeBrand.tertiary.opacity(0.18),
+            strokeAccent: acmeBrand.secondary
+        )
+    )
 )
 
 // 2. Create theme
 let acmeTheme = DSTheme(
     name: "AcmeTheme",
     palette: acmePalette,
-    typography: DSTypography(
-        family: FontFamily(brand: "Inter"),
-        /* ... sizes ... */
-    ),
+    typography: DSTypography(family: FontFamily(brand: "Inter")),
     motion: DSMotion()
+)
+
+precondition(
+    DSThemeValidator.validate(acmeTheme).allSatisfy { $0.severity != .error }
 )
 
 // 3. Apply globally

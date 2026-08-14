@@ -36,6 +36,30 @@ public struct DSSymbol: Hashable, Sendable {
         guard UIImage(systemName: systemName) != nil else { return nil }
         self.systemName = systemName
     }
+
+    /// Returns the first symbol available on the current operating system.
+    ///
+    /// Put the newest preferred name first and progressively older fallbacks
+    /// after it. The method returns `nil` only when none of the names exists.
+    /// This keeps cross-version fallback logic concise without maintaining a
+    /// closed DaVinci-owned catalog.
+    ///
+    /// ```swift
+    /// let symbol = DSSymbol.firstAvailable(
+    ///     "person.crop.circle.badge.checkmark",
+    ///     "person.crop.circle"
+    /// )
+    /// ```
+    public static func firstAvailable(_ systemNames: String...) -> DSSymbol? {
+        firstAvailable(systemNames)
+    }
+
+    /// Sequence-based counterpart for callers that already store symbol names
+    /// in a collection.
+    public static func firstAvailable<S: Sequence>(_ systemNames: S) -> DSSymbol?
+    where S.Element == String {
+        systemNames.lazy.compactMap(DSSymbol.init(systemName:)).first
+    }
 }
 
 // MARK: - DaVinci-owned symbols

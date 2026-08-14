@@ -338,26 +338,26 @@ comparison run. Never commit a hard-coded recording flag.
 All public APIs must have documentation comments:
 
 ```swift
-/// A themed button component with multiple variants and states.
+/// A themed button component with multiple appearances and states.
 ///
 /// Use `DSButton` to create buttons that automatically adapt to your theme:
 ///
 /// ```swift
-/// DSButton("Submit", variant: .primary) {
+/// DSButton("Submit", appearance: .primary) {
 ///     submitForm()
 /// }
 /// ```
 ///
 /// ## Topics
 /// ### Creating Buttons
-/// - ``init(_:variant:icon:isLoading:isDisabled:accessibilityLabel:accessibilityHint:action:)``
+/// - ``init(_:appearance:icon:isLoading:isDisabled:accessibilityLabel:accessibilityHint:action:)``
 ///
-/// ### Variants
-/// - ``Variant``
+/// ### Appearances
+/// - ``Appearance``
 ///
 /// - Parameters:
 ///   - title: The button's text label
-///   - variant: Visual style (`.primary`, `.secondary`, `.outline`)
+///   - appearance: Visual style (`.primary`, `.secondary`, `.outline`, `.ghost`)
 ///   - action: Closure to execute when tapped
 public struct DSButton: View { ... }
 ```

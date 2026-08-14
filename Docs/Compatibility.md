@@ -40,6 +40,13 @@ CI performs two complementary checks:
 2. The complete test suite on a dynamically created iPhone Simulator using the
    newest iOS runtime installed on the macOS 26 runner.
 
+The scheduled `LTS Compatibility` workflow additionally installs an iOS 17.5
+Simulator runtime and executes the compatibility suite against the minimum
+supported major version. All test sources compile there and behavioral tests run;
+pixel snapshots execute only on the current CI runtime because SwiftUI rendering
+is OS-specific. The workflow can also be triggered manually before a patch release.
+
 The helper at `.github/scripts/create-ios-simulator.sh` avoids assuming that a
 particular simulator is already registered. It prefers a recent iPhone device type
-and falls back to any installed iPhone type.
+that is compatible with the selected runtime and falls back to any supported
+iPhone type. Set `DAVINCI_IOS_RUNTIME_MAJOR=17` to require the minimum runtime.

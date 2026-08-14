@@ -45,6 +45,26 @@ struct DSSymbolTests {
         acceptSendable(symbol)
     }
 
+    @Test func firstAvailableUsesFirstValidSymbol() throws {
+        let symbol = try #require(
+            DSSymbol.firstAvailable("davinci.symbol.does.not.exist", "person", "photo")
+        )
+
+        #expect(symbol.systemName == "person")
+    }
+
+    @Test func firstAvailableSupportsSequences() throws {
+        let symbol = try #require(
+            DSSymbol.firstAvailable(["davinci.symbol.does.not.exist", "photo"])
+        )
+
+        #expect(symbol.systemName == "photo")
+    }
+
+    @Test func firstAvailableReturnsNilWhenNoNameIsValid() {
+        #expect(DSSymbol.firstAvailable("", "davinci.symbol.does.not.exist") == nil)
+    }
+
     @Test func davinciOwnedSymbolsAreAvailable() {
         let symbols: [DSSymbol] = [.clear, .imagePlaceholder, .errorIndicator]
 

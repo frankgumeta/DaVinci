@@ -117,15 +117,15 @@ public struct DSSwitch: View, Sendable {
 
     internal var accessibilityDescriptor: DSAccessibilityDescriptor {
         DSAccessibilityDescriptor(
-            label: accessibilityLabel ?? label ?? "Toggle",
-            value: isOn ? "On" : "Off",
+            label: accessibilityLabel ?? label ?? DSLocalizedStrings.value(.toggle),
+            value: DSLocalizedStrings.value(isOn ? .toggleOn : .toggleOff),
             traits: .isToggle,
             isEnabled: !isDisabled
         )
     }
 
     internal var resolvedAccessibilityLabel: String {
-        accessibilityDescriptor.label ?? "Toggle"
+        accessibilityDescriptor.label ?? DSLocalizedStrings.value(.toggle)
     }
 }
 

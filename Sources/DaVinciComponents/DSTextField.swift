@@ -260,8 +260,8 @@ public struct DSTextField: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Clear text")
-            .accessibilityHint("Removes the entered text")
+            .accessibilityLabel(DSLocalizedStrings.value(.clearText))
+            .accessibilityHint(DSLocalizedStrings.value(.clearTextHint))
         }
     }
 
@@ -391,15 +391,22 @@ extension DSTextField {
     }
 
     internal var resolvedAccessibilityValue: String {
-        let enteredValue = text.isEmpty ? (prompt ?? "Empty") : text
+        let enteredValue = text.isEmpty ? (prompt ?? DSLocalizedStrings.value(.empty)) : text
         var parts = [enteredValue]
 
         if let limit = characterLimit {
-            parts.append("\(min(text.count, limit)) of \(limit) characters")
+            parts.append(
+                DSLocalizedStrings.format(
+                    .characterProgressFormat,
+                    arguments: [min(text.count, limit), limit]
+                )
+            )
         }
 
         if let message = fieldMessage, message.isError {
-            parts.append("Error: \(message.text)")
+            parts.append(
+                DSLocalizedStrings.format(.errorFormat, arguments: [message.text])
+            )
         }
 
         return parts.joined(separator: ". ")

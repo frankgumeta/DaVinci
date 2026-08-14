@@ -1,0 +1,364 @@
+{
+  "ABIRoot": {
+    "kind": "Root",
+    "name": "DaVinciGallery",
+    "printedName": "DaVinciGallery",
+    "children": [
+      {
+        "kind": "Import",
+        "name": "DaVinciComponents",
+        "printedName": "DaVinciComponents",
+        "declKind": "Import",
+        "moduleName": "DaVinciGallery"
+      },
+      {
+        "kind": "Import",
+        "name": "DaVinciTokens",
+        "printedName": "DaVinciTokens",
+        "declKind": "Import",
+        "moduleName": "DaVinciGallery"
+      },
+      {
+        "kind": "Import",
+        "name": "SwiftOnoneSupport",
+        "printedName": "SwiftOnoneSupport",
+        "declKind": "Import",
+        "moduleName": "DaVinciGallery"
+      },
+      {
+        "kind": "Import",
+        "name": "SwiftUI",
+        "printedName": "SwiftUI",
+        "declKind": "Import",
+        "moduleName": "DaVinciGallery"
+      },
+      {
+        "kind": "Import",
+        "name": "_Concurrency",
+        "printedName": "_Concurrency",
+        "declKind": "Import",
+        "moduleName": "DaVinciGallery"
+      },
+      {
+        "kind": "Import",
+        "name": "_StringProcessing",
+        "printedName": "_StringProcessing",
+        "declKind": "Import",
+        "moduleName": "DaVinciGallery"
+      },
+      {
+        "kind": "Import",
+        "name": "_SwiftConcurrencyShims",
+        "printedName": "_SwiftConcurrencyShims",
+        "declKind": "Import",
+        "moduleName": "DaVinciGallery"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "GalleryHomeScreen",
+        "printedName": "GalleryHomeScreen",
+        "children": [
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(currentTheme:colorSchemeOverride:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "GalleryHomeScreen",
+                "printedName": "DaVinciGallery.GalleryHomeScreen",
+                "usr": "s:14DaVinciGallery0C10HomeScreenV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Binding",
+                "printedName": "SwiftUI.Binding<DaVinciTokens.DSTheme>",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "DSTheme",
+                    "printedName": "DaVinciTokens.DSTheme",
+                    "usr": "s:13DaVinciTokens7DSThemeV"
+                  }
+                ],
+                "usr": "s:7SwiftUI7BindingV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Binding",
+                "printedName": "SwiftUI.Binding<SwiftUI.ColorScheme?>",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "SwiftUI.ColorScheme?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "ColorScheme",
+                        "printedName": "SwiftUI.ColorScheme",
+                        "usr": "s:7SwiftUI11ColorSchemeO"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "usr": "s:7SwiftUI7BindingV"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:14DaVinciGallery0C10HomeScreenV12currentTheme19colorSchemeOverrideAC7SwiftUI7BindingVy0aB6Tokens7DSThemeVG_AHyAF05ColorI0OSgGtcfc",
+            "mangledName": "$s14DaVinciGallery0C10HomeScreenV12currentTheme19colorSchemeOverrideAC7SwiftUI7BindingVy0aB6Tokens7DSThemeVG_AHyAF05ColorI0OSgGtcfc",
+            "moduleName": "DaVinciGallery",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom"
+            ],
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Var",
+            "name": "body",
+            "printedName": "body",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "OpaqueTypeArchetype",
+                "printedName": "some SwiftUI.View",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "View",
+                    "printedName": "SwiftUI.View",
+                    "usr": "s:7SwiftUI4ViewP"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:14DaVinciGallery0C10HomeScreenV4bodyQrvp",
+            "mangledName": "$s14DaVinciGallery0C10HomeScreenV4bodyQrvp",
+            "moduleName": "DaVinciGallery",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "OpaqueTypeArchetype",
+                    "printedName": "some SwiftUI.View",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "View",
+                        "printedName": "SwiftUI.View",
+                        "usr": "s:7SwiftUI4ViewP"
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:14DaVinciGallery0C10HomeScreenV4bodyQrvg",
+                "mangledName": "$s14DaVinciGallery0C10HomeScreenV4bodyQrvg",
+                "moduleName": "DaVinciGallery",
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "TypeAlias",
+            "name": "Body",
+            "printedName": "Body",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "OpaqueTypeArchetype",
+                "printedName": "some SwiftUI.View",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "View",
+                    "printedName": "SwiftUI.View",
+                    "usr": "s:7SwiftUI4ViewP"
+                  }
+                ]
+              }
+            ],
+            "declKind": "TypeAlias",
+            "usr": "s:14DaVinciGallery0C10HomeScreenV4Bodya",
+            "mangledName": "$s14DaVinciGallery0C10HomeScreenV4Bodya",
+            "moduleName": "DaVinciGallery",
+            "implicit": true
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:14DaVinciGallery0C10HomeScreenV",
+        "mangledName": "$s14DaVinciGallery0C10HomeScreenV",
+        "moduleName": "DaVinciGallery",
+        "declAttributes": [
+          "Preconcurrency",
+          "Custom"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "View",
+            "printedName": "View",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "Body",
+                "printedName": "Body",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "OpaqueTypeArchetype",
+                    "printedName": "some SwiftUI.View",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "View",
+                        "printedName": "SwiftUI.View",
+                        "usr": "s:7SwiftUI4ViewP"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "usr": "s:7SwiftUI4ViewP",
+            "mangledName": "$s7SwiftUI4ViewP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "DSTheme",
+        "printedName": "DSTheme",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "alternate",
+            "printedName": "alternate",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "DSTheme",
+                "printedName": "DaVinciTokens.DSTheme",
+                "usr": "s:13DaVinciTokens7DSThemeV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:13DaVinciTokens7DSThemeV0aB7GalleryE9alternateACvpZ",
+            "mangledName": "$s13DaVinciTokens7DSThemeV0aB7GalleryE9alternateACvpZ",
+            "moduleName": "DaVinciGallery",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "isFromExtension": true,
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "DSTheme",
+                    "printedName": "DaVinciTokens.DSTheme",
+                    "usr": "s:13DaVinciTokens7DSThemeV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:13DaVinciTokens7DSThemeV0aB7GalleryE9alternateACvgZ",
+                "mangledName": "$s13DaVinciTokens7DSThemeV0aB7GalleryE9alternateACvgZ",
+                "moduleName": "DaVinciGallery",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "isFromExtension": true,
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:13DaVinciTokens7DSThemeV",
+        "mangledName": "$s13DaVinciTokens7DSThemeV",
+        "moduleName": "DaVinciTokens",
+        "isExternal": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      }
+    ],
+    "json_format_version": 8
+  }
+}

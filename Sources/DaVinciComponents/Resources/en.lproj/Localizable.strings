@@ -1,0 +1,16 @@
+"accessibility.clear.label" = "Clear text";
+"accessibility.clear.hint" = "Removes the entered text";
+"accessibility.empty" = "Empty";
+"accessibility.error.format" = "Error: %@";
+"accessibility.character-progress.format" = "%1$lld of %2$lld characters";
+"accessibility.image.failed" = "Image failed to load";
+"accessibility.image.failed-value" = "Failed to load";
+"accessibility.image.loading" = "Loading image";
+"accessibility.image.placeholder" = "Placeholder image";
+"accessibility.image.remote" = "Remote image";
+"accessibility.loading" = "Loading";
+"accessibility.progress" = "Progress";
+"accessibility.progress.percent-format" = "%lld%%";
+"accessibility.toggle" = "Toggle";
+"accessibility.toggle.off" = "Off";
+"accessibility.toggle.on" = "On";

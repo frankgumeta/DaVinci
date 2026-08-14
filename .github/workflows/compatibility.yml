@@ -1,0 +1,53 @@
+name: LTS Compatibility
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 8 * * 1'
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  ios-17-runtime:
+    name: Test on iOS 17 runtime
+    runs-on: macos-26
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    - name: Select Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '26.6'
+
+    - name: Install iOS 17.5 Simulator Runtime
+      run: |
+        if ! xcrun simctl list runtimes | grep -q 'iOS 17'; then
+          xcodebuild -downloadPlatform iOS -buildVersion 17.5
+        fi
+
+    - name: Create iOS 17 Simulator
+      id: simulator
+      env:
+        DAVINCI_IOS_RUNTIME_MAJOR: '17'
+      run: echo "udid=$(bash .github/scripts/create-ios-simulator.sh)" >> "$GITHUB_OUTPUT"
+
+    - name: Run Compatibility Suite on Minimum Runtime
+      run: |
+        bash .github/scripts/run-minimum-runtime-tests.sh \
+          '${{ steps.simulator.outputs.udid }}' \
+          .build/iOS17-TestResults.xcresult
+
+    - name: Upload Compatibility Result
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-17-compatibility-result
+        path: .build/iOS17-TestResults.xcresult
+        if-no-files-found: warn
+        retention-days: 14
