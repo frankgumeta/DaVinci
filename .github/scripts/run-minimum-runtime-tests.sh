@@ -11,11 +11,7 @@ root="$(cd "$(dirname "$0")/../.." && pwd)"
 simulator_udid="$1"
 result_bundle_path="$2"
 snapshot_skips=()
-build_settings=()
-
-if [[ -n "${DAVINCI_CODE_SIGNING_ALLOWED:-}" ]]; then
-    build_settings+=("CODE_SIGNING_ALLOWED=$DAVINCI_CODE_SIGNING_ALLOWED")
-fi
+code_signing_allowed="${DAVINCI_CODE_SIGNING_ALLOWED:-YES}"
 
 # Pixel snapshots are intentionally recorded and compared on the current CI
 # runtime. The minimum-runtime lane still compiles them, but skips execution so
@@ -31,4 +27,4 @@ xcodebuild test \
     -resultBundlePath "$result_bundle_path" \
     -derivedDataPath "$root/.build" \
     "${snapshot_skips[@]}" \
-    "${build_settings[@]}"
+    "CODE_SIGNING_ALLOWED=$code_signing_allowed"
