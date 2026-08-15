@@ -49,5 +49,19 @@ Before publishing a version:
 4. Compare the public API with the previous tag and classify every difference.
 5. Verify installation from a minimal external consumer app.
 
+CI also compares the compiled Swift interface of every public product against the
+checked-in 1.4.0 LTS baseline. After an intentional release-level API review, update
+that baseline with:
+
+```bash
+xcodebuild build \
+  -scheme DaVinci-Package \
+  -destination 'generic/platform=iOS Simulator' \
+  -derivedDataPath .build
+bash .github/scripts/check-api-baseline.sh --update
+```
+
+Never update the baseline merely to make an unexplained compatibility failure pass.
+
 The compatibility matrix in `Docs/Compatibility.md` is part of the public support
 contract. Any change to it must be called out in release notes.

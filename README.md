@@ -19,6 +19,10 @@ requirement; it does not require a matching iOS deployment target. See the
 [compatibility matrix](Docs/Compatibility.md) for the supported toolchain and test
 strategy.
 
+Version 1.4 is the stable long-term-support line. See the
+[support policy](Docs/Support.md) and [security policy](SECURITY.md) for its
+compatibility and maintenance contract.
+
 ## Features
 
 - 🎨 **Complete Token System**: Colors, typography, spacing, radius, elevation, motion, and more
@@ -47,7 +51,7 @@ Or add it to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/frankgumeta/DaVinci.git", from: "1.0.0")
+    .package(url: "https://github.com/frankgumeta/DaVinci.git", from: "1.4.0")
 ],
 targets: [
     .target(
@@ -185,6 +189,10 @@ bottom edge only.
 Supporting text is announced as an accessibility hint. Errors and character
 progress are included in the field's accessibility value. Character limits
 truncate by Swift `Character`, preserving extended grapheme clusters.
+
+Accessibility strings owned by DaVinci follow the application language and ship
+with English and Spanish translations. Labels and messages supplied by the host
+application remain the host application's localization responsibility.
 
 Errors are configured through the same typed initializer:
 

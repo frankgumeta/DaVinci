@@ -8,6 +8,10 @@ except where a release documents an explicit pre-adoption exception.
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-08-14
+
+> **Codex Variatio**
+
 ### Added
 - `DSBadge.Tone` and independent filled, subtle, and outlined badge appearances
 - `OpacityTokens.subtleFill` and `subtleStroke` for consistent low-emphasis tinted surfaces
@@ -17,6 +21,12 @@ except where a release documents an explicit pre-adoption exception.
 - Stepped, animated striped, and reflective shimmer `DSProgressBar` styles, including Reduce Motion support
 - Typed `DSRemoteImage.Geometry` presets for rectangular, rounded, and guaranteed-square circular media
 - Low-emphasis `DSSegmentedControl.Appearance.subtle` with a transparent container and tinted selection capsule
+- English and Spanish localization for accessibility labels, values, hints, and state announcements owned by DaVinci
+- `DSSymbol.firstAvailable(_:)` for choosing the first runtime-supported SF Symbol from an ordered fallback list
+- `DSThemeValidator` diagnostics for theme identity, typography, motion, semantic contrast, and unresolved colors
+- A versioned 1.4.0 public API baseline, documentation contract checks, and representative API compilation tests
+- Performance smoke baselines for image decoding and the bounded image cache
+- Long-term support, security-reporting, and performance policies for the 1.4.x line
 
 ### Changed
 - Component previews now live in dedicated `Component+Previews.swift` files
@@ -27,6 +37,9 @@ except where a release documents an explicit pre-adoption exception.
 - Coverage continues to enforce 95% for `DaVinciComponents` while excluding dedicated
   `*+Previews.swift` sources from production-line totals
 - CI and release builds explicitly compile with `ENABLE_PREVIEWS=YES`
+- CI now detects public API drift, stale documentation examples, and simulator/runtime compatibility independently
+- Release validation exercises the iOS 17 minimum runtime in addition to the latest available simulator runtime
+- The 1.4.x line is designated as the stable long-term-support line, with source-compatible patch releases
 
 ### Removed
 - `DSRemoteImage` initializers based on independent `width`/`height` or `size`; migrate to the required `geometry:` parameter

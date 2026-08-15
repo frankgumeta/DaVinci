@@ -148,12 +148,16 @@ public struct DSRemoteImage: View {
     ) -> String {
         switch phase {
         case .loading:
-            return customLabel ?? "Loading image"
+            return customLabel ?? DSLocalizedStrings.value(.imageLoading)
         case .success:
-            return customLabel ?? (url != nil ? "Remote image" : "Placeholder image")
+            return customLabel ?? DSLocalizedStrings.value(
+                url != nil ? .imageRemote : .imagePlaceholder
+            )
         case .failure:
             // A missing URL is not a failure: nothing was ever requested.
-            return customLabel ?? (url != nil ? "Image failed to load" : "Placeholder image")
+            return customLabel ?? DSLocalizedStrings.value(
+                url != nil ? .imageFailed : .imagePlaceholder
+            )
         }
     }
 
@@ -167,13 +171,13 @@ public struct DSRemoteImage: View {
         let traits: AccessibilityTraits
         switch phase {
         case .loading:
-            value = "Loading"
+            value = DSLocalizedStrings.value(.loading)
             traits = .updatesFrequently
         case .success:
             value = nil
             traits = .isImage
         case .failure:
-            value = url != nil ? "Failed to load" : nil
+            value = url != nil ? DSLocalizedStrings.value(.imageFailedValue) : nil
             traits = .isImage
         }
         return DSAccessibilityDescriptor(

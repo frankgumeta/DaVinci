@@ -87,6 +87,16 @@ DSRemoteImage(
 All component icon APIs require `DSSymbol`, so invalid or unavailable names are
 handled before a component is constructed.
 
+When a preferred symbol is newer than the minimum supported iOS version, list
+fallbacks in priority order without creating a closed catalog:
+
+```swift
+let profile = DSSymbol.firstAvailable(
+    "person.crop.circle.badge.checkmark",
+    "person.crop.circle"
+)
+```
+
 ---
 
 ### Text Components

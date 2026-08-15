@@ -4,6 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "DaVinci",
+    defaultLocalization: "en",
     platforms: [
         .iOS(.v17)
     ],
@@ -30,7 +31,8 @@ let package = Package(
         // MARK: - Components
         .target(
             name: "DaVinciComponents",
-            dependencies: ["DaVinciTokens"]
+            dependencies: ["DaVinciTokens"],
+            resources: [.process("Resources")]
         ),
 
         // MARK: - Gallery (library — previews work here)

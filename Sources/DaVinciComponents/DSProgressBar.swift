@@ -190,11 +190,17 @@ public struct DSProgressBar: View, Sendable {
 
     internal var resolvedAccessibilityLabel: String {
         if let accessibilityLabel { return accessibilityLabel }
-        return label ?? "Progress"
+        return label ?? DSLocalizedStrings.value(.progress)
     }
 
     internal var resolvedAccessibilityValue: String {
-        isIndeterminate ? "Loading" : "\(Int(value * 100))%"
+        if isIndeterminate {
+            return DSLocalizedStrings.value(.loading)
+        }
+        return DSLocalizedStrings.format(
+            .progressPercentFormat,
+            arguments: [Int(value * 100)]
+        )
     }
 
     internal var accessibilityDescriptor: DSAccessibilityDescriptor {

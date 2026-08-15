@@ -169,7 +169,7 @@ public struct DSButton: View {
     internal var accessibilityDescriptor: DSAccessibilityDescriptor {
         DSAccessibilityDescriptor(
             label: accessibilityLabel ?? title,
-            value: isLoading ? "Loading" : nil,
+            value: isLoading ? DSLocalizedStrings.value(.loading) : nil,
             hint: accessibilityHint,
             traits: isLoading ? [.isButton, .updatesFrequently] : .isButton,
             isEnabled: !isDisabled && !isLoading
