@@ -8,7 +8,7 @@ except where a release documents an explicit pre-adoption exception.
 
 ## [Unreleased]
 
-## [1.4.0] - 2026-08-14
+## [1.4.0] - 2026-08-15
 
 > **Codex Variatio**
 
