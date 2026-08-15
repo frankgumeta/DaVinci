@@ -44,7 +44,9 @@ The scheduled `LTS Compatibility` workflow additionally installs an iOS 17.5
 Simulator runtime and executes the compatibility suite against the minimum
 supported major version. All test sources compile there and behavioral tests run;
 pixel snapshots execute only on the current CI runtime because SwiftUI rendering
-is OS-specific. The workflow can also be triggered manually before a patch release.
+is OS-specific. Time-based performance baselines also execute only on the current
+runtime because first-boot legacy simulators can be throttled independently of
+product behavior. The workflow can also be triggered manually before a patch release.
 
 The helper at `.github/scripts/create-ios-simulator.sh` avoids assuming that a
 particular simulator is already registered. It prefers a recent iPhone device type

@@ -25,7 +25,8 @@ announced in this document and the README. No end-of-support date is currently s
   dropped within 1.4.x.
 - Every patch release runs the current-runtime suite, the minimum-runtime
   compatibility suite, public API comparison, documentation checks, coverage
-  enforcement, and DocC. Pixel snapshots remain pinned to the current CI runtime.
+  enforcement, and DocC. Pixel snapshots and time-based performance baselines
+  remain pinned to the current CI runtime.
 
 When development moves beyond 1.4, maintenance fixes should be based on a dedicated
 `release/1.4.x` branch and merged back into the active development line.
