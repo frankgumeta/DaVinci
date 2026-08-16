@@ -17,7 +17,7 @@ jobs:
     
     steps:
     - name: Checkout PR
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
 
@@ -37,7 +37,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: Install SwiftLint
       run: brew install swiftlint
@@ -51,7 +51,7 @@ jobs:
     
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       
     - name: Select Xcode
       uses: maxim-lobanov/setup-xcode@v1
@@ -84,7 +84,7 @@ jobs:
 
     - name: Upload Snapshot Failure Artifacts
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: snapshot-failures
         path: .build/snapshot-failures/
@@ -101,7 +101,7 @@ jobs:
 
     - name: Upload Coverage Report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: code-coverage
         path: coverage.md
@@ -114,7 +114,7 @@ jobs:
     
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       
     - name: Select Xcode
       uses: maxim-lobanov/setup-xcode@v1
