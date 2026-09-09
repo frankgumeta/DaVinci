@@ -24,11 +24,15 @@ struct ComponentsListScreen: View {
             Section("Feedback") {
                 NavigationLink("Progress Bar") { DSProgressBarGalleryScreen() }
                 NavigationLink("Badge") { DSBadgeGalleryScreen() }
+                NavigationLink("Activity Indicator") { DSActivityIndicatorGalleryScreen() }
             }
 
             Section("Structure") {
                 NavigationLink("Divider") { DSDividerGalleryScreen() }
                 NavigationLink("Card") { DSCardGalleryScreen() }
+                NavigationLink("Surface") { DSSurfaceGalleryScreen() }
+                NavigationLink("List Row") { DSListRowGalleryScreen() }
+                NavigationLink("Action Row") { DSActionRowGalleryScreen() }
             }
 
             Section("Media") {

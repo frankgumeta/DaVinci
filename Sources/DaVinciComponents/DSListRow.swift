@@ -82,19 +82,27 @@ public struct DSListRow<Leading: View, Content: View, Trailing: View>: View {
 
     @Environment(\.dsTheme) private var theme
 
+    private let alignment: VerticalAlignment
     private let leading: Leading
     private let content: Content
     private let trailing: Trailing
     private let accessibilityLabel: String?
     private let accessibilityValue: String?
 
+    /// - Parameter alignment: How `leading` and `content` line up with each other.
+    ///   Defaults to `.center`. Use `.top` when the content can grow to several
+    ///   lines — a wrapping subtitle otherwise drags a leading icon down to the
+    ///   middle of the block, away from the title it belongs to. `trailing` keeps
+    ///   its own centring either way; see the note on the body below.
     public init(
+        alignment: VerticalAlignment = .center,
         accessibilityLabel: String? = nil,
         accessibilityValue: String? = nil,
         @ViewBuilder leading: () -> Leading,
         @ViewBuilder trailing: () -> Trailing,
         @ViewBuilder content: () -> Content
     ) {
+        self.alignment = alignment
         self.accessibilityLabel = accessibilityLabel
         self.accessibilityValue = accessibilityValue
         self.leading = leading()
@@ -103,11 +111,16 @@ public struct DSListRow<Leading: View, Content: View, Trailing: View>: View {
     }
 
     public var body: some View {
-        HStack(spacing: SpacingTokens.space3) {
+        HStack(alignment: alignment, spacing: SpacingTokens.space3) {
             leading
             content
                 .frame(maxWidth: .infinity, alignment: .leading)
+            // The trailing slot stays centred on the row even when the rest is
+            // top-aligned: a control such as a switch belongs to the row as a
+            // whole, not to the first line of its text. Expanding to the row's
+            // height and centring inside is what keeps those two independent.
             trailing
+                .frame(maxHeight: .infinity)
         }
         .padding(.vertical, SpacingTokens.space2)
         .frame(minHeight: ControlHeightTokens.minimumHitTarget)

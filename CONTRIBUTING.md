@@ -237,7 +237,10 @@ xcodebuild test \
   -destination "platform=iOS Simulator,id=$SIMULATOR_UDID"
 
 # Record new snapshots (when UI changes are intentional)
-RECORD_SNAPSHOTS=1 xcodebuild test \
+# The TEST_RUNNER_ prefix is required: xcodebuild only forwards variables carrying
+# it into the test process running on the simulator. A bare RECORD_SNAPSHOTS=1 stays
+# in the host shell, never reaches the tests, and every snapshot fails as missing.
+TEST_RUNNER_RECORD_SNAPSHOTS=1 xcodebuild test \
   -scheme DaVinci-Package \
   -destination "platform=iOS Simulator,id=$SIMULATOR_UDID"
 
@@ -276,7 +279,7 @@ python3 .github/scripts/check-code-coverage.py \
 - Snapshots are stored in `Tests/DaVinciComponentsTests/__Snapshots__/`
 - Each component has snapshots for light and dark modes
 - A missing reference is a test failure; snapshots are never recorded implicitly
-- When intentionally changing UI, run with `RECORD_SNAPSHOTS=1` to update references
+- When intentionally changing UI, run with `TEST_RUNNER_RECORD_SNAPSHOTS=1` to update references
 - Recording mode rewrites every snapshot exercised by the selected test run
 - Review the changed PNG files visually before committing them
 - Use the repository simulator helper with Xcode 26.6, matching CI
@@ -301,7 +304,7 @@ Xcode configuration as CI.
 **Snapshots failing after intentional UI changes?**
 ```bash
 # Re-record snapshots with your changes
-RECORD_SNAPSHOTS=1 xcodebuild test \
+TEST_RUNNER_RECORD_SNAPSHOTS=1 xcodebuild test \
   -scheme DaVinci-Package \
   -destination "platform=iOS Simulator,id=$SIMULATOR_UDID"
 ```
@@ -310,11 +313,14 @@ After recording, inspect `git diff --stat` and every changed PNG. A green test r
 recording mode means the files were written successfully; it does not approve their
 visual result.
 
-Some Xcode/simulator combinations do not propagate the shell's
-`RECORD_SNAPSHOTS` variable to XCTest. Confirm that the output contains
-`Recorded snapshot:` lines. If it does not, temporarily pass `record: true` only
-in the owning snapshot suite, run that suite, and revert the flag before the final
-comparison run. Never commit a hard-coded recording flag.
+`xcodebuild` does not pass the shell's environment to the test process running on
+the simulator. Only variables prefixed with `TEST_RUNNER_` are forwarded, with the
+prefix stripped — so `TEST_RUNNER_RECORD_SNAPSHOTS=1` in the shell is what the tests
+read as `RECORD_SNAPSHOTS`. A bare `RECORD_SNAPSHOTS=1` silently records nothing and
+every snapshot fails as a missing reference.
+
+Confirm that the output contains `Recorded snapshot:` lines. If it does not, check
+the prefix before anything else. Never commit a hard-coded `record: true` flag.
 
 **Snapshots differ slightly between machines?**
 - Create the simulator with `.github/scripts/create-ios-simulator.sh`, as CI does
@@ -329,7 +335,7 @@ comparison run. Never commit a hard-coded recording flag.
 - Download the `snapshot-failures` artifact and compare expected, received, and diff
 
 **Need to update a single snapshot?**
-- Run only the owning snapshot test from Xcode with `RECORD_SNAPSHOTS=1`
+- Run only the owning snapshot test with `TEST_RUNNER_RECORD_SNAPSHOTS=1` and `-only-testing:`
 - Do not delete the reference first; missing references intentionally fail outside recording mode
 
 ## Documentation

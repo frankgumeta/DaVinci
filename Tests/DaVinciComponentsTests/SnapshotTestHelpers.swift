@@ -443,7 +443,8 @@ enum SnapshotError: Error, CustomStringConvertible {
         case .pixelBufferCreationFailed:
             return "Failed to normalize snapshot as an RGBA8 pixel buffer"
         case .missingReference(let filename):
-            return "Missing reference snapshot: \(filename). Run with RECORD_SNAPSHOTS=1 to create it."
+            return "Missing reference snapshot: \(filename). "
+                + "Run with TEST_RUNNER_RECORD_SNAPSHOTS=1 to create it."
         case let .dimensionMismatch(expectedWidth, expectedHeight, receivedWidth, receivedHeight):
             return "Snapshot dimensions differ: expected \(expectedWidth)x\(expectedHeight), "
                 + "received \(receivedWidth)x\(receivedHeight)"
