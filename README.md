@@ -360,6 +360,9 @@ xcodebuild test \
   -scheme DaVinci-Package \
   -destination "platform=iOS Simulator,id=$SIMULATOR_UDID"
 
+# Delete it when you are done; simulators otherwise accumulate booted forever
+bash .github/scripts/delete-ios-simulator.sh "$SIMULATOR_UDID"
+
 # Run with verbose output
 xcodebuild test \
   -scheme DaVinci-Package \

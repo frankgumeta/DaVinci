@@ -93,6 +93,12 @@ jobs:
           -destination 'generic/platform=iOS Simulator' \
           -derivedDataPath .build
         
+    - name: Delete Simulators
+      if: always()
+      run: |
+        bash .github/scripts/delete-ios-simulator.sh '${{ steps.simulator.outputs.udid }}'
+        bash .github/scripts/delete-ios-simulator.sh '${{ steps.minimum-simulator.outputs.udid }}'
+
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:

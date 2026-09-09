@@ -107,6 +107,10 @@ jobs:
         path: coverage.md
         if-no-files-found: warn
         retention-days: 14
+
+    - name: Delete iOS Simulator
+      if: always()
+      run: bash .github/scripts/delete-ios-simulator.sh '${{ steps.simulator.outputs.udid }}'
         
   build-ios:
     name: Build (iOS 17 deployment)
