@@ -14,6 +14,18 @@ public struct DSIconButton: View {
         case ghost
     }
 
+    /// The outline of the button.
+    ///
+    /// No Liquid Glass or material variants live here: those are platform-availability
+    /// concerns, and a consumer that wants one wraps the button in its own adaptive
+    /// surface rather than the design system committing to an OS-version-gated look.
+    public enum Shape: Sendable, CaseIterable {
+        /// Rounded rectangle at the medium radius. The default.
+        case roundedRectangle
+        /// A circle, for floating and avatar-style buttons.
+        case circle
+    }
+
     public enum Size: Sendable {
         case small
         case medium
@@ -35,6 +47,7 @@ public struct DSIconButton: View {
     private let accessibilityHint: String?
     private let appearance: Appearance
     private let size: Size
+    private let shape: Shape
     private let isLoading: Bool
     private let isDisabled: Bool
     private let action: @MainActor () -> Void
@@ -45,6 +58,7 @@ public struct DSIconButton: View {
         titleForAccessibility: String,
         appearance: Appearance = .secondary,
         size: Size = .medium,
+        shape: Shape = .roundedRectangle,
         isLoading: Bool = false,
         isDisabled: Bool = false,
         accessibilityHint: String? = nil,
@@ -55,6 +69,7 @@ public struct DSIconButton: View {
         self.accessibilityHint = accessibilityHint
         self.appearance = appearance
         self.size = size
+        self.shape = shape
         self.isLoading = isLoading
         self.isDisabled = isDisabled
         self.action = action
@@ -76,11 +91,10 @@ public struct DSIconButton: View {
             .frame(width: size.dimension, height: size.dimension)
             .foregroundStyle(style.foregroundColor)
             .background(style.backgroundColor)
-            .clipShape(RoundedRectangle(cornerRadius: RadiusTokens.medium))
+            .clipShape(resolvedShape)
             .overlay {
                 if style.borderWidth > 0 {
-                    RoundedRectangle(cornerRadius: RadiusTokens.medium)
-                        .stroke(style.borderColor, lineWidth: style.borderWidth)
+                    resolvedShape.stroke(style.borderColor, lineWidth: style.borderWidth)
                 }
             }
         }
@@ -96,7 +110,15 @@ public struct DSIconButton: View {
     /// Icon font size derived from the button dimension (~40% of control height).
     private static let iconSizeRatio: CGFloat = 0.4
 
-    internal var minimumHitDimension: CGFloat { 44 }
+    /// The button outline as a concrete shape.
+    internal var resolvedShape: AnyShape {
+        switch shape {
+        case .roundedRectangle: AnyShape(RoundedRectangle(cornerRadius: RadiusTokens.medium))
+        case .circle:           AnyShape(Circle())
+        }
+    }
+
+    internal var minimumHitDimension: CGFloat { ControlHeightTokens.minimumHitTarget }
 
     internal var accessibilityDescriptor: DSAccessibilityDescriptor {
         DSAccessibilityDescriptor(

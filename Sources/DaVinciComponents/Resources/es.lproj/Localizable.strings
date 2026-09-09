@@ -11,6 +11,8 @@
 "accessibility.loading" = "Cargando";
 "accessibility.progress" = "Progreso";
 "accessibility.progress.percent-format" = "%lld%%";
+"accessibility.selected" = "Seleccionado";
+"accessibility.not-selected" = "No seleccionado";
 "accessibility.toggle" = "Interruptor";
 "accessibility.toggle.off" = "Desactivado";
 "accessibility.toggle.on" = "Activado";

@@ -1,3 +1,6 @@
+// swiftlint:disable file_length
+// This suite mirrors the token catalogue one assertion per token, so its
+// length tracks the number of tokens rather than any complexity of its own.
 import Foundation
 import SwiftUI
 import Testing
@@ -540,14 +543,76 @@ struct DSTypographyTests {
         let sizes: [CGFloat] = [
             typo.overline.size,
             typo.caption.size,
+            typo.footnote.size,
             typo.callout.size,
+            typo.subheadline.size,
             typo.body.size,
-            typo.headline.size,
-            typo.title.size,
+            typo.titleSmall.size,
+            typo.titleMedium.size,
+            typo.titleLarge.size,
             typo.display.size
         ]
         for i in 0..<sizes.count - 1 {
             #expect(sizes[i] < sizes[i + 1])
+        }
+    }
+
+    @Test func labelScaleIsAscendingAndMediumWeight() {
+        let typo = DSTypography()
+        let labels = [typo.labelSmall, typo.labelMedium, typo.labelLarge]
+
+        for i in 0..<labels.count - 1 {
+            #expect(labels[i].size < labels[i + 1].size)
+        }
+        for label in labels {
+            #expect(label.weight == .medium)
+        }
+    }
+
+    @Test func titleFamilyIsBoldAndHeadlineIsSemibold() {
+        let typo = DSTypography()
+
+        // titleSmall and headline share a size; weight is what separates them.
+        #expect(typo.titleSmall.size == typo.headline.size)
+        #expect(typo.titleSmall.weight == .bold)
+        #expect(typo.headline.weight == .semibold)
+        #expect(typo.titleSmall != typo.headline)
+    }
+
+    @Test func namedStylesCoversEveryStoredRole() {
+        let typo = DSTypography()
+        #expect(typo.namedStyles.count == 14)
+        #expect(typo.allStyles.count == typo.namedStyles.count)
+
+        let names = Set(typo.namedStyles.map(\.name))
+        #expect(names.count == typo.namedStyles.count)
+    }
+
+    @Test func everyStyleInTheScaleIsDistinct() {
+        let styles = DSTypography().allStyles
+        for i in 0..<styles.count {
+            for j in (i + 1)..<styles.count {
+                #expect(styles[i] != styles[j])
+            }
+        }
+    }
+
+    @Test func digitStyleDefaultsToProportionalAndCanBeMonospaced() {
+        let style = DSTextStyle(size: 16, lineHeight: 22, weight: .regular)
+        #expect(style.digitStyle == .proportional)
+
+        let tabular = style.monospacedDigits()
+        #expect(tabular.digitStyle == .monospaced)
+        #expect(tabular.size == style.size)
+        #expect(tabular.lineHeight == style.lineHeight)
+        #expect(tabular.weight == style.weight)
+        #expect(tabular.relativeTo == style.relativeTo)
+        #expect(tabular != style)
+    }
+
+    @Test func everyDefaultRoleUsesProportionalDigits() {
+        for (name, style) in DSTypography().namedStyles {
+            #expect(style.digitStyle == .proportional, "\(name) should not default to tabular figures")
         }
     }
 
@@ -605,11 +670,18 @@ struct DSTypographyTests {
         let typo = DSTypography()
 
         #expect(typo.display.relativeTo == .largeTitle)
-        #expect(typo.title.relativeTo == .title)
+        #expect(typo.titleLarge.relativeTo == .title)
+        #expect(typo.titleMedium.relativeTo == .title2)
+        #expect(typo.titleSmall.relativeTo == .title3)
         #expect(typo.headline.relativeTo == .headline)
+        #expect(typo.subheadline.relativeTo == .subheadline)
         #expect(typo.body.relativeTo == .body)
         #expect(typo.callout.relativeTo == .callout)
+        #expect(typo.footnote.relativeTo == .footnote)
         #expect(typo.caption.relativeTo == .caption)
+        #expect(typo.labelLarge.relativeTo == .body)
+        #expect(typo.labelMedium.relativeTo == .callout)
+        #expect(typo.labelSmall.relativeTo == .caption)
         #expect(typo.overline.relativeTo == .caption2)
     }
 

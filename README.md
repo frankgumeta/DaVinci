@@ -360,6 +360,9 @@ xcodebuild test \
   -scheme DaVinci-Package \
   -destination "platform=iOS Simulator,id=$SIMULATOR_UDID"
 
+# Delete it when you are done; simulators otherwise accumulate booted forever
+bash .github/scripts/delete-ios-simulator.sh "$SIMULATOR_UDID"
+
 # Run with verbose output
 xcodebuild test \
   -scheme DaVinci-Package \
@@ -431,8 +434,9 @@ Visual regression tests normalize reference and received images to RGBA8 and com
 their pixels. Missing references fail by default; recording is always explicit.
 
 ```bash
-# Record new snapshots
-RECORD_SNAPSHOTS=1 xcodebuild test \
+# Record new snapshots (the TEST_RUNNER_ prefix is required for the variable to
+# reach the test process on the simulator)
+TEST_RUNNER_RECORD_SNAPSHOTS=1 xcodebuild test \
   -scheme DaVinci-Package \
   -destination "platform=iOS Simulator,id=$SIMULATOR_UDID"
 

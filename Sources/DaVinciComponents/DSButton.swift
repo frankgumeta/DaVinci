@@ -96,12 +96,27 @@ public struct DSButton: View {
         case ghost
     }
 
+    /// How much space the button occupies.
+    public enum Size: Sendable, CaseIterable {
+        /// Full-width button at the medium control height. The default.
+        case regular
+        /// Hugs its content at ``ControlHeightTokens/compact`` height.
+        ///
+        /// The *painted* control is 36pt tall, but its interactive area is expanded to
+        /// ``ControlHeightTokens/minimumHitTarget`` in both dimensions. A compact button
+        /// therefore looks small without becoming hard to hit — which is the whole point
+        /// of the size, and the part hand-rolled compact buttons usually get wrong by
+        /// constraining only the height and leaving a narrow label narrow.
+        case compact
+    }
+
     @Environment(\.dsTheme) private var theme
     @Environment(\.colorScheme) private var colorScheme
 
     private let title: String
     private let appearance: Appearance
     private let icon: DSButtonIcon?
+    private let size: Size
     private let isLoading: Bool
     private let isDisabled: Bool
     private let accessibilityLabel: String?
@@ -111,6 +126,7 @@ public struct DSButton: View {
     public init(
         _ title: String,
         appearance: Appearance = .primary,
+        size: Size = .regular,
         icon: DSButtonIcon? = nil,
         isLoading: Bool = false,
         isDisabled: Bool = false,
@@ -121,6 +137,7 @@ public struct DSButton: View {
         self.title = title
         self.appearance = appearance
         self.icon = icon
+        self.size = size
         self.isLoading = isLoading
         self.isDisabled = isDisabled
         self.accessibilityLabel = accessibilityLabel
@@ -146,19 +163,26 @@ public struct DSButton: View {
                         .tint(style.foregroundColor)
                 }
             }
-            .padding(.horizontal, SpacingTokens.space5)
-            .padding(.vertical, SpacingTokens.space3)
-            .frame(maxWidth: .infinity)
-            .frame(minHeight: ControlHeightTokens.medium)
+            .padding(.horizontal, horizontalPadding)
+            .padding(.vertical, verticalPadding)
+            .frame(maxWidth: size == .regular ? .infinity : nil)
+            .frame(minHeight: paintedHeight)
             .foregroundStyle(style.foregroundColor)
             .background(style.backgroundColor)
-            .clipShape(RoundedRectangle(cornerRadius: RadiusTokens.medium))
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .overlay {
                 if style.borderWidth > 0 {
-                    RoundedRectangle(cornerRadius: RadiusTokens.medium)
+                    RoundedRectangle(cornerRadius: cornerRadius)
                         .stroke(style.borderColor, lineWidth: style.borderWidth)
                 }
             }
+            // Expanded after the background so the touch area grows without the
+            // painted control growing with it.
+            .frame(
+                minWidth: ControlHeightTokens.minimumHitTarget,
+                minHeight: ControlHeightTokens.minimumHitTarget
+            )
+            .contentShape(Rectangle())
         }
         .buttonStyle(DSPressableButtonStyle(duration: theme.motion.fast))
         .disabled(!accessibilityDescriptor.isEnabled)
@@ -192,12 +216,50 @@ public struct DSButton: View {
                     .dsTextStyle(iconTextStyle, family: theme.typography.family)
             }
         }
-        .dsTextStyle(theme.typography.headline, family: theme.typography.family)
+        .dsTextStyle(labelStyle, family: theme.typography.family)
     }
+
+    // MARK: - Size Metrics
+
+    private var horizontalPadding: CGFloat {
+        switch size {
+        case .regular: SpacingTokens.space5
+        case .compact: SpacingTokens.space4
+        }
+    }
+
+    private var verticalPadding: CGFloat {
+        switch size {
+        case .regular: SpacingTokens.space3
+        case .compact: SpacingTokens.space2
+        }
+    }
+
+    internal var paintedHeight: CGFloat {
+        switch size {
+        case .regular: ControlHeightTokens.medium
+        case .compact: ControlHeightTokens.compact
+        }
+    }
+
+    private var cornerRadius: CGFloat {
+        switch size {
+        case .regular: RadiusTokens.medium
+        case .compact: RadiusTokens.small
+        }
+    }
+
+    /// Button text uses the label family at both sizes.
+    ///
+    /// Labels exist for control text specifically: single-line, tightly leaded and
+    /// `medium` weight, which stays legible at small sizes and on coloured fills.
+    /// Before 2.0 buttons borrowed `headline`, a section-header role — the workaround
+    /// that appears when a scale has no label family at all.
+    internal var labelStyle: DSTextStyle { theme.typography.labelLarge }
 
     private var iconTextStyle: DSTextStyle {
         DSTextStyle(
-            size: theme.typography.headline.size,
+            size: labelStyle.size,
             lineHeight: theme.typography.headline.lineHeight,
             weight: .medium,
             relativeTo: theme.typography.headline.relativeTo

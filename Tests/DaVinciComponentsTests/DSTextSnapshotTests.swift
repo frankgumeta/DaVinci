@@ -9,99 +9,57 @@ struct DSTextSnapshotTests {
 
     let recordMode = isRecordingSnapshots
 
-    // MARK: - Role Variants
+    /// Sample text per role, chosen to show the role's intended use.
+    private static func sample(for role: DSText.Role) -> String {
+        switch role {
+        case .display:     "Display"
+        case .titleLarge:  "Title Large"
+        case .titleMedium: "Title Medium"
+        case .titleSmall:  "Title Small"
+        case .headline:    "Headline"
+        case .subheadline: "Subheadline"
+        case .body:        "Body text content"
+        case .callout:     "Callout text"
+        case .footnote:    "Footnote text"
+        case .caption:     "Caption text"
+        case .labelLarge:  "Label Large"
+        case .labelMedium: "Label Medium"
+        case .labelSmall:  "Label Small"
+        case .overline:    "OVERLINE"
+        }
+    }
 
-    @Test func displayRole_light() throws {
-        let text = DSText("Display", role: .display)
+    /// A canvas tall enough for the role's line height, so descenders are never clipped.
+    private static func canvas(for role: DSText.Role) -> CGSize {
+        let style = DSText.textStyle(for: role, theme: .defaultTheme)
+        return CGSize(width: 320, height: ceil(style.lineHeight) + 16)
+    }
+
+    private func assertRole(_ role: DSText.Role, colorScheme: ColorScheme) throws {
         try SnapshotTester.assertSnapshot(
-            text,
-            named: "text-display",
-            size: CGSize(width: 300, height: 50),
-            colorScheme: .light,
+            DSText(Self.sample(for: role), role: role),
+            named: "text-\(role.rawValue)",
+            size: Self.canvas(for: role),
+            colorScheme: colorScheme,
             record: recordMode
         )
     }
 
-    @Test func titleRole_light() throws {
-        let text = DSText("Title", role: .title)
-        try SnapshotTester.assertSnapshot(
-            text,
-            named: "text-title",
-            size: CGSize(width: 300, height: 40),
-            colorScheme: .light,
-            record: recordMode
-        )
+    // MARK: - Every Role, Light
+
+    @Test(arguments: DSText.Role.allCases)
+    func role_light(_ role: DSText.Role) throws {
+        try assertRole(role, colorScheme: .light)
     }
 
-    @Test func headlineRole_light() throws {
-        let text = DSText("Headline", role: .headline)
-        try SnapshotTester.assertSnapshot(
-            text,
-            named: "text-headline",
-            size: CGSize(width: 300, height: 40),
-            colorScheme: .light,
-            record: recordMode
-        )
+    // MARK: - Every Role, Dark
+
+    @Test(arguments: DSText.Role.allCases)
+    func role_dark(_ role: DSText.Role) throws {
+        try assertRole(role, colorScheme: .dark)
     }
 
-    @Test func bodyRole_light() throws {
-        let text = DSText("Body text content", role: .body)
-        try SnapshotTester.assertSnapshot(
-            text,
-            named: "text-body",
-            size: CGSize(width: 300, height: 30),
-            colorScheme: .light,
-            record: recordMode
-        )
-    }
-
-    @Test func calloutRole_light() throws {
-        let text = DSText("Callout text", role: .callout)
-        try SnapshotTester.assertSnapshot(
-            text,
-            named: "text-callout",
-            size: CGSize(width: 300, height: 30),
-            colorScheme: .light,
-            record: recordMode
-        )
-    }
-
-    @Test func captionRole_light() throws {
-        let text = DSText("Caption text", role: .caption)
-        try SnapshotTester.assertSnapshot(
-            text,
-            named: "text-caption",
-            size: CGSize(width: 300, height: 25),
-            colorScheme: .light,
-            record: recordMode
-        )
-    }
-
-    @Test func overlineRole_light() throws {
-        let text = DSText("OVERLINE", role: .overline)
-        try SnapshotTester.assertSnapshot(
-            text,
-            named: "text-overline",
-            size: CGSize(width: 300, height: 25),
-            colorScheme: .light,
-            record: recordMode
-        )
-    }
-
-    // MARK: - Dark Mode
-
-    @Test func bodyRole_dark() throws {
-        let text = DSText("Body text content", role: .body)
-        try SnapshotTester.assertSnapshot(
-            text,
-            named: "text-body",
-            size: CGSize(width: 300, height: 30),
-            colorScheme: .dark,
-            record: recordMode
-        )
-    }
-
-    // MARK: - Color Override
+    // MARK: - Colour Override
 
     @Test func customColor_light() throws {
         let text = DSText("Custom Color", role: .body, color: .red)
@@ -109,6 +67,96 @@ struct DSTextSnapshotTests {
             text,
             named: "text-custom-color",
             size: CGSize(width: 300, height: 30),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    @Test func customColor_dark() throws {
+        let text = DSText("Custom Color", role: .body, color: .red)
+        try SnapshotTester.assertSnapshot(
+            text,
+            named: "text-custom-color",
+            size: CGSize(width: 300, height: 30),
+            colorScheme: .dark,
+            record: recordMode
+        )
+    }
+
+    // MARK: - Tabular Figures
+
+    /// Proportional and tabular digits must render differently, otherwise
+    /// `DSDigitStyle` is not reaching the resolved font.
+    @Test func monospacedDigits_light() throws {
+        let theme = DSTheme.defaultTheme
+        let text = Text("11:19  88.10")
+            .dsTextStyle(theme.typography.body.monospacedDigits(), family: theme.typography.family)
+            .foregroundStyle(theme.colors.semantic.textPrimary)
+
+        try SnapshotTester.assertSnapshot(
+            text,
+            named: "text-monospaced-digits",
+            size: CGSize(width: 300, height: 30),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    @Test func proportionalDigits_light() throws {
+        let theme = DSTheme.defaultTheme
+        let text = Text("11:19  88.10")
+            .dsTextStyle(theme.typography.body, family: theme.typography.family)
+            .foregroundStyle(theme.colors.semantic.textPrimary)
+
+        try SnapshotTester.assertSnapshot(
+            text,
+            named: "text-proportional-digits",
+            size: CGSize(width: 300, height: 30),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    // MARK: - Attributed Text
+
+    private static var attributedSample: AttributedString {
+        var text = AttributedString("Baseline with bold and link")
+        if let bold = text.range(of: "bold") {
+            text[bold].font = .system(size: 16, weight: .bold)
+        }
+        if let link = text.range(of: "link") {
+            text[link].link = URL(string: "https://example.com")
+        }
+        return text
+    }
+
+    @Test func attributed_light() throws {
+        try SnapshotTester.assertSnapshot(
+            DSText(Self.attributedSample, role: .body),
+            named: "text-attributed",
+            size: CGSize(width: 320, height: 32),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    @Test func attributed_dark() throws {
+        try SnapshotTester.assertSnapshot(
+            DSText(Self.attributedSample, role: .body),
+            named: "text-attributed",
+            size: CGSize(width: 320, height: 32),
+            colorScheme: .dark,
+            record: recordMode
+        )
+    }
+
+    /// The attributed and plain renderings of the same characters must differ,
+    /// proving the inline attributes were not flattened by the baseline merge.
+    @Test func attributedDiffersFromPlain_light() throws {
+        try SnapshotTester.assertSnapshot(
+            DSText("Baseline with bold and link", role: .body),
+            named: "text-attributed-plain-control",
+            size: CGSize(width: 320, height: 32),
             colorScheme: .light,
             record: recordMode
         )

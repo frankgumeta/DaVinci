@@ -35,13 +35,18 @@ import DaVinciTokens
 /// DSCard(style: .outlined) { /* content */ }
 /// ```
 ///
+/// ## Relationship to `dsSurface`
+///
+/// `DSCard` is padding composed over ``DSSurfaceStyle``. When a view needs the surface
+/// treatment without the card's padding — a swatch, a selection ring, a floating
+/// control — apply ``SwiftUI/View/dsSurface(_:)`` directly instead of bending a card
+/// into shape.
+///
 /// ## Topics
 ///
 /// ### Creating Cards
 /// - ``init(style:accessibilityLabel:accessibilityHint:accessibilityTraits:content:)``
 public struct DSCard<Content: View>: View {
-
-    @Environment(\.dsTheme) private var theme
 
     private let style: DSCardStyle
     private let content: Content
@@ -63,31 +68,26 @@ public struct DSCard<Content: View>: View {
         self.content = content()
     }
 
-    @ViewBuilder
     public var body: some View {
-        let elevation = style.elevation
-
-        switch style {
-        case .compact, .standard, .prominent:
-            content
-                .padding(style.padding)
-                .background(theme.colors.semantic.surfacePrimary)
-                .clipShape(RoundedRectangle(cornerRadius: style.cornerRadius))
-                .shadow(color: elevation.color, radius: elevation.radius, x: elevation.x, y: elevation.y)
-                .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
-
-        case .outlined:
-            content
-                .padding(style.padding)
-                .background(theme.colors.semantic.surfacePrimary)
-                .clipShape(RoundedRectangle(cornerRadius: style.cornerRadius))
-                .overlay {
-                    RoundedRectangle(cornerRadius: style.cornerRadius)
-                        .strokeBorder(theme.colors.semantic.stroke, lineWidth: style.borderWidth)
-                }
-            .shadow(color: elevation.color, radius: elevation.radius, x: elevation.x, y: elevation.y)
+        content
+            .padding(style.padding)
+            .dsSurface(surfaceStyle)
             .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
-        }
+    }
+
+    /// The card preset expressed as a surface.
+    ///
+    /// `DSCard` is layout (padding) composed over a surface; the surface itself owns
+    /// shape, fill, stroke and elevation.
+    internal var surfaceStyle: DSSurfaceStyle {
+        DSSurfaceStyle(
+            shape: .roundedRectangle(cornerRadius: style.cornerRadius),
+            fill: .primary,
+            stroke: style.borderWidth > 0
+                ? DSSurfaceStroke(fill: .semantic, width: style.borderWidth)
+                : nil,
+            elevation: style.elevation
+        )
     }
 
     internal var accessibilityDescriptor: DSAccessibilityDescriptor {

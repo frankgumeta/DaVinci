@@ -8,6 +8,57 @@ except where a release documents an explicit pre-adoption exception.
 
 ## [Unreleased]
 
+## [2.0.0-alpha.1] - 2026-09-09
+
+> **Pre-release.** The 2.0 public API is stable enough to pin, but the release
+> criteria for 2.0.0 are not yet met. See [Migration-2.0](Docs/Migration-2.0.md).
+
+### Removed
+- **Breaking:** `DSTypography.title` and `DSText.Role.title`. Replaced by the
+  three-step title scale below. See [Migration-2.0](Docs/Migration-2.0.md) for the
+  call-site mapping.
+
+### Added
+- Three-step title scale: `titleLarge` (28/34), `titleMedium` (24/30) and
+  `titleSmall` (20/26), replacing the single `title` step
+- `subheadline` (15/20) and `footnote` (13/18) body-adjacent roles
+- Label family for control text: `labelLarge` (16/20), `labelMedium` (14/18) and
+  `labelSmall` (12/16), all `medium` weight
+- `AttributedString` rendering in `DSText`, preserving inline attributes such as
+  bold runs and links instead of flattening them into the role's baseline style
+- `DSDigitStyle` with `proportional` and `monospaced` cases, so numeric text can
+  hold its column width without changing the resolved font family
+- `DSSurfaceStyle` and the `dsSurface(_:)` modifier: shape, fill, stroke and
+  elevation as one composable treatment, with `card`, `overlay`, `pill`,
+  `floating`, `outline` and `plain` presets
+- `DSListRow` with leading, trailing and content slots, plus `title`/`value` and
+  `title`/`subtitle` presets
+- `DSListRow(alignment:)` to line up the leading slot with the first line of the
+  content rather than the middle of the row, for rows whose subtitle wraps. The
+  trailing slot stays centred on the row regardless, so a switch or chevron still
+  belongs to the row as a whole. Defaults to `.center`, so existing rows are
+  unaffected
+- `DSActionRow` and `DSSelectableRow` for tappable and selectable rows
+- `DSRowAccessory` with `chevron`, `selection(isSelected:)` and `activity` kinds
+- `DSActivityIndicator` with an ascending size scale and a localized default label
+- `DSButton.Size` with `regular` and `compact`, where `compact` paints below the
+  44pt hit target while keeping the target itself intact
+- `DSIconButton.Shape` with `roundedRectangle` and `circle`
+
+### Changed
+- **Breaking:** `DSButton` labels now use `typography.labelLarge` (16/20, medium)
+  at both sizes, where 2.0 previously used `typography.headline` (20/26, bold)
+- **Breaking:** `DSPressableButtonStyle` is now `public`, and its `duration`
+  parameter is part of the supported surface
+- `DSCard` corners use continuous curvature, changing the rendered corner shape
+- `titleMedium` scales relative to `.title2`, whereas the removed `title` scaled
+  relative to `.title`. Metrics are identical at the default Dynamic Type size;
+  the two diverge at accessibility sizes
+
+### Fixed
+- `DSButton.paintedHeight` is now `internal` rather than `private`, so the default
+  size can be asserted directly. Module-internal; no effect on consumers
+
 ## [1.4.0] - 2026-08-15
 
 > **Codex Variatio**

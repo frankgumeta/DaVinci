@@ -7,6 +7,45 @@ trap 'rm -f "$simctl_json"' EXIT
 
 xcrun simctl list --json > "$simctl_json"
 
+# Reap simulators this script created and nobody deleted. A caller that exits
+# without running delete-ios-simulator.sh — an interrupted test run, a killed CI
+# job — leaves one booted forever, and they accumulate silently.
+#
+# Only simulators older than the threshold are removed, so a concurrent run's
+# simulator is never taken out from under it. The creation time comes from the
+# name this script assigns below.
+stale_seconds="${DAVINCI_SIMULATOR_MAX_AGE:-7200}"
+stale_udids="$(python3 -c '
+import json
+import sys
+import time
+
+cutoff = time.time() - float(sys.argv[1])
+devices = json.load(open(sys.argv[2])).get("devices", {})
+
+for runtime_devices in devices.values():
+    for device in runtime_devices:
+        name = device.get("name", "")
+        if not name.startswith("DaVinci CI "):
+            continue
+        stamp = name.removeprefix("DaVinci CI ").split("-", 1)[0]
+        try:
+            created = float(stamp)
+        except ValueError:
+            # An older naming scheme with no timestamp: leave it for a human.
+            continue
+        if created < cutoff:
+            print(device["udid"])
+' "$stale_seconds" "$simctl_json")"
+
+if [[ -n "$stale_udids" ]]; then
+    while IFS= read -r stale_udid; do
+        echo "Reaping stale simulator $stale_udid" >&2
+        xcrun simctl shutdown "$stale_udid" 2>/dev/null || true
+        xcrun simctl delete "$stale_udid" 2>/dev/null || true
+    done <<< "$stale_udids"
+fi
+
 selector_arguments=("$simctl_json")
 if [[ -n "${DAVINCI_IOS_RUNTIME_MAJOR:-}" ]]; then
     selector_arguments+=(--runtime-major "$DAVINCI_IOS_RUNTIME_MAJOR")

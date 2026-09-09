@@ -11,6 +11,8 @@
 "accessibility.loading" = "Loading";
 "accessibility.progress" = "Progress";
 "accessibility.progress.percent-format" = "%lld%%";
+"accessibility.selected" = "Selected";
+"accessibility.not-selected" = "Not selected";
 "accessibility.toggle" = "Toggle";
 "accessibility.toggle.off" = "Off";
 "accessibility.toggle.on" = "On";

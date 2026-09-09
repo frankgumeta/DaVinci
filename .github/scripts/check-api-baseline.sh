@@ -13,7 +13,11 @@ esac
 
 root="$(cd "$(dirname "$0")/../.." && pwd)"
 products_dir="${DAVINCI_PRODUCTS_DIR:-$root/.build/Build/Products/Debug-iphonesimulator}"
-baseline_dir="$root/.github/api-baselines/1.4.0"
+# The baseline tracks the current development line, not the newest tag: a release
+# branch checks its own line's surface. Override with DAVINCI_API_BASELINE to
+# compare against an older line.
+baseline_version="${DAVINCI_API_BASELINE:-2.0.0}"
+baseline_dir="$root/.github/api-baselines/$baseline_version"
 sdk="$(xcrun --sdk iphonesimulator --show-sdk-path)"
 target="arm64-apple-ios17.0-simulator"
 modules=(DaVinciTokens DaVinciComponents DaVinciGallery)

@@ -51,3 +51,7 @@ jobs:
         path: .build/iOS17-TestResults.xcresult
         if-no-files-found: warn
         retention-days: 14
+
+    - name: Delete iOS 17 Simulator
+      if: always()
+      run: bash .github/scripts/delete-ios-simulator.sh '${{ steps.simulator.outputs.udid }}'

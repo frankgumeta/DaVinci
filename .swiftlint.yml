@@ -31,6 +31,12 @@ file_length:
   warning: 650
   error: 800
 
+# A switch over every DSText.Role is 14 branches by definition; the count is the
+# number of roles, not a sign the function needs splitting.
+cyclomatic_complexity:
+  warning: 15
+  error: 20
+
 # Naming conventions
 identifier_name:
   min_length:

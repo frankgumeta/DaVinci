@@ -14,6 +14,8 @@ internal enum DSLocalizedStringKey: String, CaseIterable, Sendable {
     case loading = "accessibility.loading"
     case progress = "accessibility.progress"
     case progressPercentFormat = "accessibility.progress.percent-format"
+    case selected = "accessibility.selected"
+    case notSelected = "accessibility.not-selected"
     case toggle = "accessibility.toggle"
     case toggleOff = "accessibility.toggle.off"
     case toggleOn = "accessibility.toggle.on"

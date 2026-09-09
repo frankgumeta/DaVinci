@@ -16,7 +16,7 @@ struct DSTextBehaviorTests {
     }
 
     @Test @MainActor func titleRoleGetsHeaderTrait() {
-        let text = DSText("Page Title", role: .title)
+        let text = DSText("Page Title", role: .titleMedium)
         #expect(text.resolvedAccessibilityTraits == .isHeader)
     }
 
@@ -50,7 +50,7 @@ struct DSTextBehaviorTests {
     @Test @MainActor func customTraitsOverrideAutoHeader() {
         let text = DSText(
             "Title",
-            role: .title,
+            role: .titleMedium,
             accessibilityTraits: .isStaticText
         )
         #expect(text.resolvedAccessibilityTraits == .isStaticText)
@@ -75,8 +75,8 @@ struct DSTextBehaviorTests {
 
     @Test func titleRoleMapsToTitleStyle() {
         let theme = DSTheme.defaultTheme
-        let style = DSText.textStyle(for: .title, theme: theme)
-        #expect(style == theme.typography.title)
+        let style = DSText.textStyle(for: .titleMedium, theme: theme)
+        #expect(style == theme.typography.titleMedium)
     }
 
     @Test func headlineRoleMapsToHeadlineStyle() {
@@ -113,18 +113,40 @@ struct DSTextBehaviorTests {
 
     @Test func allRolesMapToDistinctStyles() {
         let theme = DSTheme.defaultTheme
-        let roles: [DSText.Role] = [
-            .display, .title, .headline, .body, .callout, .caption, .overline
-        ]
-        var styles: [DSTextStyle] = []
+        let roles: [DSText.Role] = DSText.Role.allCases
+        let styles = roles.map { DSText.textStyle(for: $0, theme: theme) }
 
-        for role in roles {
-            styles.append(DSText.textStyle(for: role, theme: theme))
+        // No two roles may resolve to the same style. Size alone is not the key:
+        // the title/heading and body/label families deliberately share sizes and are
+        // separated by weight, so the whole style must be compared.
+        for i in 0..<styles.count {
+            for j in (i + 1)..<styles.count {
+                #expect(
+                    styles[i] != styles[j],
+                    "\(roles[i]) and \(roles[j]) resolve to the same style"
+                )
+            }
         }
+    }
 
-        // All sizes should be distinct
-        let sizes = styles.map(\.size)
-        #expect(Set(sizes).count == roles.count)
+    @Test func familiesMayShareSizesButNeverWeights() {
+        let theme = DSTheme.defaultTheme
+
+        // Documents the intentional overlaps introduced by the label family.
+        let overlaps: [(DSText.Role, DSText.Role)] = [
+            (.titleSmall, .headline),
+            (.body, .labelLarge),
+            (.callout, .labelMedium),
+            (.caption, .labelSmall)
+        ]
+
+        for (first, second) in overlaps {
+            let a = DSText.textStyle(for: first, theme: theme)
+            let b = DSText.textStyle(for: second, theme: theme)
+
+            #expect(a.size == b.size, "\(first) and \(second) should share a size")
+            #expect(a.weight != b.weight, "\(first) and \(second) must differ in weight")
+        }
     }
 
     // MARK: - Typography Scale Ordering
@@ -132,7 +154,7 @@ struct DSTextBehaviorTests {
     @Test func typographySizeDecreases() {
         let theme = DSTheme.defaultTheme
         let display = DSText.textStyle(for: .display, theme: theme).size
-        let title = DSText.textStyle(for: .title, theme: theme).size
+        let title = DSText.textStyle(for: .titleMedium, theme: theme).size
         let headline = DSText.textStyle(for: .headline, theme: theme).size
         let body = DSText.textStyle(for: .body, theme: theme).size
         let callout = DSText.textStyle(for: .callout, theme: theme).size
@@ -158,7 +180,7 @@ struct DSTextBehaviorTests {
     // MARK: - Header Roles Grouped
 
     @Test @MainActor func headerRolesAllGetHeaderTrait() {
-        let headerRoles: [DSText.Role] = [.display, .title, .headline]
+        let headerRoles: [DSText.Role] = [.display, .titleLarge, .titleMedium, .titleSmall, .headline]
         for role in headerRoles {
             let text = DSText("X", role: role)
             #expect(text.resolvedAccessibilityTraits == .isHeader)
