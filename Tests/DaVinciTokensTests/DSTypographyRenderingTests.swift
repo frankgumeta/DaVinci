@@ -6,18 +6,7 @@ import Testing
 @Suite("DSTypography Rendering")
 struct DSTypographyRenderingTests {
     @Test func everyDefaultRoleGrowsAtAccessibilitySizes() throws {
-        let typography = DSTypography()
-        let styles = [
-            typography.display,
-            typography.title,
-            typography.headline,
-            typography.body,
-            typography.callout,
-            typography.caption,
-            typography.overline
-        ]
-
-        for style in styles {
+        for style in DSTypography().allStyles {
             let standard = try renderedSize(style: style, dynamicTypeSize: .large)
             let accessibility = try renderedSize(style: style, dynamicTypeSize: .accessibility5)
 

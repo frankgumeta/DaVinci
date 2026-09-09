@@ -92,17 +92,7 @@ public enum DSThemeValidator {
         _ typography: DSTypography,
         into issues: inout [DSThemeValidationIssue]
     ) {
-        let styles: [(String, DSTextStyle)] = [
-            ("display", typography.display),
-            ("title", typography.title),
-            ("headline", typography.headline),
-            ("body", typography.body),
-            ("callout", typography.callout),
-            ("caption", typography.caption),
-            ("overline", typography.overline)
-        ]
-
-        for (name, style) in styles {
+        for (name, style) in typography.namedStyles {
             if !style.size.isFinite || style.size <= 0 {
                 issues.append(
                     issue(

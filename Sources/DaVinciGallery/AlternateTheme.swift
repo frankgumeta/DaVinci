@@ -21,7 +21,7 @@ private let alternateFeedback = FeedbackColors(
 private let alternateTypography = DSTypography(
     family: FontFamily(brand: "Georgia"),
     display: DSTextStyle(size: 36, lineHeight: 44, weight: .bold, relativeTo: .largeTitle),
-    title: DSTextStyle(size: 26, lineHeight: 32, weight: .bold, relativeTo: .title),
+    titleMedium: DSTextStyle(size: 26, lineHeight: 32, weight: .bold, relativeTo: .title2),
     headline: DSTextStyle(size: 20, lineHeight: 26, weight: .semibold, relativeTo: .headline),
     body: DSTextStyle(size: 16, lineHeight: 24, weight: .regular, relativeTo: .body),
     callout: DSTextStyle(size: 14, lineHeight: 20, weight: .regular, relativeTo: .callout),

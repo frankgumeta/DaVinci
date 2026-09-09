@@ -148,9 +148,7 @@ struct DSIconButtonTests {
 struct DSTextTests {
 
     @Test @MainActor func textWithAllRoles() {
-        let roles: [DSText.Role] = [
-            .display, .title, .headline, .body, .callout, .caption, .overline
-        ]
+        let roles: [DSText.Role] = DSText.Role.allCases
         for role in roles {
             let text = DSText("Sample", role: role)
             #expect(type(of: text) == DSText.self)
@@ -168,9 +166,7 @@ struct DSTextTests {
     }
 
     @Test @MainActor func allRolesWithCustomColors() {
-        let roles: [DSText.Role] = [
-            .display, .title, .headline, .body, .callout, .caption, .overline
-        ]
+        let roles: [DSText.Role] = DSText.Role.allCases
         let colors: [Color] = [.red, .blue, .green, .purple]
 
         for role in roles {

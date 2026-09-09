@@ -13,7 +13,7 @@ struct DSTextGalleryScreen: View {
 
                 GallerySection(title: "Roles") {
                     DSText("Display", role: .display)
-                    DSText("Title", role: .title)
+                    DSText("Title Medium", role: .titleMedium)
                     DSText("Headline", role: .headline)
                     DSText("Body — the main reading style.", role: .body)
                     DSText("Callout — supporting text.", role: .callout)

@@ -6,7 +6,7 @@ import DaVinciTokens
 #Preview("DSText — All Roles") {
     VStack(alignment: .leading, spacing: 8) {
         DSText("Display", role: .display)
-        DSText("Title", role: .title)
+        DSText("Title", role: .titleMedium)
         DSText("Headline", role: .headline)
         DSText("Body text", role: .body)
         DSText("Callout text", role: .callout)
@@ -18,7 +18,7 @@ import DaVinciTokens
 
 #Preview("DSText — Accessibility") {
     VStack(alignment: .leading, spacing: 16) {
-        DSText("Page Title", role: .title)
+        DSText("Page Title", role: .titleMedium)
         // Automatically marked as .isHeader
 
         DSText("Section Heading", role: .headline)

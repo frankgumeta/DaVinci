@@ -38,6 +38,50 @@ struct PublicAPICompilationTests {
         _ = DSCard(style: .outlined) { Text("Summary") }
     }
 
+    /// Everything added in 2.0 must be reachable without `@testable`.
+    ///
+    /// This file imports `DaVinciComponents` normally, so anything referenced here is
+    /// provably part of the public surface — which is the only way to assert that
+    /// `DSPressableButtonStyle` really was published rather than left internal.
+    @Test func twoPointZeroSurfaceIsPublic() {
+        // Typography: the label family and tabular figures.
+        _ = DSText("Control label", role: .labelLarge)
+        _ = DSText(AttributedString("Attributed"), role: .footnote)
+        _ = DSTypography().labelMedium.monospacedDigits()
+        _ = DSTypography().namedStyles
+
+        // Surfaces, composed without any card padding.
+        _ = Text("Swatch").dsSurface(.outline)
+        _ = Text("Chip").dsSurface(.pill)
+        _ = Text("Custom").dsSurface(
+            DSSurfaceStyle(shape: .circle, fill: .color(.red), stroke: .accent)
+        )
+
+        // Rows: layout, action and selection kept separate.
+        _ = DSListRow(title: "Language", value: "English")
+        _ = DSListRow(title: "Appearance", subtitle: "Follows the system")
+        _ = DSListRow(
+            leading: { Image(systemName: "globe") },
+            trailing: { DSRowAccessory(.chevron) },
+            content: { DSText("Language", role: .body) }
+        )
+        _ = DSActionRow(action: {}, content: { DSRowLabel(title: "Open", subtitle: nil) })
+        _ = DSSelectableRow(isSelected: true, action: {}, content: { DSText("Midnight", role: .body) })
+
+        // Controls and feedback.
+        _ = DSActivityIndicator(size: .small)
+        _ = DSButton("Buy", size: .compact) {}
+        _ = Button("Custom control") {}
+            .buttonStyle(DSPressableButtonStyle(duration: 0.2))
+
+        if let play = DSSymbol(systemName: "play.fill") {
+            _ = DSIconButton(symbol: play, titleForAccessibility: "Play", shape: .circle) {}
+        }
+
+        _ = ControlHeightTokens.minimumHitTarget
+        _ = ControlHeightTokens.compact
+    }
+
     @Test func canonicalThemeValidationExampleCompiles() {
         let brand = BrandColors(primary: .indigo, secondary: .blue, tertiary: .cyan)
         let feedback = FeedbackColors()

@@ -16,14 +16,56 @@ struct TypographyGalleryScreen: View {
                 infoRow("Resolved", value: theme.typography.family.resolved)
             }
 
-            Section("Text Styles") {
-                styleRow("Display", style: theme.typography.display)
-                styleRow("Title", style: theme.typography.title)
-                styleRow("Headline", style: theme.typography.headline)
-                styleRow("Body", style: theme.typography.body)
-                styleRow("Callout", style: theme.typography.callout)
-                styleRow("Caption", style: theme.typography.caption)
-                styleRow("Overline", style: theme.typography.overline)
+            Section("Display") {
+                styleRow("display", style: theme.typography.display)
+            }
+
+            Section("Title") {
+                styleRow("titleLarge", style: theme.typography.titleLarge)
+                styleRow("titleMedium", style: theme.typography.titleMedium)
+                styleRow("titleSmall", style: theme.typography.titleSmall)
+            }
+
+            Section("Heading") {
+                styleRow("headline", style: theme.typography.headline)
+                styleRow("subheadline", style: theme.typography.subheadline)
+            }
+
+            Section("Body") {
+                styleRow("body", style: theme.typography.body)
+                styleRow("callout", style: theme.typography.callout)
+                styleRow("footnote", style: theme.typography.footnote)
+                styleRow("caption", style: theme.typography.caption)
+            }
+
+            Section("Label") {
+                styleRow("labelLarge", style: theme.typography.labelLarge)
+                styleRow("labelMedium", style: theme.typography.labelMedium)
+                styleRow("labelSmall", style: theme.typography.labelSmall)
+            }
+
+            Section("Utility") {
+                styleRow("overline", style: theme.typography.overline)
+            }
+
+            Section("Tabular Figures") {
+                VStack(alignment: .leading, spacing: SpacingTokens.space2) {
+                    Text("Proportional  12:04 · 88.10 · 11:19")
+                        .dsTextStyle(theme.typography.body, family: theme.typography.family)
+                        .foregroundStyle(theme.colors.semantic.textPrimary)
+                    Text("Monospaced    12:04 · 88.10 · 11:19")
+                        .dsTextStyle(
+                            theme.typography.body.monospacedDigits(),
+                            family: theme.typography.family
+                        )
+                        .foregroundStyle(theme.colors.semantic.textPrimary)
+                }
+                .padding(.vertical, SpacingTokens.space1)
+            }
+
+            Section("Attributed Text") {
+                DSText(attributedSample, role: .footnote)
+                    .padding(.vertical, SpacingTokens.space1)
             }
 
             Section("Allowed Weights") {
@@ -70,6 +112,21 @@ struct TypographyGalleryScreen: View {
     }
 
     // MARK: - Helpers
+
+    /// Demonstrates that inline attributes survive the role's baseline typography.
+    private var attributedSample: AttributedString {
+        var text = AttributedString("Roles set a baseline; bold, colour and links survive.")
+        if let bold = text.range(of: "bold") {
+            text[bold].font = .system(size: 13, weight: .bold)
+        }
+        if let colour = text.range(of: "colour") {
+            text[colour].foregroundColor = theme.colors.feedback.success
+        }
+        if let links = text.range(of: "links") {
+            text[links].link = URL(string: "https://github.com/frankgumeta/DaVinci")
+        }
+        return text
+    }
 
     private func styleRow(_ name: String, style: DSTextStyle) -> some View {
         VStack(alignment: .leading, spacing: SpacingTokens.space1) {
