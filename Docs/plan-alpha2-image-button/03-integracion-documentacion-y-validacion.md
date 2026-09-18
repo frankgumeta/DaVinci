@@ -5,6 +5,14 @@
 Integrar ambos cambios como un contrato coherente de alpha.2, revisar sus efectos
 visuales y cerrar la matriz de calidad sin congelar todavía la API estable 2.0.
 
+## Estado de ejecución
+
+Completada el 2026-09-18. `DSRemoteImage` quedó documentado, su initializer
+aditivo fue incorporado al baseline 2.0 y el contrato de `DSButton` quedó
+explícitamente sin cambio de producto. Pasaron SwiftLint, suite iOS 27.0,
+cobertura, runtime mínimo iOS 17.5, DocC, scripts de validación, API check y
+consumidor externo. No se creó ningún tag.
+
 ## Alcance
 
 - Actualizar documentación pública y notas de alpha.2 con ambos cambios.
