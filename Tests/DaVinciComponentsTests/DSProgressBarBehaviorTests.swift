@@ -50,6 +50,16 @@ struct DSProgressBarBehaviorTests {
         #expect(bar.value == 0.001)
     }
 
+    @Test @MainActor func nonFiniteValuesNormalizeToZero() {
+        let values = [Double.nan, .infinity, -.infinity]
+
+        for value in values {
+            let bar = DSProgressBar(value: value)
+            #expect(bar.value == 0.0)
+            #expect(bar.resolvedAccessibilityValue == "0%")
+        }
+    }
+
     // MARK: - Size Height Mapping
 
     @Test func sizeSmallHeight() {

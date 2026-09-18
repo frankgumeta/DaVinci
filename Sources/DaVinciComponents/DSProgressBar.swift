@@ -100,7 +100,8 @@ public struct DSProgressBar: View, Sendable {
     /// Creates a themed progress bar.
     ///
     /// - Parameters:
-    ///   - value: Progress value from 0.0 to 1.0 (clamped; ignored when `isIndeterminate` is true)
+    ///   - value: Progress value from 0.0 to 1.0 (clamped; non-finite values become 0.0;
+    ///     ignored when `isIndeterminate` is true)
     ///   - size: Semantic height of the bar (default: `.small`)
     ///   - label: Optional label text displayed above the bar
     ///   - isIndeterminate: If true, shows an animated loading state
@@ -114,7 +115,8 @@ public struct DSProgressBar: View, Sendable {
         accessibilityLabel: String? = nil,
         style: Style = .continuous
     ) {
-        self.value = min(max(value, 0.0), 1.0)
+        let finiteValue = value.isFinite ? value : 0.0
+        self.value = min(max(finiteValue, 0.0), 1.0)
         self.size = size
         self.label = label
         self.isIndeterminate = isIndeterminate
