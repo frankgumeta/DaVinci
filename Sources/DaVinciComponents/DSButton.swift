@@ -75,7 +75,7 @@ public enum DSButtonIcon: Sendable {
 /// ## Topics
 ///
 /// ### Creating Buttons
-/// - ``init(_:appearance:icon:isLoading:isDisabled:accessibilityLabel:accessibilityHint:action:)``
+/// - ``init(_:appearance:size:icon:isLoading:isDisabled:accessibilityLabel:accessibilityHint:action:)``
 ///
 /// ### Button Appearances
 /// - ``Appearance``
@@ -100,10 +100,10 @@ public struct DSButton: View {
     public enum Size: Sendable, CaseIterable {
         /// Full-width button at the medium control height. The default.
         case regular
-        /// Hugs its content at ``ControlHeightTokens/compact`` height.
+        /// Hugs its content at `ControlHeightTokens.compact` height.
         ///
         /// The *painted* control is 36pt tall, but its interactive area is expanded to
-        /// ``ControlHeightTokens/minimumHitTarget`` in both dimensions. A compact button
+        /// `ControlHeightTokens.minimumHitTarget` in both dimensions. A compact button
         /// therefore looks small without becoming hard to hit — which is the whole point
         /// of the size, and the part hand-rolled compact buttons usually get wrong by
         /// constraining only the height and leaving a narrow label narrow.

@@ -77,7 +77,7 @@ public struct DSRowAccessory: View {
 ///
 /// The row combines its children into a single element so VoiceOver reads it as one
 /// row rather than three fragments, and reserves at least
-/// ``ControlHeightTokens/minimumHitTarget`` of height.
+/// `ControlHeightTokens.minimumHitTarget` of height.
 public struct DSListRow<Leading: View, Content: View, Trailing: View>: View {
 
     @Environment(\.dsTheme) private var theme
@@ -89,11 +89,17 @@ public struct DSListRow<Leading: View, Content: View, Trailing: View>: View {
     private let accessibilityLabel: String?
     private let accessibilityValue: String?
 
-    /// - Parameter alignment: How `leading` and `content` line up with each other.
+    /// - Parameters:
+    ///   - alignment: How `leading` and `content` line up with each other.
     ///   Defaults to `.center`. Use `.top` when the content can grow to several
     ///   lines — a wrapping subtitle otherwise drags a leading icon down to the
     ///   middle of the block, away from the title it belongs to. `trailing` keeps
     ///   its own centring either way; see the note on the body below.
+    ///   - accessibilityLabel: An optional label that replaces the combined child labels.
+    ///   - accessibilityValue: An optional value announced with the row's label.
+    ///   - leading: The leading slot, typically an icon, image, or colour swatch.
+    ///   - trailing: The trailing slot, typically a value, control, or row accessory.
+    ///   - content: The main content slot for the row.
     public init(
         alignment: VerticalAlignment = .center,
         accessibilityLabel: String? = nil,
@@ -119,8 +125,8 @@ public struct DSListRow<Leading: View, Content: View, Trailing: View>: View {
             HStack(alignment: alignment, spacing: SpacingTokens.space3) {
                 leading
                 content
-                    .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             trailing
         }
         .padding(.vertical, SpacingTokens.space2)

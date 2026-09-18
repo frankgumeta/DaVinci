@@ -84,7 +84,7 @@ struct DSTextAttributedStringTests {
     @Test func linksKeepTheSystemTintAndNeighboursGetTheColor() throws {
         var input = AttributedString("Read the license terms")
         let linkRange = try #require(input.range(of: "license"))
-        input[linkRange].link = try #require(URL(string: "https://example.com/license"))
+        input[linkRange].link = URL(string: "https://example.com/license")!
 
         let result = styled(input, role: .footnote, color: .red)
         let resultLinkRange = try #require(result.range(of: "license"))

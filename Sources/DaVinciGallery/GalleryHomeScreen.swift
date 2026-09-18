@@ -100,7 +100,7 @@ public struct GalleryHomeScreen: View {
 
 #Preview("Gallery Home") {
     @Previewable @State var theme = DSTheme.defaultTheme
-    @Previewable @State var scheme: ColorScheme? = nil
+    @Previewable @State var scheme: ColorScheme?
     GalleryHomeScreen(currentTheme: $theme, colorSchemeOverride: $scheme)
         .dsTheme(theme)
         .preferredColorScheme(scheme)
@@ -116,7 +116,7 @@ public struct GalleryHomeScreen: View {
 
 #Preview("Gallery Home — Alternate") {
     @Previewable @State var theme = DSTheme.alternate
-    @Previewable @State var scheme: ColorScheme? = nil
+    @Previewable @State var scheme: ColorScheme?
     GalleryHomeScreen(currentTheme: $theme, colorSchemeOverride: $scheme)
         .dsTheme(theme)
         .preferredColorScheme(scheme)

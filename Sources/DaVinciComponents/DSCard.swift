@@ -37,9 +37,9 @@ import DaVinciTokens
 ///
 /// ## Relationship to `dsSurface`
 ///
-/// `DSCard` is padding composed over ``DSSurfaceStyle``. When a view needs the surface
+/// `DSCard` is padding composed over `DSSurfaceStyle`. When a view needs the surface
 /// treatment without the card's padding — a swatch, a selection ring, a floating
-/// control — apply ``SwiftUI/View/dsSurface(_:)`` directly instead of bending a card
+/// control — apply `View.dsSurface(_:)` directly instead of bending a card
 /// into shape.
 ///
 /// ## Topics

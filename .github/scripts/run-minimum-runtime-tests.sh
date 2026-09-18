@@ -18,10 +18,13 @@ code_signing_allowed="${DAVINCI_CODE_SIGNING_ALLOWED:-YES}"
 # OS rendering differences do not masquerade as compatibility regressions.
 # Performance baselines also remain on the current runtime: a freshly installed
 # legacy simulator can be heavily throttled even when product behavior is valid.
-for file in "$root"/Tests/DaVinciComponentsTests/*SnapshotTests.swift; do
-    suite="$(basename "$file" .swift)"
+snapshot_files=("$root"/Tests/DaVinciComponentsTests/*SnapshotTests.swift)
+while IFS= read -r suite; do
     test_skips+=("-skip-testing:DaVinciComponentsTests/$suite")
-done
+done < <(
+    python3 "$root/.github/scripts/list-snapshot-test-suites.py" \
+        "${snapshot_files[@]}"
+)
 
 xcodebuild test \
     -scheme DaVinci-Package \

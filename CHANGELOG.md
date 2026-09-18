@@ -8,6 +8,27 @@ except where a release documents an explicit pre-adoption exception.
 
 ## [Unreleased]
 
+<!-- Reserved for compatible post-2.0.0 work. -->
+
+## [2.0.0] - 2026-09-18
+
+> **Release candidate prepared.** Publication remains gated by the protected
+> candidate SHA and release workflow review.
+
+### Changed
+- The 2.0 line requires Xcode 27.0 and Swift tools 6.4 while retaining Swift 6
+  language mode and the iOS 17 deployment target.
+- CI uses the dedicated Xcode 27 runner image and verifies the exact Xcode build,
+  Swift version, package contract, and an external consumer of every public product.
+- Gallery production coverage is now gated at 60%; Tokens remain at 100% and
+  Components at 95% minimum.
+
+### Fixed
+- Corrected Xcode 27 list-row layout, attributed-text, card, and snapshot
+  baselines after visual review.
+- Added repeated performance measurements, Gallery smoke coverage, DocC warning
+  gating, and reproducible iOS 17.5 compatibility validation.
+
 ## [2.0.0-alpha.1] - 2026-09-09
 
 > **Pre-release.** The 2.0 public API is stable enough to pin, but the release

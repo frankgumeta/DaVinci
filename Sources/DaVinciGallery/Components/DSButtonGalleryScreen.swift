@@ -21,7 +21,11 @@ struct DSButtonGalleryScreen: View {
                 GallerySection(title: "Icons") {
                     DSButton("Add Item", appearance: .primary, icon: .leading(DSSymbol(systemName: "plus")!)) {}
                     DSButton("Continue", appearance: .outline, icon: .trailing(DSSymbol(systemName: "arrow.right")!)) {}
-                    DSButton("Share", appearance: .secondary, icon: .leading(DSSymbol(systemName: "square.and.arrow.up")!)) {}
+                    DSButton(
+                        "Share",
+                        appearance: .secondary,
+                        icon: .leading(DSSymbol(systemName: "square.and.arrow.up")!)
+                    ) {}
                 }
 
                 GallerySection(title: "States") {

@@ -70,7 +70,11 @@ struct DSDividerGalleryScreen: View {
                     DSDivider(style: .regular)
                     DSDivider(style: .hairline)
 
-                    DSText("Hairline between dense list items", role: .caption, color: theme.colors.semantic.textSecondary)
+                    DSText(
+                        "Hairline between dense list items",
+                        role: .caption,
+                        color: theme.colors.semantic.textSecondary
+                    )
                     VStack(spacing: 0) {
                         DSText("Item one", role: .body)
                             .padding(.vertical, SpacingTokens.space2)

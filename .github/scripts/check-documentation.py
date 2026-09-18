@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -59,8 +60,18 @@ def find_removed_api_references(root: Path) -> list[str]:
 
 def validate_release_floor(root: Path) -> list[str]:
     readme = (root / "README.md").read_text(encoding="utf-8")
-    if 'from: "1.4.0"' not in readme:
-        return ["README.md: installation example must start at the stable 1.4.0 API floor"]
+    policy_path = root / ".github" / "version-policy.json"
+    if not policy_path.is_file():
+        return [".github/version-policy.json: missing version policy source"]
+    policy = json.loads(policy_path.read_text(encoding="utf-8"))
+    stable_version = policy.get("stableDependencyVersion")
+    if not isinstance(stable_version, str) or not stable_version:
+        return [".github/version-policy.json: stableDependencyVersion is required"]
+    if f'from: "{stable_version}"' not in readme:
+        return [
+            "README.md: installation example must start at the stable "
+            f"{stable_version} API floor"
+        ]
     return []
 
 

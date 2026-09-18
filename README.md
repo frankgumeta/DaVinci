@@ -4,7 +4,7 @@
 
 ![DaVinci Framework Icon](assets/davinci-framework-icon.svg)
 
-[![Swift](https://img.shields.io/badge/Swift-6.3-orange.svg)](https://swift.org)
+[![Swift](https://img.shields.io/badge/Swift-6.4-orange.svg)](https://swift.org)
 [![Platform](https://img.shields.io/badge/Platform-iOS%2017%2B-blue.svg)](https://developer.apple.com)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![CI](https://github.com/frankgumeta/DaVinci/actions/workflows/ci.yml/badge.svg)](https://github.com/frankgumeta/DaVinci/actions/workflows/ci.yml)
@@ -22,6 +22,10 @@ strategy.
 Version 1.4 is the stable long-term-support line. See the
 [support policy](Docs/Support.md) and [security policy](SECURITY.md) for its
 compatibility and maintenance contract.
+
+The 2.0 line is currently prepared for release from the `2.0.0-alpha.1`
+pre-release. It uses the Xcode 27 contract documented below; the stable package
+dependency remains `1.4.0` until the `v2.0.0` tag is published.
 
 ## Features
 
@@ -289,7 +293,7 @@ Reusable SwiftUI components that consume tokens from `DaVinciTokens`.
 |---|---|
 | `DSButton` | Themed button with primary, secondary, outline, and ghost appearances, icons, loading, and disabled states |
 | `DSIconButton` | Icon-only button with aligned appearances, size, loading, and disabled support |
-| `DSText` | Semantic text component mapping roles (`.display`, `.title`, `.headline`, `.body`, `.callout`, `.caption`, `.overline`) to typography tokens |
+| `DSText` | Semantic text component mapping display, title, body-adjacent, label, and digit roles to typography tokens |
 | `DSCard` | Compact, standard, prominent, and outlined surface containers |
 | `DSTextField` | Themed text field with label and prompt |
 | `DSSwitch` | Themed toggle with label, disabled state, and accessibility value |
@@ -298,6 +302,10 @@ Reusable SwiftUI components that consume tokens from `DaVinciTokens`.
 | `DSBadge` | Text and dot badges with independent semantic tones, visual appearances, and sizes |
 | `DSDivider` | Horizontal or vertical semantic divider |
 | `DSRemoteImage` | Validated remote loading with rectangle, rounded, and circle geometry |
+| `DSListRow` | Layout-only leading/content/trailing row with title/subtitle and title/value presets |
+| `DSActionRow`, `DSSelectableRow` | Tappable and selectable row behavior composed over `DSListRow` |
+| `DSRowAccessory`, `DSActivityIndicator` | Standard row accessories and localized loading indicator |
+| `DSSurfaceStyle`, `dsSurface(_:)` | Composable surface shape, fill, stroke, and elevation treatment |
 | `DSSkeletonBlock`, `DSSkeletonRow`, `DSSkeletonCard`, `DSSkeletonList` | Loading placeholders with optional shimmer |
 | `dsShimmering(_:)` | Reduce-Motion-aware shimmer modifier |
 | `DSPressableButtonStyle` | Shared `ButtonStyle` applying `OpacityTokens.pressed` with configurable duration |
@@ -319,6 +327,7 @@ Interactive gallery screens for visual verification of all tokens and components
 | `EffectsGalleryScreen` | Elevation shadow demos |
 | `ComponentsListScreen` | Navigation to text, controls, feedback, and structure galleries |
 | `SkeletonGalleryScreen` | Skeleton block, row, card, and list examples |
+| Component galleries | Button, icon button, text, text field, switch, segmented control, progress, badge, activity indicator, divider, card, surface, list row, action row, and remote image |
 
 **Import:** `import DaVinciGallery`
 
@@ -344,7 +353,7 @@ DaVinciDemo            (depends on all)
 
 - **All token structs are immutable** (`public let`) and `Sendable` — safe to use from any isolation context.
 - **`DSTheme`** is injected via the `.dsTheme` SwiftUI environment value.
-- **Swift 6 strict concurrency** is enforced across all targets (`swift-tools-version: 6.3`, language mode 6).
+- **Swift 6 strict concurrency** is enforced across all targets (`swift-tools-version: 6.4`, language mode 6).
 - **No `Equatable` on Color-containing types** — structs with `SwiftUI.Color` fields omit `Equatable` to avoid unstable equality.
 
 ## Testing
@@ -354,14 +363,12 @@ Run the test suite to validate tokens and components:
 ```bash
 # Create and boot an iPhone using the latest installed iOS runtime
 SIMULATOR_UDID="$(bash .github/scripts/create-ios-simulator.sh)"
+trap 'bash .github/scripts/delete-ios-simulator.sh "$SIMULATOR_UDID"' EXIT
 
 # Run all tests on that simulator
 xcodebuild test \
   -scheme DaVinci-Package \
   -destination "platform=iOS Simulator,id=$SIMULATOR_UDID"
-
-# Delete it when you are done; simulators otherwise accumulate booted forever
-bash .github/scripts/delete-ios-simulator.sh "$SIMULATOR_UDID"
 
 # Run with verbose output
 xcodebuild test \
@@ -385,13 +392,13 @@ xcodebuild build \
 
 Coverage is reported only for production targets; test bundles and dedicated
 `*+Previews.swift` sources are deliberately excluded from the metric. With Xcode
-26.6, the current reproducible line coverage is:
+27.0, the current reproducible line coverage is:
 
 | Product target | Covered lines | Executable lines | Coverage | CI policy |
 |---|---:|---:|---:|---|
-| `DaVinciTokens` | 238 | 238 | 100.00% | Minimum 100% |
-| `DaVinciComponents` | 2763 | 2870 | 96.27% | Minimum 95% |
-| `DaVinciGallery` | 0 | 5827 | 0.00% | Reported, not currently gated |
+| `DaVinciTokens` | 531 | 531 | 100.00% | Minimum 100% |
+| `DaVinciComponents` | 3282 | 3394 | 96.70% | Minimum 95% |
+| `DaVinciGallery` | 5353 | 7947 | 67.36% | Minimum 60% |
 
 There is no aggregate “overall” claim: including test targets would inflate it,
 while including the currently unexercised gallery would conceal the actual gap.
@@ -425,6 +432,7 @@ python3 .github/scripts/check-code-coverage.py \
   "$RESULT_BUNDLE" \
   --minimum DaVinciTokens=100 \
   --minimum DaVinciComponents=95 \
+  --minimum DaVinciGallery=60 \
   --output coverage.md
 ```
 
@@ -457,7 +465,7 @@ artifact on failed runs.
 Snapshot rendering fixes the canvas size, 2x scale, `en_US_POSIX` locale, UTC time
 zone, theme, and color scheme. Layout defaults to left-to-right and Dynamic Type
 `.large`; individual tests can override both for RTL and accessibility-size
-baselines. Use the repository simulator helper and Xcode 26.6, matching CI, when
+baselines. Use the repository simulator helper and Xcode 27.0, matching CI, when
 approving baselines.
 
 ## Best Practices

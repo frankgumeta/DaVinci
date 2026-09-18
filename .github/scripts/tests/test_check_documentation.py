@@ -16,6 +16,10 @@ class DocumentationValidationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "Docs").mkdir()
+            (root / ".github").mkdir()
+            (root / ".github" / "version-policy.json").write_text(
+                '{"stableDependencyVersion": "1.4.0"}', encoding="utf-8"
+            )
             (root / "README.md").write_text('from: "1.4.0"', encoding="utf-8")
             (root / "Docs" / "Usage.md").write_text(
                 'DSIconButton(systemName: "trash") {}', encoding="utf-8"
@@ -30,6 +34,10 @@ class DocumentationValidationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "Docs").mkdir()
+            (root / ".github").mkdir()
+            (root / ".github" / "version-policy.json").write_text(
+                '{"stableDependencyVersion": "1.4.0"}', encoding="utf-8"
+            )
             (root / "README.md").write_text(
                 'from: "1.4.0"\nDSButton("Save", appearance: .primary) {}',
                 encoding="utf-8",

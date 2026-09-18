@@ -18,8 +18,8 @@ Be respectful, inclusive, and collaborative. We aim to maintain a welcoming envi
 ## Getting Started
 
 ### Prerequisites
-- Xcode 26.6
-- Swift tools 6.3
+- Xcode 27.0 (build 27A266a)
+- Swift tools 6.4
 - Swift language mode 6 with complete strict concurrency
 - iOS 17.0+ (iOS-only package)
 
@@ -288,7 +288,7 @@ python3 .github/scripts/check-code-coverage.py \
 - When intentionally changing UI, run with `TEST_RUNNER_RECORD_SNAPSHOTS=1` to update references
 - Recording mode rewrites every snapshot exercised by the selected test run
 - Review the changed PNG files visually before committing them
-- Use the repository simulator helper with Xcode 26.6, matching CI
+- Use the repository simulator helper with Xcode 27.0, matching CI
 - Delete the simulator afterwards with `.github/scripts/delete-ios-simulator.sh`
 - Failure artifacts are written under `.build/snapshot-failures/`, which is ignored by Git
 - CI uploads failure artifacts for 14 days as `snapshot-failures`
@@ -352,7 +352,7 @@ make, and treats an empty or unknown UDID as a no-op rather than an error.
 
 **Snapshots differ slightly between machines?**
 - Create the simulator with `.github/scripts/create-ios-simulator.sh`, as CI does
-- Check Xcode version matches CI (26.6)
+- Check Xcode version matches CI (27.0, build 27A266a)
 - Verify simulator is clean: `xcrun simctl erase all`
 - Font rendering can vary - ensure system fonts are up to date
 

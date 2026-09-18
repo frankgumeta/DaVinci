@@ -60,6 +60,7 @@ for module in "${modules[@]}"; do
     fi
 
     diagnostics="$temporary_dir/$module-diagnostics.txt"
+    filtered_diagnostics="$temporary_dir/$module-filtered-diagnostics.txt"
     xcrun swift-api-digester \
         -diagnose-sdk \
         -input-paths "$baseline" \
@@ -68,9 +69,15 @@ for module in "${modules[@]}"; do
         -print-module \
         -compiler-style-diags > "$diagnostics" 2>&1
 
-    if sed '/^\/\*/d; /^[[:space:]]*$/d' "$diagnostics" | grep -q .; then
+    python3 "$root/.github/scripts/filter-api-diagnostics.py" \
+        "$baseline" \
+        "$current" \
+        "$diagnostics" \
+        --output "$filtered_diagnostics"
+
+    if sed '/^\/\*/d; /^[[:space:]]*$/d' "$filtered_diagnostics" | grep -q .; then
         echo "Breaking public API changes detected in $module:" >&2
-        cat "$diagnostics" >&2
+        cat "$filtered_diagnostics" >&2
         exit 1
     fi
     echo "API baseline passed for $module"

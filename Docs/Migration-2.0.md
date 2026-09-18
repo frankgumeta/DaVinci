@@ -8,6 +8,13 @@ to find than one the compiler points at.
 
 This guide covers every breaking change and the exact replacement for each.
 
+## Toolchain requirement
+
+DaVinci 2.0 requires Xcode 27.0 and Swift tools 6.4 while retaining Swift 6
+language mode and an iOS 17 deployment target. Update the development and CI
+toolchains before resolving 2.0; adopting Xcode 27 does not require raising an
+application's deployment target to iOS 27.
+
 ## At a glance
 
 | 1.4 | 2.0 | Notes |
@@ -136,13 +143,14 @@ DSText(text, role: .body)
 4. Review button-adjacent layouts for the smaller label typography.
 5. Replace hand-rolled subheadline, footnote and control-label styles with the
    new tokens.
+6. Update local and CI environments to Xcode 27.0 and Swift tools 6.4.
 
 ## Pinning the pre-release
 
-`2.0.0-alpha.1` carries the full 2.0 public API. The remaining work before 2.0.0
-is coverage and documentation — previews, gallery screens, snapshots, list
-performance baselines and accessibility tests — none of which changes the API
-surface. Pin it exactly:
+`2.0.0-alpha.1` carries the full 2.0 public API. The local release gates now cover
+previews, gallery screens, snapshots, list performance baselines, accessibility
+tests, DocC, API drift, and the iOS 17.5 compatibility lane. Publication still
+depends on the release checklist and an approved tag. Pin the alpha exactly:
 
 ```swift
 .package(url: "https://github.com/frankgumeta/DaVinci.git", exact: "2.0.0-alpha.1")

@@ -49,9 +49,17 @@ Before publishing a version:
 4. Compare the public API with the previous tag and classify every difference.
 5. Verify installation from a minimal external consumer app.
 
-CI also compares the compiled Swift interface of every public product against the
-checked-in 1.4.0 LTS baseline. After an intentional release-level API review, update
-that baseline with:
+There are two API baselines with different jobs:
+
+- The 1.4.0 baseline is historical evidence for the major migration and remains
+  unchanged.
+- The 2.0.0 baseline is the active development/release gate after the 2.0 public
+  surface is approved. It is compared only against DaVinci-owned declarations;
+  SDK-owned `EnvironmentValues` conformance churn is filtered by an exact,
+  regression-tested rule.
+
+CI compares the compiled Swift interface of every public product against the
+active baseline. After an intentional release-level API review, update it with:
 
 ```bash
 xcodebuild build \

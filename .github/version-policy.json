@@ -1,0 +1,9 @@
+{
+  "stableDependencyVersion": "1.4.0",
+  "developmentVersion": "2.0.0",
+  "currentPreRelease": "2.0.0-alpha.1",
+  "minimumIOS": "17.0",
+  "swiftTools": "6.4",
+  "swiftLanguage": "6",
+  "xcode": "27.0"
+}
