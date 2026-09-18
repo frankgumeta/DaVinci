@@ -81,6 +81,19 @@ struct DSTextAttributedStringTests {
         #expect(result[resultLinkRange].link == url)
     }
 
+    @Test func linksKeepTheSystemTintAndNeighboursGetTheColor() throws {
+        var input = AttributedString("Read the license terms")
+        let linkRange = try #require(input.range(of: "license"))
+        input[linkRange].link = try #require(URL(string: "https://example.com/license"))
+
+        let result = styled(input, role: .footnote, color: .red)
+        let resultLinkRange = try #require(result.range(of: "license"))
+        let resultPlainRange = try #require(result.range(of: "Read"))
+
+        #expect(result[resultLinkRange].foregroundColor == nil)
+        #expect(result[resultPlainRange].foregroundColor == .red)
+    }
+
     @Test func unstyledNeighboursOfAStyledRunStillGetTheBaseline() throws {
         var input = AttributedString("before bold after")
         let boldRange = try #require(input.range(of: "bold"))

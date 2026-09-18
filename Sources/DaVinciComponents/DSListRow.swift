@@ -111,16 +111,17 @@ public struct DSListRow<Leading: View, Content: View, Trailing: View>: View {
     }
 
     public var body: some View {
-        HStack(alignment: alignment, spacing: SpacingTokens.space3) {
-            leading
-            content
-                .frame(maxWidth: .infinity, alignment: .leading)
-            // The trailing slot stays centred on the row even when the rest is
-            // top-aligned: a control such as a switch belongs to the row as a
-            // whole, not to the first line of its text. Expanding to the row's
-            // height and centring inside is what keeps those two independent.
+        // The trailing slot stays centred on the row even when the rest is
+        // top-aligned: a control such as a switch belongs to the row as a whole,
+        // not to the first line of its text. Nesting keeps `alignment` scoped to
+        // leading and content, so the row still hugs its content's height.
+        HStack(alignment: .center, spacing: SpacingTokens.space3) {
+            HStack(alignment: alignment, spacing: SpacingTokens.space3) {
+                leading
+                content
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
             trailing
-                .frame(maxHeight: .infinity)
         }
         .padding(.vertical, SpacingTokens.space2)
         .frame(minHeight: ControlHeightTokens.minimumHitTarget)

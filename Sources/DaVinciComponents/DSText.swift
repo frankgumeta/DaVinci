@@ -187,6 +187,8 @@ public struct DSText: View {
     /// Merges the role's typography and colour into `attributed` as a baseline.
     ///
     /// Uses `.keepCurrent`, so attributes already present on a run are never replaced.
+    /// Link runs without an explicit colour are left uncoloured: SwiftUI only applies
+    /// its link tint to runs with no foreground colour of their own.
     nonisolated internal static func styled(
         _ attributed: AttributedString,
         style: DSTextStyle,
@@ -194,10 +196,16 @@ public struct DSText: View {
         color: Color
     ) -> AttributedString {
         var result = attributed
-        var baseline = AttributeContainer()
-        baseline.font = style.font(family: family)
-        baseline.foregroundColor = color
-        result.mergeAttributes(baseline, mergePolicy: .keepCurrent)
+        var fontBaseline = AttributeContainer()
+        fontBaseline.font = style.font(family: family)
+        result.mergeAttributes(fontBaseline, mergePolicy: .keepCurrent)
+
+        var colorBaseline = AttributeContainer()
+        colorBaseline.foregroundColor = color
+        let plainRanges = result.runs.filter { $0.link == nil }.map(\.range)
+        for range in plainRanges {
+            result[range].mergeAttributes(colorBaseline, mergePolicy: .keepCurrent)
+        }
         return result
     }
 

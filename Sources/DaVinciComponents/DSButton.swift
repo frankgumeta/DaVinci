@@ -177,10 +177,11 @@ public struct DSButton: View {
                 }
             }
             // Expanded after the background so the touch area grows without the
-            // painted control growing with it.
+            // painted control growing with it. Only compact buttons expand: the
+            // frame also affects layout, and regular buttons keep their 1.x size.
             .frame(
-                minWidth: ControlHeightTokens.minimumHitTarget,
-                minHeight: ControlHeightTokens.minimumHitTarget
+                minWidth: hitTargetMinimum,
+                minHeight: hitTargetMinimum
             )
             .contentShape(Rectangle())
         }
@@ -239,6 +240,13 @@ public struct DSButton: View {
         switch size {
         case .regular: ControlHeightTokens.medium
         case .compact: ControlHeightTokens.compact
+        }
+    }
+
+    internal var hitTargetMinimum: CGFloat? {
+        switch size {
+        case .regular: nil
+        case .compact: ControlHeightTokens.minimumHitTarget
         }
     }
 

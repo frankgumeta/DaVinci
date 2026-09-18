@@ -56,12 +56,14 @@ public struct DSActionRow<Content: View>: View {
         Button(action: action) {
             content
                 .frame(maxWidth: .infinity, alignment: .leading)
+                // Inside the label and before the content shape, so the whole
+                // minimum height is tappable, not just the text.
+                .frame(minHeight: ControlHeightTokens.minimumHitTarget)
                 .contentShape(Rectangle())
         }
         .buttonStyle(DSPressableButtonStyle(duration: theme.motion.fast))
         .disabled(!isInteractive)
         .opacity(isDisabled ? OpacityTokens.disabled : 1)
-        .frame(minHeight: ControlHeightTokens.minimumHitTarget)
         .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
     }
 
@@ -146,12 +148,12 @@ public struct DSSelectableRow<Leading: View, Content: View>: View {
                 DSRowAccessory(.selection(isSelected: isSelected))
             }
             .padding(.vertical, SpacingTokens.space2)
+            .frame(minHeight: ControlHeightTokens.minimumHitTarget)
             .contentShape(Rectangle())
         }
         .buttonStyle(DSPressableButtonStyle(duration: theme.motion.fast))
         .disabled(isDisabled)
         .opacity(isDisabled ? OpacityTokens.disabled : 1)
-        .frame(minHeight: ControlHeightTokens.minimumHitTarget)
         .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
     }
 
