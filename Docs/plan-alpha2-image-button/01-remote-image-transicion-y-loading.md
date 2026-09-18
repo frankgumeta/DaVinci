@@ -6,6 +6,19 @@ Implementar una aparición suave y accesible de la imagen cargada, junto con un
 contenido de loading personalizable que preserve el comportamiento existente por
 defecto.
 
+## Estado de ejecución
+
+Completada el 2026-09-18. La implementación conserva el skeleton/shimmer por
+defecto, añade el `@ViewBuilder loading`, aplica la transición sólo de loading a
+success y desactiva la animación con Reduce Motion. El placeholder SF Symbol de
+error y la ruta de `nil URL` no cambian. La API baseline queda pendiente de la
+revisión de integración definida en la Fase 3.
+
+Evidencia ejecutada: SwiftLint estricto para los archivos afectados, tests de
+comportamiento, compilación de ejemplos públicos y suite de snapshots de
+`DSRemoteImage` en el simulador iOS 27.0; se añadieron snapshots estáticos del
+loading personalizado en light/dark.
+
 ## Alcance
 
 - Añadir lectura de `accessibilityReduceMotion` en `DSRemoteImage`.

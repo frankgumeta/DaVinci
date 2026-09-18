@@ -80,6 +80,27 @@ typealias PlatformColor = NSColor
     .dsTheme(.defaultTheme)
 }
 
+#Preview("DSRemoteImage — Custom Loading") {
+    DSRemoteImage(
+        url: URL(string: "https://example.com/photo.jpg"),
+        geometry: .rounded(
+            size: CGSize(width: 120, height: 120),
+            cornerRadius: RadiusTokens.medium
+        ),
+        loading: {
+            VStack(spacing: SpacingTokens.space2) {
+                ProgressView()
+                Text("Loading image")
+                    .font(.callout)
+            }
+            .foregroundStyle(.secondary)
+        }
+    )
+    .padding()
+    .environment(\.dsImageLoader, SlowPreviewImageLoader())
+    .dsTheme(.defaultTheme)
+}
+
 #Preview("DSRemoteImage — Success") {
     VStack(spacing: 16) {
         DSRemoteImage(

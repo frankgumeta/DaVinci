@@ -51,6 +51,21 @@ struct DSRemoteImageGalleryScreen: View {
                             )
                         )
                     }
+
+                    DSRemoteImage(
+                        url: URL(string: "https://example.com/custom-loading.jpg"),
+                        geometry: .rounded(
+                            size: CGSize(width: 216, height: 80),
+                            cornerRadius: RadiusTokens.medium
+                        ),
+                        loading: {
+                            HStack(spacing: SpacingTokens.space2) {
+                                ProgressView()
+                                Text("Loading image")
+                            }
+                            .foregroundStyle(.secondary)
+                        }
+                    )
                 }
 
                 GallerySection(title: "Additional Rounded Size") {

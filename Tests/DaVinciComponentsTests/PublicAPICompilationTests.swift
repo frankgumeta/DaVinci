@@ -29,6 +29,26 @@ struct PublicAPICompilationTests {
             geometry: .circle(diameter: 80),
             placeholder: DSSymbol(systemName: "person.crop.circle")
         )
+        _ = DSRemoteImage(
+            url: URL(string: "https://example.com/photo.jpg"),
+            geometry: .rounded(
+                size: CGSize(width: 120, height: 80),
+                cornerRadius: RadiusTokens.medium
+            ),
+            loading: {
+                Image(systemName: "hourglass")
+            }
+        )
+        _ = DSRemoteImage(
+            url: URL(string: "https://example.com/avatar.jpg"),
+            geometry: .circle(diameter: 80),
+            loading: {
+                ZStack {
+                    ProgressView()
+                    Text("Loading")
+                }
+            }
+        )
         _ = DSSegmentedControl(
             options: ["List", "Grid"],
             selectedIndex: selectionBinding,

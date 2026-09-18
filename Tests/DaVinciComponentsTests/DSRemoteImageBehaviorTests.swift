@@ -144,6 +144,33 @@ struct DSRemoteImageBehaviorTests {
         #expect(DSRemoteImage.initialPhase(for: url) == .loading)
     }
 
+    @Test func successTransitionOnlyAnimatesFromLoadingWithoutReduceMotion() {
+        #expect(
+            DSRemoteImage.shouldAnimateSuccessTransition(
+                from: .loading,
+                reduceMotion: false
+            )
+        )
+        #expect(
+            !DSRemoteImage.shouldAnimateSuccessTransition(
+                from: .loading,
+                reduceMotion: true
+            )
+        )
+        #expect(
+            !DSRemoteImage.shouldAnimateSuccessTransition(
+                from: .failure,
+                reduceMotion: false
+            )
+        )
+        #expect(
+            !DSRemoteImage.shouldAnimateSuccessTransition(
+                from: .success,
+                reduceMotion: false
+            )
+        )
+    }
+
     @Test func loaderConfigurationParticipatesInTaskIdentity() {
         let url = URL(string: "https://example.com/photo.jpg")
         let firstLoader = TaskIdentityImageLoader(identity: "tenant-a", maximumPayloadBytes: 1_024)

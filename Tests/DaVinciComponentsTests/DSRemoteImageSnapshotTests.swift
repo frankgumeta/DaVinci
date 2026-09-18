@@ -150,6 +150,52 @@ struct DSRemoteImageSnapshotTests {
         )
     }
 
+    // MARK: - Custom Loading Content
+
+    @Test func remoteImageCustomLoading_light() throws {
+        let view = DSRemoteImage(
+            url: URL(string: "https://example.com/test.jpg"),
+            geometry: .rounded(
+                size: CGSize(width: 120, height: 80),
+                cornerRadius: RadiusTokens.medium
+            ),
+            loading: {
+                Image(systemName: "hourglass")
+                    .font(.title2)
+                    .foregroundStyle(.secondary)
+            }
+        )
+        try SnapshotTester.assertSnapshot(
+            view,
+            named: "remote-image-custom-loading",
+            size: CGSize(width: 140, height: 100),
+            colorScheme: .light,
+            record: recordMode
+        )
+    }
+
+    @Test func remoteImageCustomLoading_dark() throws {
+        let view = DSRemoteImage(
+            url: URL(string: "https://example.com/test.jpg"),
+            geometry: .rounded(
+                size: CGSize(width: 120, height: 80),
+                cornerRadius: RadiusTokens.medium
+            ),
+            loading: {
+                Image(systemName: "hourglass")
+                    .font(.title2)
+                    .foregroundStyle(.secondary)
+            }
+        )
+        try SnapshotTester.assertSnapshot(
+            view,
+            named: "remote-image-custom-loading",
+            size: CGSize(width: 140, height: 100),
+            colorScheme: .dark,
+            record: recordMode
+        )
+    }
+
     // MARK: - Geometry
 
     @Test func remoteImageCirclePlaceholder_light() throws {

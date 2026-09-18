@@ -4,7 +4,8 @@ import DaVinciTokens
 // MARK: - DSRemoteImage
 
 /// An async image loader that shows a shimmering skeleton while loading,
-/// the remote image on success, or a placeholder on failure.
+/// optional custom loading content, the remote image on success, or a
+/// placeholder on failure.
 ///
 /// Uses the `dsImageLoader` environment value for data fetching (testable)
 /// and an internal, cost-limited pipeline to validate, deduplicate, decode,
@@ -19,7 +20,7 @@ import DaVinciTokens
 /// cache identity automatically cancels the previous load and starts a new one.
 ///
 /// A `nil` URL is resolved synchronously to the placeholder state, so the view
-/// never renders a shimmering skeleton for content that can never load.
+/// never renders loading content for content that can never load.
 internal struct DSRemoteImageLoadIdentity: Equatable {
     let url: URL?
     let loaderCacheIdentity: String
@@ -54,12 +55,14 @@ public struct DSRemoteImage: View {
 
     @Environment(\.dsTheme) private var theme
     @Environment(\.dsImageLoader) private var loader
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let url: URL?
     internal let geometry: Geometry
     private let contentMode: ContentMode
     private let showsShimmer: Bool
     private let placeholder: DSSymbol?
+    private let loadingContent: AnyView?
     private let label: String?
     private let isDecorative: Bool
 
@@ -78,11 +81,72 @@ public struct DSRemoteImage: View {
         accessibilityLabel: String? = nil,
         isDecorative: Bool = false
     ) {
+        self.init(
+            url: url,
+            geometry: geometry,
+            contentMode: contentMode,
+            showsShimmer: showsShimmer,
+            placeholder: placeholder,
+            accessibilityLabel: accessibilityLabel,
+            isDecorative: isDecorative,
+            loadingContent: nil
+        )
+    }
+
+    /// Creates a remotely loaded image with custom loading content.
+    ///
+    /// The loading content occupies the component's geometry and is hidden from
+    /// accessibility because the component owns the loading announcement. DaVinci
+    /// animates its own transition and does not add shimmer to custom content.
+    ///
+    /// - Parameters:
+    ///   - url: The remote image URL.
+    ///   - geometry: Required size and clipping configuration.
+    ///   - contentMode: How the decoded image fills the geometry (default: `.fill`).
+    ///   - showsShimmer: Whether the default skeleton shimmers; ignored for custom
+    ///     loading content.
+    ///   - placeholder: SF Symbol shown when the URL is missing or loading fails.
+    ///   - accessibilityLabel: Optional label for the image state.
+    ///   - isDecorative: Whether to remove the component from the accessibility tree.
+    ///   - loading: A transient view shown until the remote image decodes.
+    public init<Loading: View>(
+        url: URL?,
+        geometry: Geometry,
+        contentMode: ContentMode = .fill,
+        showsShimmer: Bool = true,
+        placeholder: DSSymbol? = nil,
+        accessibilityLabel: String? = nil,
+        isDecorative: Bool = false,
+        @ViewBuilder loading: @escaping () -> Loading
+    ) {
+        self.init(
+            url: url,
+            geometry: geometry,
+            contentMode: contentMode,
+            showsShimmer: showsShimmer,
+            placeholder: placeholder,
+            accessibilityLabel: accessibilityLabel,
+            isDecorative: isDecorative,
+            loadingContent: AnyView(loading())
+        )
+    }
+
+    private init(
+        url: URL?,
+        geometry: Geometry,
+        contentMode: ContentMode,
+        showsShimmer: Bool,
+        placeholder: DSSymbol?,
+        accessibilityLabel: String?,
+        isDecorative: Bool,
+        loadingContent: AnyView?
+    ) {
         self.url = url
         self.geometry = geometry.normalized
         self.contentMode = contentMode
         self.showsShimmer = showsShimmer
         self.placeholder = placeholder
+        self.loadingContent = loadingContent
         self.label = accessibilityLabel
         self.isDecorative = isDecorative
         _phase = State(initialValue: Self.initialPhase(for: url))
@@ -121,12 +185,8 @@ public struct DSRemoteImage: View {
     private var content: some View {
         switch phase {
         case .loading:
-            DSSkeletonBlock(
-                height: geometry.size.height,
-                width: geometry.size.width,
-                cornerRadius: geometry.cornerRadius,
-                isShimmering: showsShimmer
-            )
+            loadingView
+                .transition(.opacity)
 
         case .success:
             if let decodedImage {
@@ -135,10 +195,12 @@ public struct DSRemoteImage: View {
                     decodedImage
                         .resizable()
                         .scaledToFill()
+                        .transition(.opacity)
                 case .fit:
                     decodedImage
                         .resizable()
                         .scaledToFit()
+                        .transition(.opacity)
                 }
             } else {
                 placeholderView
@@ -146,6 +208,21 @@ public struct DSRemoteImage: View {
 
         case .failure:
             placeholderView
+        }
+    }
+
+    @ViewBuilder
+    private var loadingView: some View {
+        if let loadingContent {
+            loadingContent
+                .accessibilityHidden(true)
+        } else {
+            DSSkeletonBlock(
+                height: geometry.size.height,
+                width: geometry.size.width,
+                cornerRadius: geometry.cornerRadius,
+                isShimmering: showsShimmer
+            )
         }
     }
 
@@ -237,6 +314,13 @@ public struct DSRemoteImage: View {
         url == nil ? .failure : .loading
     }
 
+    internal static func shouldAnimateSuccessTransition(
+        from phase: LoadPhase,
+        reduceMotion: Bool
+    ) -> Bool {
+        phase == .loading && !reduceMotion
+    }
+
     private func load(_ url: URL?) async {
         phase = Self.initialPhase(for: url)
         decodedImage = nil
@@ -247,11 +331,24 @@ public struct DSRemoteImage: View {
         switch result {
         case .success(let decoded):
             #if canImport(UIKit)
-            decodedImage = Image(uiImage: decoded.image)
+            let image = Image(uiImage: decoded.image)
             #elseif canImport(AppKit)
-            decodedImage = Image(nsImage: decoded.image)
+            let image = Image(nsImage: decoded.image)
             #endif
-            phase = .success
+
+            let animate = Self.shouldAnimateSuccessTransition(
+                from: phase,
+                reduceMotion: reduceMotion
+            )
+            if animate {
+                withAnimation(theme.motion.easeInOutNormal) {
+                    decodedImage = image
+                    phase = .success
+                }
+            } else {
+                decodedImage = image
+                phase = .success
+            }
         case .failure:
             phase = .failure
         case .cancelled:
