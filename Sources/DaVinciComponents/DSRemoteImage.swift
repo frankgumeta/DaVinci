@@ -15,11 +15,17 @@ import DaVinciTokens
 /// not retried automatically. Cancelling one consumer does not cancel shared
 /// work that another image view may still need.
 ///
-/// Lifecycle is managed via `.task(id:)` — changing the URL automatically
-/// cancels the previous load and starts a new one.
+/// Lifecycle is managed via `.task(id:)` — changing the URL or the loader's
+/// cache identity automatically cancels the previous load and starts a new one.
 ///
 /// A `nil` URL is resolved synchronously to the placeholder state, so the view
 /// never renders a shimmering skeleton for content that can never load.
+internal struct DSRemoteImageLoadIdentity: Equatable {
+    let url: URL?
+    let loaderCacheIdentity: String
+    let maximumPayloadBytes: Int
+}
+
 public struct DSRemoteImage: View {
 
     // MARK: - ContentMode
@@ -89,9 +95,24 @@ public struct DSRemoteImage: View {
             .frame(width: geometry.size.width, height: geometry.size.height)
             .clipShape(geometry.clipShape)
             .modifier(DSAccessibilityModifier(descriptor: accessibilityDescriptor))
-            .task(id: url) {
+            .task(id: loadTaskIdentity) {
                 await load(url)
             }
+    }
+
+    private var loadTaskIdentity: DSRemoteImageLoadIdentity {
+        Self.loadTaskIdentity(for: url, using: loader)
+    }
+
+    internal static func loadTaskIdentity(
+        for url: URL?,
+        using loader: any DSImageLoading
+    ) -> DSRemoteImageLoadIdentity {
+        DSRemoteImageLoadIdentity(
+            url: url,
+            loaderCacheIdentity: loader.cacheIdentity,
+            maximumPayloadBytes: loader.maximumPayloadBytes
+        )
     }
 
     // MARK: - Content

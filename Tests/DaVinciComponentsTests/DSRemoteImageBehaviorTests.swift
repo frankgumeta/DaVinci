@@ -5,6 +5,17 @@ import UIKit
 @testable import DaVinciTokens
 @testable import DaVinciComponents
 
+private struct TaskIdentityImageLoader: DSImageLoading {
+    let identity: String
+    let maximumPayloadBytes: Int
+
+    var cacheIdentity: String { identity }
+
+    func loadImageData(from url: URL) async throws -> Data {
+        Data()
+    }
+}
+
 // MARK: - DSRemoteImage Behavior Tests
 
 @Suite("DSRemoteImage Behavior")
@@ -131,6 +142,23 @@ struct DSRemoteImageBehaviorTests {
     @Test func validURLStartsInTheLoadingPhase() {
         let url = URL(string: "https://example.com/photo.jpg")
         #expect(DSRemoteImage.initialPhase(for: url) == .loading)
+    }
+
+    @Test func loaderConfigurationParticipatesInTaskIdentity() {
+        let url = URL(string: "https://example.com/photo.jpg")
+        let firstLoader = TaskIdentityImageLoader(identity: "tenant-a", maximumPayloadBytes: 1_024)
+        let matchingLoader = TaskIdentityImageLoader(identity: "tenant-a", maximumPayloadBytes: 1_024)
+        let differentTenant = TaskIdentityImageLoader(identity: "tenant-b", maximumPayloadBytes: 1_024)
+        let differentLimit = TaskIdentityImageLoader(identity: "tenant-a", maximumPayloadBytes: 2_048)
+
+        let firstIdentity = DSRemoteImage.loadTaskIdentity(for: url, using: firstLoader)
+        let matchingIdentity = DSRemoteImage.loadTaskIdentity(for: url, using: matchingLoader)
+        let differentTenantIdentity = DSRemoteImage.loadTaskIdentity(for: url, using: differentTenant)
+        let differentLimitIdentity = DSRemoteImage.loadTaskIdentity(for: url, using: differentLimit)
+
+        #expect(firstIdentity == matchingIdentity)
+        #expect(firstIdentity != differentTenantIdentity)
+        #expect(firstIdentity != differentLimitIdentity)
     }
 
     // MARK: - Custom Label Always Wins
