@@ -37,6 +37,12 @@ jobs:
     - name: Verify Toolchain
       run: bash .github/scripts/verify-toolchain.sh
 
+    - name: Install SwiftLint
+      run: brew install swiftlint
+
+    - name: Run SwiftLint
+      run: swiftlint lint --strict
+
     - name: Validate Package Contract
       run: python3 .github/scripts/check-package-contract.py
 
