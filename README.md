@@ -19,13 +19,12 @@ requirement; it does not require a matching iOS deployment target. See the
 [compatibility matrix](Docs/Compatibility.md) for the supported toolchain and test
 strategy.
 
-Version 1.4 is the stable long-term-support line. See the
-[support policy](Docs/Support.md) and [security policy](SECURITY.md) for its
-compatibility and maintenance contract.
+Version 2.0.0 is the stable line and version 1.4 remains long-term support. See
+the [support policy](Docs/Support.md) and [security policy](SECURITY.md) for
+their compatibility and maintenance contracts.
 
-The 2.0 line is currently prepared for release from the `2.0.0-alpha.2`
-pre-release. It uses the Xcode 27 contract documented below; the stable package
-dependency remains `1.4.0` until the `v2.0.0` tag is published.
+The 2.0 line uses the Xcode 27 contract documented below. The `v2.0.0` tag is
+the immutable publication point for the stable package.
 
 ## Features
 
@@ -55,7 +54,7 @@ Or add it to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/frankgumeta/DaVinci.git", from: "1.4.0")
+    .package(url: "https://github.com/frankgumeta/DaVinci.git", from: "2.0.0")
 ],
 targets: [
     .target(
@@ -67,9 +66,9 @@ targets: [
 ]
 ```
 
-To evaluate the active alpha, pin it explicitly with
-`.package(..., exact: "2.0.0-alpha.2")`; the stable `from: "1.4.0"` example above
-remains the supported LTS installation until 2.0.0 is published.
+The previous alpha can be evaluated by pinning it explicitly with
+`.package(..., exact: "2.0.0-alpha.2")`; production consumers should use the
+stable `from: "2.0.0"` requirement above.
 
 ## Quick Start
 

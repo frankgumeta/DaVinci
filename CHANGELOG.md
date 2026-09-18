@@ -8,7 +8,26 @@ except where a release documents an explicit pre-adoption exception.
 
 ## [Unreleased]
 
-<!-- Reserved for adjustments after alpha.2. -->
+<!-- Reserved for compatible adjustments after 2.0.0. -->
+
+## [2.0.0] - 2026-09-18
+
+> **Stable release.** DaVinci 2.0 is the supported post-1.4 API line; 1.4.x
+> remains available as the long-term-support branch.
+
+### Added
+- Three-step title typography, label roles, attributed text, surface styles,
+  list/action/selectable rows, activity indicators, and expanded button APIs.
+- Accessibility contracts, localized announcements, remote-image validation,
+  cache isolation, performance checks, and minimum-runtime validation.
+
+### Changed
+- The 2.0 line requires Xcode 27.0 and Swift tools 6.4 while retaining the
+  iOS 17 deployment target.
+
+### Removed
+- **Breaking:** `DSTypography.title` and `DSText.Role.title`; use the title
+  scale documented in [Migration-2.0](Docs/Migration-2.0.md).
 
 ## [2.0.0-alpha.2] - 2026-09-18
 

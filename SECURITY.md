@@ -4,6 +4,7 @@
 
 | Version | Supported |
 |---|---|
+| 2.0.x | Yes |
 | 1.4.x | Yes |
 | 1.3.x and earlier | No |
 
@@ -19,5 +20,6 @@ exhaustion, cache isolation, or concurrency safety should include representative
 payload and loader details when it is safe to share them.
 
 The maintainer will acknowledge the report, assess severity, and coordinate a
-compatibility-preserving 1.4.x patch when the LTS line is affected. No fixed response
-time is promised by this independently maintained project.
+fix on the affected supported line, including a compatibility-preserving 1.4.x
+patch when the LTS line is affected. No fixed response time is promised by this
+independently maintained project.

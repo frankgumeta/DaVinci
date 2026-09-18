@@ -1,26 +1,27 @@
 # Long-term support policy
 
-DaVinci 1.4 remains the stable long-term-support line. Alpha.1 is closed and 2.0.0-
-alpha.2 is the active pre-release until the approved `v2.0.0` tag is
-published. It is source-breaking against 1.4, so adopting it is a migration rather
-than an upgrade. See [Migration-2.0](Migration-2.0.md).
+DaVinci 2.0 is the stable line and 1.4 remains the long-term-support branch. The
+2.0 API is source-breaking against 1.4, so adopting it is a migration rather than
+an upgrade. See [Migration-2.0](Migration-2.0.md).
 
 ## Supported lines
 
 | Version | Status | Scope |
 |---|---|---|
-| 2.0.0-alpha.2 | Pre-release | The active 2.0 API surface; adjustments remain allowed before the stable freeze |
+| 2.0.x | Stable | Compatibility-preserving correctness, security, accessibility, and documentation fixes |
 | 1.4.x | LTS | Compatibility-preserving correctness, security, accessibility, documentation, and supported-toolchain fixes |
 | 1.3.x and earlier | Unsupported | Upgrade to the latest 1.4 patch release |
 
 The 1.4 line remains supported until an end-of-support date is explicitly
-announced in this document and the README. No end-of-support date is currently set;
-in particular, the 2.0 pre-release does not end support for 1.4.
+announced in this document and the README. No end-of-support date is currently set.
 
 ## Stability contract
 
 - Patch releases in 1.4.x do not remove public APIs or introduce source-breaking
   signature and behavior changes.
+- Patch releases in 2.0.x accept compatible correctness, security, accessibility,
+  and documentation fixes; new compatible APIs belong in 2.1 and source-breaking
+  changes wait for 3.0.
 - Security and correctness fixes are prioritized over expanding the component
   catalog.
 - New opt-in APIs belong in a later minor version and must preserve the 1.4 public
@@ -40,14 +41,7 @@ The 2.0 development line uses Xcode 27.0, Swift tools 6.4, and Swift 6 language
 mode while retaining iOS 17 as its deployment target. That toolchain change does
 not alter the published 1.4.x compatibility contract above.
 
-## The 2.0 pre-release
+## The 2.0 stable line
 
-`2.0.0-alpha.2` carries the current 2.0 public API and can be pinned exactly, but
-the stability contract above does not apply to it:
-
-- Pre-release versions may change API between alphas if a defect requires it.
-- Alpha.2 permits further API and rendering adjustments before the 2.0.0 freeze.
-- The existing coverage, documentation, visual, performance, and compatibility
-  evidence is inherited from the alpha.1 closure and must be rerun after changes.
-- Pin it with `exact:` rather than a range, so a later alpha cannot be resolved
-  into a build without an explicit decision.
+The `2.0.0` release is the supported stable API line. The 1.4.x LTS branch remains
+available for consumers that cannot yet complete the migration.
