@@ -1,18 +1,18 @@
-# Fase 2 — DSButton con ancho intrínseco
+# Fase 2 — DSButton: decisión de no cambio
 
 ## Objetivo
 
-Hacer que `DSButton` abrace su contenido por defecto y que el ancho completo sea
-una decisión explícita del layout consumidor mediante modificadores SwiftUI.
+Evaluar el cambio a ancho intrínseco y cerrar el contrato sin alterar el
+componente cuando el layout externo no puede preservar su superficie pintada.
 
 ## Estado de ejecución
 
-Bloqueada en el checkpoint previo a implementación, 2026-09-18. El prototipo
-retiró temporalmente el `maxWidth` interno y probó
+Cerrada sin cambios de producto el 2026-09-18. El prototipo retiró
+temporalmente el `maxWidth` interno y probó
 `.frame(maxWidth: .infinity)` desde el consumidor: el wrapper se expandió, pero
-el fondo pintado permaneció intrínseco. No se cambió `DSButton` ni sus snapshots.
-Se necesita decidir cómo debe obtenerse un CTA full-width con el appearance de
-DaVinci antes de continuar.
+el fondo pintado permaneció intrínseco. Se conserva el `DSButton` full-width
+regular actual y sus snapshots; el consumidor puede limitar el área contenedora
+cuando necesite un botón más estrecho.
 
 ## Alcance
 

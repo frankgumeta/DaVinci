@@ -81,14 +81,15 @@ intrínseco de `DSButton`.
 - Está acordado qué snapshots cambiarán y que sólo se regrabarán tras revisar el
   resultado de implementación.
 
-## Resultado del checkpoint de ancho
+## Decisión de alcance del botón
 
 Validado el 2026-09-18 con el `DSButton` sin su `maxWidth` interno y una
-composición consumidora `.frame(maxWidth: .infinity)`. El contenedor externo sí
+composición consumidora `.frame(maxWidth: .infinity)`: el contenedor externo sí
 ocupa el canvas disponible, pero la superficie pintada conserva el ancho
-intrínseco del título y su padding. Por tanto, no existe todavía una receta
-SwiftUI externa válida que preserve el appearance actual; la Fase 2 queda
-bloqueada antes de modificar el producto hasta resolver esta decisión.
+intrínseco. La decisión es dejar `DSButton` sin cambios de producto ni
+snapshots; quien implemente una pantalla puede limitar el contenedor que recibe
+el botón para controlar el área disponible. No se añade una API DaVinci de
+width/fill.
 
 ## Pruebas requeridas
 

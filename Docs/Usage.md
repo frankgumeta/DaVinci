@@ -206,6 +206,27 @@ Use `.rectangle(size:)` for edge-to-edge media and
 `.rounded(size:cornerRadius:)` for cards or thumbnails. Geometry is required so
 dimensions and clipping remain one coherent configuration.
 
+While the image loads, the existing initializer shows the design-system
+skeleton and keeps its shimmer policy. If a screen needs its own transient
+content, use the `loading` view-builder; the component crossfades from that view
+to the decoded image and switches immediately when Reduce Motion is enabled:
+
+```swift
+DSRemoteImage(
+    url: avatarURL,
+    geometry: .circle(diameter: 80),
+    accessibilityLabel: "Profile photo",
+    loading: {
+        ProgressView()
+    }
+)
+```
+
+The custom loading view is hidden from accessibility because `DSRemoteImage`
+announces the loading state once. A failed request keeps the existing error
+behavior: `placeholder` may provide a `DSSymbol`, otherwise the default `photo`
+symbol is shown.
+
 ---
 
 ## Common Patterns

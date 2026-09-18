@@ -9655,6 +9655,124 @@
             "init_kind": "Designated"
           },
           {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(url:geometry:contentMode:showsShimmer:placeholder:accessibilityLabel:isDecorative:loading:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "DSRemoteImage",
+                "printedName": "DaVinciComponents.DSRemoteImage",
+                "usr": "s:17DaVinciComponents13DSRemoteImageV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Foundation.URL?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "URL",
+                    "printedName": "Foundation.URL",
+                    "usr": "s:10Foundation3URLV"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNameAlias",
+                "name": "Geometry",
+                "printedName": "DaVinciComponents.DSRemoteImage.Geometry",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "DSRemoteImageGeometry",
+                    "printedName": "DaVinciComponents.DSRemoteImageGeometry",
+                    "usr": "s:17DaVinciComponents21DSRemoteImageGeometryO"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "ContentMode",
+                "printedName": "DaVinciComponents.DSRemoteImage.ContentMode",
+                "hasDefaultArg": true,
+                "usr": "s:17DaVinciComponents13DSRemoteImageV11ContentModeO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "DaVinciComponents.DSSymbol?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "DSSymbol",
+                    "printedName": "DaVinciComponents.DSSymbol",
+                    "usr": "s:17DaVinciComponents8DSSymbolV"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "() -> Loading",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "GenericTypeParam",
+                    "printedName": "Loading"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:17DaVinciComponents13DSRemoteImageV3url8geometry11contentMode12showsShimmer11placeholder18accessibilityLabel12isDecorative7loadingAC10Foundation3URLVSg_AA0dE8GeometryOAC07ContentI0OSbAA8DSSymbolVSgSSSgSbxyctc7SwiftUI4ViewRzlufc",
+            "mangledName": "$s17DaVinciComponents13DSRemoteImageV3url8geometry11contentMode12showsShimmer11placeholder18accessibilityLabel12isDecorative7loadingAC10Foundation3URLVSg_AA0dE8GeometryOAC07ContentI0OSbAA8DSSymbolVSgSSSgSbxyctc7SwiftUI4ViewRzlufc",
+            "moduleName": "DaVinciComponents",
+            "genericSig": "<Loading where Loading : SwiftUI.View>",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom"
+            ],
+            "init_kind": "Designated"
+          },
+          {
             "kind": "Var",
             "name": "body",
             "printedName": "body",

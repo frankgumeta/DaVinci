@@ -239,7 +239,19 @@ DSRemoteImage(
     geometry: .circle(diameter: 80),
     accessibilityLabel: "User avatar"
 )
+
+// The skeleton/shimmer remains the default loading state. Supply any SwiftUI
+// view for a custom transient state when the screen needs one.
+DSRemoteImage(
+    url: avatarURL,
+    geometry: .circle(diameter: 80),
+    loading: { ProgressView() }
+)
 ```
+
+`DSRemoteImage` crossfades from loading to the decoded image and makes that
+change immediate when Reduce Motion is enabled. Failed loads still show the
+optional `DSSymbol` passed as `placeholder`, or the default `photo` symbol.
 
 ### Skeleton Loading
 

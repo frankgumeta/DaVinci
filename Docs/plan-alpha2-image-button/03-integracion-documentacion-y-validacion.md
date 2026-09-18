@@ -8,8 +8,8 @@ visuales y cerrar la matriz de calidad sin congelar todavía la API estable 2.0.
 ## Alcance
 
 - Actualizar documentación pública y notas de alpha.2 con ambos cambios.
-- Clasificar `DSButton` como cambio de default visual y la nueva carga de
-  `DSRemoteImage` como API aditiva de pre-release.
+- Registrar que `DSButton` no cambia su default visual; la nueva carga de
+  `DSRemoteImage` es la única API aditiva de pre-release.
 - Revisar y aprobar sólo snapshots directamente afectados.
 - Ejecutar la matriz Xcode 27 e iOS 17.5 establecida por el repositorio.
 - Confirmar lint y cobertura de Gallery tras añadir ejemplos.
@@ -34,7 +34,8 @@ visuales y cerrar la matriz de calidad sin congelar todavía la API estable 2.0.
    - crossfade de remote image y Reduce Motion;
    - loading View personalizada y skeleton default;
    - placeholder de error sin cambios;
-   - botón de ancho intrínseco y receta SwiftUI para controlar ancho.
+   - el default full-width actual de `DSButton` y la recomendación de limitar su
+     contenedor cuando una pantalla necesite un ancho menor.
 2. Gallery y previews permiten revisar todos los casos nuevos.
 3. Snapshots afectados acompañados por una explicación concreta del diff.
 4. Suite completa, runtime mínimo, cobertura, DocC, lint, consumer y API check
@@ -45,7 +46,8 @@ visuales y cerrar la matriz de calidad sin congelar todavía la API estable 2.0.
 
 ## Criterios de salida
 
-- No quedan ejemplos que describan `regular` como full width por defecto.
+- Los ejemplos siguen describiendo correctamente `regular` como full width por
+  defecto; no se documenta un cambio de ancho que no se implementó.
 - No se confunden loading personalizado y placeholder de error.
 - Reduce Motion fue probado automática y manualmente.
 - Dos corridas visuales limpias consecutivas producen cero diff tras aprobar los
@@ -55,9 +57,8 @@ visuales y cerrar la matriz de calidad sin congelar todavía la API estable 2.0.
 - Antes de actualizar, el diff de API contiene sólo el initializer aditivo esperado.
 - La nueva API recibe aprobación explícita; después se actualiza el baseline 2.0
   de forma deliberada y `check-api-baseline.sh --check` pasa.
-- El checkpoint de ancho pintado de `DSButton` tiene evidencia. Si no existe una
-  receta SwiftUI estándar válida, fase 2 permanece sin implementar y la integración
-  se detiene pendiente de decisión del usuario.
+- El checkpoint de ancho pintado de `DSButton` tiene evidencia y la decisión de
+  no cambiar el componente está registrada.
 - El working tree queda limpio y los cambios se agrupan en commits revisables.
 
 ## Pruebas requeridas

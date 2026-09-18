@@ -145,6 +145,17 @@ DSText(text, role: .body)
    new tokens.
 6. Update local and CI environments to Xcode 27.0 and Swift tools 6.4.
 
+### Alpha.2 remote image loading
+
+`DSRemoteImage` keeps its existing skeleton/shimmer and failure placeholder
+behavior. Alpha.2 adds an optional `loading` view-builder for screens that need
+custom transient content; the component crossfades to the decoded image and
+respects Reduce Motion. No migration is required for existing initializers.
+
+`DSButton` keeps its current regular full-width default. No width API or button
+snapshot migration is included in this alpha; constrain the button's containing
+layout when a screen needs a narrower available area.
+
 ## Pinning the pre-release
 
 `2.0.0-alpha.2` carries the current 2.0 public API. The local release gates now cover

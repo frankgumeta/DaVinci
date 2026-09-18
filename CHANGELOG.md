@@ -41,6 +41,15 @@ except where a release documents an explicit pre-adoption exception.
   Swift version, package contract, and an external consumer of every public product.
 - Gallery production coverage is now gated at 60%; Tokens remain at 100% and
   Components at 95% minimum.
+- `DSRemoteImage` crossfades from loading to success using the theme's normal
+  motion token and switches immediately when Reduce Motion is enabled.
+- `DSButton` keeps its existing regular full-width default; no width API or
+  button snapshot migration is introduced in this alpha.
+
+### Added
+- An optional `DSRemoteImage` `loading` view-builder for custom transient
+  loading content. The default skeleton/shimmer and failure placeholder remain
+  unchanged.
 
 ### Fixed
 - Corrected Xcode 27 list-row layout, attributed-text, card, and snapshot
