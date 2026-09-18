@@ -39,7 +39,10 @@ class DocumentationValidationTests(unittest.TestCase):
                 '{"stableDependencyVersion": "1.4.0"}', encoding="utf-8"
             )
             (root / "README.md").write_text(
-                'from: "1.4.0"\nDSButton("Save", appearance: .primary) {}',
+                'from: "1.4.0"\n'
+                'DSText("Save", role: .titleMedium) {}\n'
+                'DSTextStyle(size: 24, lineHeight: 30, weight: .bold, relativeTo: .title2)\n'
+                'DSButton("Save", appearance: .primary) {}',
                 encoding="utf-8",
             )
             (root / "ACCESSIBILITY.md").write_text(
@@ -54,6 +57,41 @@ class DocumentationValidationTests(unittest.TestCase):
             )
 
             self.assertEqual(failures, [])
+
+    def test_detects_removed_2_0_typography_apis(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "Docs").mkdir()
+            (root / ".github").mkdir()
+            (root / ".github" / "version-policy.json").write_text(
+                '{"stableDependencyVersion": "1.4.0"}', encoding="utf-8"
+            )
+            (root / "README.md").write_text('from: "1.4.0"', encoding="utf-8")
+            (root / "Docs" / "Usage.md").write_text(
+                'DSText("Title", role: .title)\n'
+                'theme.typography.title\n'
+                '    title: DSTextStyle(size: 24, lineHeight: 30, weight: .bold, relativeTo: .title)\n',
+                encoding="utf-8",
+            )
+
+            failures = MODULE.find_removed_api_references(root)
+
+            self.assertEqual(len(failures), 3)
+            self.assertIn("removed text title role", failures[0])
+            self.assertIn("removed title typography member", failures[1])
+            self.assertIn("removed title typography initializer", failures[2])
+
+    def test_migration_guide_can_reference_removed_apis(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "Docs").mkdir()
+            (root / "Docs" / "Migration-2.0.md").write_text(
+                'DSText("Title", role: .title)\n'
+                'theme.typography.title\n',
+                encoding="utf-8",
+            )
+
+            self.assertEqual(MODULE.find_removed_api_references(root), [])
 
 
 if __name__ == "__main__":

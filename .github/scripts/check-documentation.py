@@ -33,7 +33,17 @@ REMOVED_API_PATTERNS = {
         r"DSRemoteImage\([\s\S]{0,400}?^\s*placeholderSystemImage\s*:", re.MULTILINE
     ),
     "removed DSColors emphasis argument": re.compile(r"^\s*emphasis\s*:", re.MULTILINE),
+    "removed text title role": re.compile(r"\brole\s*:\s*\.title\b"),
+    "removed title typography member": re.compile(r"\b(?:theme\.)?typography\.title\b"),
+    "removed title typography initializer": re.compile(
+        r"^\s*title\s*:\s*DSTextStyle\(", re.MULTILINE
+    ),
 }
+
+# The migration guide intentionally contains pre-2.0 call sites in its
+# "Before" examples. Those references are documentation of the removed API,
+# not current API usage.
+EXEMPT_DOCUMENTATION_FILES = {"Docs/Migration-2.0.md"}
 
 
 def documentation_files(root: Path) -> list[Path]:
@@ -50,6 +60,8 @@ def documentation_files(root: Path) -> list[Path]:
 def find_removed_api_references(root: Path) -> list[str]:
     failures: list[str] = []
     for path in documentation_files(root):
+        if path.relative_to(root).as_posix() in EXEMPT_DOCUMENTATION_FILES:
+            continue
         text = path.read_text(encoding="utf-8")
         for description, pattern in REMOVED_API_PATTERNS.items():
             for match in pattern.finditer(text):

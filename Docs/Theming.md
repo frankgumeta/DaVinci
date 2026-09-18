@@ -258,7 +258,7 @@ Test your palette with contrast checkers before deploying.
 let customTypography = DSTypography(
     family: FontFamily(brand: "Poppins"),
     display: DSTextStyle(size: 34, lineHeight: 41, weight: .bold, relativeTo: .largeTitle),
-    title: DSTextStyle(size: 24, lineHeight: 30, weight: .bold, relativeTo: .title),
+    titleMedium: DSTextStyle(size: 24, lineHeight: 30, weight: .bold, relativeTo: .title2),
     headline: DSTextStyle(size: 20, lineHeight: 25, weight: .semibold, relativeTo: .headline),
     body: DSTextStyle(size: 16, lineHeight: 24, weight: .regular, relativeTo: .body),
     callout: DSTextStyle(size: 14, lineHeight: 20, weight: .regular, relativeTo: .callout),

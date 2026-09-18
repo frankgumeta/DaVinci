@@ -103,11 +103,11 @@ must be localized by the host application.
 
 - ✅ Semantic roles map to appropriate text styles
 - ✅ Supports Dynamic Type (scales with user preferences)
-- ✅ Proper heading hierarchy when using `.display`, `.title`, `.headline`
+- ✅ Proper heading hierarchy when using `.display`, `.titleLarge`, `.headline`
 
 **Heading Usage:**
 ```swift
-DSText("Page Title", role: .title)        // Acts as h1
+DSText("Page Title", role: .titleLarge)   // Acts as h1
 DSText("Section Header", role: .headline) // Acts as h2
 DSText("Body content", role: .body)       // Regular text
 ```

@@ -100,7 +100,7 @@ import DaVinciComponents
 struct ContentView: View {
     var body: some View {
         VStack(spacing: 16) {
-            DSText("Welcome to DaVinci", role: .title)
+            DSText("Welcome to DaVinci", role: .titleMedium)
             DSText("A modern design system", role: .body)
             
             DSButton("Get Started", appearance: .primary) {

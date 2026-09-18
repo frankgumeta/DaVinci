@@ -108,7 +108,7 @@ let profile = DSSymbol.firstAvailable(
 
 ```swift
 // Page title
-DSText("Account Settings", role: .title)
+DSText("Account Settings", role: .titleMedium)
 
 // Input field
 DSTextField("Email", text: $email, prompt: "you@example.com")
@@ -337,7 +337,7 @@ DSTextField(
 
 var body: some View {
     VStack(spacing: SpacingTokens.space4) {
-        DSText("Sign In", role: .title)
+        DSText("Sign In", role: .titleMedium)
         
         DSTextField(
             "Email",
@@ -739,7 +739,7 @@ VStack(spacing: SpacingTokens.space4) {
 
 ```swift
 VStack(alignment: .leading, spacing: SpacingTokens.space3) {
-    DSText("Settings", role: .title)
+    DSText("Settings", role: .titleMedium)
     // Automatically marked as .isHeader
     
     DSText("Account", role: .headline)
@@ -816,7 +816,7 @@ DSSkeletonList(count: 5)
 
 ### DO ✅
 
-- Use semantic text roles (`.title`, `.headline`, `.body`)
+- Use semantic text roles (`.titleMedium`, `.headline`, `.body`)
 - Provide accessibility labels for icon-only buttons
 - Use loading states for async operations
 - Validate forms with inline error messages
@@ -850,7 +850,7 @@ struct ProfileScreen: View {
         ScrollView {
             VStack(spacing: SpacingTokens.space4) {
                 // Header
-                DSText("Profile", role: .title)
+                DSText("Profile", role: .titleMedium)
                 
                 // Profile Image
                 DSRemoteImage(
