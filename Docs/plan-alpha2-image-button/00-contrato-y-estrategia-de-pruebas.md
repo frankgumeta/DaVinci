@@ -81,6 +81,15 @@ intrínseco de `DSButton`.
 - Está acordado qué snapshots cambiarán y que sólo se regrabarán tras revisar el
   resultado de implementación.
 
+## Resultado del checkpoint de ancho
+
+Validado el 2026-09-18 con el `DSButton` sin su `maxWidth` interno y una
+composición consumidora `.frame(maxWidth: .infinity)`. El contenedor externo sí
+ocupa el canvas disponible, pero la superficie pintada conserva el ancho
+intrínseco del título y su padding. Por tanto, no existe todavía una receta
+SwiftUI externa válida que preserve el appearance actual; la Fase 2 queda
+bloqueada antes de modificar el producto hasta resolver esta decisión.
+
 ## Pruebas requeridas
 
 - Prueba unitaria de la política de transición: animación habilitada/deshabilitada

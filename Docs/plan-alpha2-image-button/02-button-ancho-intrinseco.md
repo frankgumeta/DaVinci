@@ -5,6 +5,15 @@
 Hacer que `DSButton` abrace su contenido por defecto y que el ancho completo sea
 una decisión explícita del layout consumidor mediante modificadores SwiftUI.
 
+## Estado de ejecución
+
+Bloqueada en el checkpoint previo a implementación, 2026-09-18. El prototipo
+retiró temporalmente el `maxWidth` interno y probó
+`.frame(maxWidth: .infinity)` desde el consumidor: el wrapper se expandió, pero
+el fondo pintado permaneció intrínseco. No se cambió `DSButton` ni sus snapshots.
+Se necesita decidir cómo debe obtenerse un CTA full-width con el appearance de
+DaVinci antes de continuar.
+
 ## Alcance
 
 - Prerrequisito bloqueante: fase 0 debe haber demostrado con una prueba qué
