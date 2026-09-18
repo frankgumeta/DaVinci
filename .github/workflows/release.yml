@@ -124,8 +124,8 @@ jobs:
           CONTRIBUTING.md
           ACCESSIBILITY.md
           SECURITY.md
-          Docs/Release-2.0.0.md
-        body_path: Docs/Release-2.0.0.md
+          ${{ steps.release-metadata.outputs.notes_path }}
+        body_path: ${{ steps.release-metadata.outputs.notes_path }}
         generate_release_notes: false
         draft: true
         prerelease: ${{ steps.release-metadata.outputs.prerelease == 'true' }}

@@ -33,6 +33,7 @@ def validate(tag: str, changelog: str) -> tuple[list[str], dict[str, str]]:
         "version": version,
         "prerelease": "true" if channel else "false",
         "channel": channel or "stable",
+        "notes_path": f"Docs/Release-{version}.md",
     }
 
 

@@ -8,12 +8,12 @@ except where a release documents an explicit pre-adoption exception.
 
 ## [Unreleased]
 
-<!-- Reserved for compatible post-2.0.0 work. -->
+<!-- Reserved for adjustments after alpha.2. -->
 
-## [2.0.0] - 2026-09-18
+## [2.0.0-alpha.2] - 2026-09-18
 
-> **Release candidate prepared.** Publication remains gated by the protected
-> candidate SHA and release workflow review.
+> **Pre-release.** Alpha.1 is closed; alpha.2 is the active line for remaining
+> adjustments before the 2.0.0 stability freeze.
 
 ### Changed
 - The 2.0 line requires Xcode 27.0 and Swift tools 6.4 while retaining Swift 6

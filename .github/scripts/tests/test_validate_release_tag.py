@@ -18,6 +18,7 @@ class ReleaseTagTests(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertEqual(metadata["prerelease"], "true")
         self.assertEqual(metadata["channel"], "alpha")
+        self.assertEqual(metadata["notes_path"], "Docs/Release-2.0.0-alpha.1.md")
 
     def test_stable_is_not_prerelease(self):
         errors, metadata = MODULE.validate("v2.0.0", self.CHANGELOG)

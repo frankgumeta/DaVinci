@@ -1,7 +1,7 @@
 # Long-term support policy
 
-DaVinci 1.4 remains the stable long-term-support line. 2.0 has completed its local
-alpha exit gates but remains a pre-release until the approved `v2.0.0` tag is
+DaVinci 1.4 remains the stable long-term-support line. Alpha.1 is closed and 2.0.0-
+alpha.2 is the active pre-release until the approved `v2.0.0` tag is
 published. It is source-breaking against 1.4, so adopting it is a migration rather
 than an upgrade. See [Migration-2.0](Migration-2.0.md).
 
@@ -9,7 +9,7 @@ than an upgrade. See [Migration-2.0](Migration-2.0.md).
 
 | Version | Status | Scope |
 |---|---|---|
-| 2.0.0-alpha | Pre-release | The 2.0 API surface, with local release gates green but no stable tag yet |
+| 2.0.0-alpha.2 | Pre-release | The active 2.0 API surface; adjustments remain allowed before the stable freeze |
 | 1.4.x | LTS | Compatibility-preserving correctness, security, accessibility, documentation, and supported-toolchain fixes |
 | 1.3.x and earlier | Unsupported | Upgrade to the latest 1.4 patch release |
 
@@ -42,11 +42,12 @@ not alter the published 1.4.x compatibility contract above.
 
 ## The 2.0 pre-release
 
-`2.0.0-alpha.1` carries the complete 2.0 public API and can be pinned exactly, but
+`2.0.0-alpha.2` carries the current 2.0 public API and can be pinned exactly, but
 the stability contract above does not apply to it:
 
 - Pre-release versions may change API between alphas if a defect requires it.
-- The local coverage, documentation, visual, performance, and compatibility gates
-  are green; publication still requires an approved SHA, tag, and release review.
+- Alpha.2 permits further API and rendering adjustments before the 2.0.0 freeze.
+- The existing coverage, documentation, visual, performance, and compatibility
+  evidence is inherited from the alpha.1 closure and must be rerun after changes.
 - Pin it with `exact:` rather than a range, so a later alpha cannot be resolved
   into a build without an explicit decision.

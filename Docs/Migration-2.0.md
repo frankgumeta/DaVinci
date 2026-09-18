@@ -147,11 +147,11 @@ DSText(text, role: .body)
 
 ## Pinning the pre-release
 
-`2.0.0-alpha.1` carries the full 2.0 public API. The local release gates now cover
+`2.0.0-alpha.2` carries the current 2.0 public API. The local release gates now cover
 previews, gallery screens, snapshots, list performance baselines, accessibility
 tests, DocC, API drift, and the iOS 17.5 compatibility lane. Publication still
 depends on the release checklist and an approved tag. Pin the alpha exactly:
 
 ```swift
-.package(url: "https://github.com/frankgumeta/DaVinci.git", exact: "2.0.0-alpha.1")
+.package(url: "https://github.com/frankgumeta/DaVinci.git", exact: "2.0.0-alpha.2")
 ```

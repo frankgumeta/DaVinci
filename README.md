@@ -23,7 +23,7 @@ Version 1.4 is the stable long-term-support line. See the
 [support policy](Docs/Support.md) and [security policy](SECURITY.md) for its
 compatibility and maintenance contract.
 
-The 2.0 line is currently prepared for release from the `2.0.0-alpha.1`
+The 2.0 line is currently prepared for release from the `2.0.0-alpha.2`
 pre-release. It uses the Xcode 27 contract documented below; the stable package
 dependency remains `1.4.0` until the `v2.0.0` tag is published.
 
@@ -66,6 +66,10 @@ targets: [
     )
 ]
 ```
+
+To evaluate the active alpha, pin it explicitly with
+`.package(..., exact: "2.0.0-alpha.2")`; the stable `from: "1.4.0"` example above
+remains the supported LTS installation until 2.0.0 is published.
 
 ## Quick Start
 
