@@ -21,7 +21,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: Verify Toolchain
       run: bash .github/scripts/verify-toolchain.sh
@@ -49,7 +49,7 @@ jobs:
 
     - name: Upload Compatibility Result
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ios-17-compatibility-result
         path: .build/iOS17-TestResults.xcresult
