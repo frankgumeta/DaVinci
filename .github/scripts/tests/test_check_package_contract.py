@@ -14,7 +14,7 @@ def manifest(
     *,
     tools_version: str = "6.4.0",
     language_versions: list[str] | None = None,
-    platform_version: str = "17.0",
+    platform_version: str = "18.0",
 ) -> dict:
     return {
         "toolsVersion": {"_version": tools_version},
@@ -30,11 +30,11 @@ class PackageContractTests(unittest.TestCase):
 
     def test_toolchain_and_deployment_drift_are_reported(self) -> None:
         failures = MODULE.validate_manifest(
-            manifest(tools_version="6.3.0", platform_version="18.0")
+            manifest(tools_version="6.3.0", platform_version="17.0")
         )
         self.assertEqual(len(failures), 2)
         self.assertIn("Swift tools 6.4.0", failures[0])
-        self.assertIn("iOS 17.0", failures[1])
+        self.assertIn("iOS 18.0", failures[1])
 
     def test_public_product_drift_is_reported(self) -> None:
         value = manifest()

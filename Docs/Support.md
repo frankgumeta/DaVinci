@@ -38,8 +38,8 @@ based on a dedicated `release/1.4.x` branch and merged back into the development
 line rather than being cut from it.
 
 The 2.0 development line uses Xcode 27.0, Swift tools 6.4, and Swift 6 language
-mode while retaining iOS 17 as its deployment target. That toolchain change does
-not alter the published 1.4.x compatibility contract above.
+mode, and raises the deployment target to iOS 18.0. The published 1.4.x
+compatibility contract above is unchanged.
 
 ## The 2.0 stable line
 

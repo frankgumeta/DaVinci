@@ -21,7 +21,7 @@ Be respectful, inclusive, and collaborative. We aim to maintain a welcoming envi
 - Xcode 27.0 (build 27A266a)
 - Swift tools 6.4
 - Swift language mode 6 with complete strict concurrency
-- iOS 17.0+ (iOS-only package)
+- iOS 18.0+ (iOS-only package)
 
 See [Docs/Compatibility.md](Docs/Compatibility.md) for the compatibility matrix
 and the distinction between toolchain, SDK, and deployment requirements.
@@ -44,7 +44,7 @@ open Package.swift
 xcodebuild build \
   -scheme DaVinci-Package \
   -destination 'generic/platform=iOS Simulator' \
-  IPHONEOS_DEPLOYMENT_TARGET=17.0
+  IPHONEOS_DEPLOYMENT_TARGET=18.0
 
 SIMULATOR_UDID="$(bash .github/scripts/create-ios-simulator.sh)"
 

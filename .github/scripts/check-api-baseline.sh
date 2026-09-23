@@ -19,7 +19,7 @@ products_dir="${DAVINCI_PRODUCTS_DIR:-$root/.build/Build/Products/Debug-iphonesi
 baseline_version="${DAVINCI_API_BASELINE:-2.0.0}"
 baseline_dir="$root/.github/api-baselines/$baseline_version"
 sdk="$(xcrun --sdk iphonesimulator --show-sdk-path)"
-target="arm64-apple-ios17.0-simulator"
+target="arm64-apple-ios18.0-simulator"
 modules=(DaVinciTokens DaVinciComponents DaVinciGallery)
 temporary_dir="$(mktemp -d)"
 trap 'rm -rf "$temporary_dir"' EXIT

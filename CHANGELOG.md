@@ -19,15 +19,18 @@ except where a release documents an explicit pre-adoption exception.
 - Three-step title typography, label roles, attributed text, surface styles,
   list/action/selectable rows, activity indicators, and expanded button APIs.
 - Accessibility contracts, localized announcements, remote-image validation,
-  cache isolation, performance checks, and minimum-runtime validation.
+  cache isolation, and performance checks.
 
 ### Changed
-- The 2.0 line requires Xcode 27.0 and Swift tools 6.4 while retaining the
-  iOS 17 deployment target.
+- The 2.0 line requires Xcode 27.0 and Swift tools 6.4 and raises the
+  deployment target from iOS 17 to iOS 18.
 
 ### Removed
 - **Breaking:** `DSTypography.title` and `DSText.Role.title`; use the title
   scale documented in [Migration-2.0](Docs/Migration-2.0.md).
+- **Breaking:** iOS 17 is no longer a supported deployment target; 2.0
+  requires iOS 18.0 or later. The 1.4.x LTS line remains available for
+  iOS 17 consumers.
 
 ## [2.0.0-alpha.2] - 2026-09-18
 

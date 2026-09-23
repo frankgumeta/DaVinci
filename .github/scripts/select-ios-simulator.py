@@ -25,7 +25,7 @@ def version_key(runtime: dict) -> tuple[int, ...]:
     return tuple(int(part) for part in re.findall(r"\d+", runtime.get("version", "0")))
 
 
-def select_runtime(data: dict, runtime_major: int | None) -> dict:
+def select_runtime(data: dict) -> dict:
     runtimes = [
         runtime
         for runtime in data.get("runtimes", [])
@@ -35,15 +35,8 @@ def select_runtime(data: dict, runtime_major: int | None) -> dict:
             or "SimRuntime.iOS" in runtime.get("identifier", "")
         )
     ]
-    if runtime_major is not None:
-        runtimes = [
-            runtime
-            for runtime in runtimes
-            if version_key(runtime) and version_key(runtime)[0] == runtime_major
-        ]
     if not runtimes:
-        requested = f" {runtime_major}" if runtime_major is not None else ""
-        raise ValueError(f"No available iOS{requested} Simulator runtime found")
+        raise ValueError("No available iOS Simulator runtime found")
     return max(runtimes, key=version_key)
 
 
@@ -70,13 +63,12 @@ def select_device_type(runtime: dict) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("inventory", type=Path)
-    parser.add_argument("--runtime-major", type=int)
     args = parser.parse_args()
 
     with args.inventory.open(encoding="utf-8") as file:
         data = json.load(file)
 
-    runtime = select_runtime(data, args.runtime_major)
+    runtime = select_runtime(data)
     device = select_device_type(runtime)
     print(runtime["identifier"])
     print(device["identifier"])

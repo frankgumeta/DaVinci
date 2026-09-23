@@ -47,9 +47,6 @@ if [[ -n "$stale_udids" ]]; then
 fi
 
 selector_arguments=("$simctl_json")
-if [[ -n "${DAVINCI_IOS_RUNTIME_MAJOR:-}" ]]; then
-    selector_arguments+=(--runtime-major "$DAVINCI_IOS_RUNTIME_MAJOR")
-fi
 
 selection="$(python3 "$(dirname "$0")/select-ios-simulator.py" "${selector_arguments[@]}" 2>&1)" || {
     echo "$selection" >&2

@@ -1,10 +1,8 @@
 # DaVinci 2.0.0 release notes
 
 DaVinci 2.0 is the first stable line after the 1.4 pre-adoption exception. It
-requires Xcode 27.0, Swift tools 6.4, Swift 6 language mode, and keeps iOS 17.0
-as the deployment target. The compiled SDK and the minimum runtime are separate:
-CI uses the iOS 27 SDK for current visual validation and an iOS 17.5 simulator for
-minimum-runtime behavior.
+requires Xcode 27.0, Swift tools 6.4, Swift 6 language mode, and sets iOS 18.0
+as the deployment target. CI uses the iOS 27 SDK for current visual validation.
 
 ## Highlights
 
@@ -14,7 +12,7 @@ minimum-runtime behavior.
 - Components include accessibility contracts, localized announcements, dark-mode
   themes, and Dynamic Type coverage.
 - SwiftLint, DocC diagnostics, product coverage, API baseline, performance,
-  snapshots, external-consumer, and minimum-runtime checks are release gates.
+  snapshots, and external-consumer checks are release gates.
 
 ## Migration
 
