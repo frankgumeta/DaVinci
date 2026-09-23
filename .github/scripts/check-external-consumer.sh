@@ -67,7 +67,7 @@ EOF
         -scheme DaVinciConsumer \
         -destination 'generic/platform=iOS Simulator' \
         -derivedDataPath "$consumer_dir/.build" \
-        IPHONEOS_DEPLOYMENT_TARGET=17.0 \
+        IPHONEOS_DEPLOYMENT_TARGET=18.0 \
         CODE_SIGNING_ALLOWED=NO
 )
 

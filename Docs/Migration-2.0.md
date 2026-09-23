@@ -10,10 +10,10 @@ This guide covers every breaking change and the exact replacement for each.
 
 ## Toolchain requirement
 
-DaVinci 2.0 requires Xcode 27.0 and Swift tools 6.4 while retaining Swift 6
-language mode and an iOS 17 deployment target. Update the development and CI
-toolchains before resolving 2.0; adopting Xcode 27 does not require raising an
-application's deployment target to iOS 27.
+DaVinci 2.0 requires Xcode 27.0, Swift tools 6.4, and an iOS 18.0 deployment
+target while retaining Swift 6 language mode. Update the development and CI
+toolchains before resolving 2.0; applications adopting 2.0 must target iOS 18.0
+or later.
 
 ## At a glance
 
@@ -160,7 +160,7 @@ layout when a screen needs a narrower available area.
 
 `2.0.0-alpha.2` carries the current 2.0 public API. The local release gates now cover
 previews, gallery screens, snapshots, list performance baselines, accessibility
-tests, DocC, API drift, and the iOS 17.5 compatibility lane. Publication still
+tests, DocC, and API drift. Publication still
 depends on the release checklist and an approved tag. Pin the alpha exactly:
 
 ```swift

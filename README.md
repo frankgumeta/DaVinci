@@ -11,10 +11,10 @@
 
 </div>
 
-A Swift Package providing a modular design system for iOS 17+, built entirely with SwiftUI and Swift 6 strict concurrency.
+A Swift Package providing a modular design system for iOS 18+, built entirely with SwiftUI and Swift 6 strict concurrency.
 
-DaVinci requires iOS 17 because its accessibility contracts use the toggle trait
-introduced in that release. Swift 6 strict concurrency is a compiler and language
+DaVinci 2.0 requires iOS 18 or later; consumers still on iOS 17 can use the
+1.4.x LTS line. Swift 6 strict concurrency is a compiler and language
 requirement; it does not require a matching iOS deployment target. See the
 [compatibility matrix](Docs/Compatibility.md) for the supported toolchain and test
 strategy.
@@ -393,14 +393,14 @@ xcodebuild test \
 ```
 
 The package is iOS-only, so plain `swift test` is not a supported validation
-command. CI also compiles all products with an iOS 17 deployment target against
+command. CI also compiles all products with an iOS 18 deployment target against
 the current SDK:
 
 ```bash
 xcodebuild build \
   -scheme DaVinci-Package \
   -destination 'generic/platform=iOS Simulator' \
-  IPHONEOS_DEPLOYMENT_TARGET=17.0
+  IPHONEOS_DEPLOYMENT_TARGET=18.0
 ```
 
 ### Test Coverage

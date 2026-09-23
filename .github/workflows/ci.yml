@@ -116,7 +116,7 @@ jobs:
       run: bash .github/scripts/delete-ios-simulator.sh '${{ steps.simulator.outputs.udid }}'
         
   build-ios:
-    name: Build (iOS 17 deployment)
+    name: Build (iOS 18 deployment)
     runs-on: xcode-27
     
     steps:
@@ -134,7 +134,7 @@ jobs:
         xcodebuild build \
           -scheme DaVinci-Package \
           -destination 'generic/platform=iOS Simulator' \
-          IPHONEOS_DEPLOYMENT_TARGET=17.0 \
+          IPHONEOS_DEPLOYMENT_TARGET=18.0 \
           ENABLE_PREVIEWS=YES \
           -derivedDataPath .build
 

@@ -13,7 +13,6 @@ pull request. The compatibility policy is:
 
 Maintenance cadence:
 
-- weekly iOS 17 compatibility smoke run;
 - Xcode 27.x canary before changing snapshots or baselines;
 - monthly review of dependencies, Actions, warnings, coverage, and performance;
 - quarterly review of 1.4.x LTS status and support horizon.

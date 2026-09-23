@@ -39,22 +39,9 @@ class SimulatorSelectionTests(unittest.TestCase):
             ]
         }
 
-        selected = MODULE.select_runtime(data, None)
+        selected = MODULE.select_runtime(data)
 
         self.assertEqual(selected["version"], "26.1")
-
-    def test_major_selects_newest_matching_minor(self):
-        data = {
-            "runtimes": [
-                runtime("17.4", [iphone("iPhone 15")]),
-                runtime("17.5", [iphone("iPhone 15 Pro")]),
-                runtime("26.1", [iphone("iPhone 17 Pro")]),
-            ]
-        }
-
-        selected = MODULE.select_runtime(data, 17)
-
-        self.assertEqual(selected["version"], "17.5")
 
     def test_device_is_selected_from_runtime_compatibility_list(self):
         selected_runtime = runtime(
@@ -67,8 +54,8 @@ class SimulatorSelectionTests(unittest.TestCase):
         self.assertEqual(selected["name"], "iPhone 15 Pro")
 
     def test_missing_requested_runtime_fails_clearly(self):
-        with self.assertRaisesRegex(ValueError, "No available iOS 17"):
-            MODULE.select_runtime({"runtimes": []}, 17)
+        with self.assertRaisesRegex(ValueError, "No available iOS Simulator runtime"):
+            MODULE.select_runtime({"runtimes": []})
 
 
 if __name__ == "__main__":

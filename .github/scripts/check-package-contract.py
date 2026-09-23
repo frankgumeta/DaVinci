@@ -50,8 +50,8 @@ def validate_manifest(manifest: dict) -> list[str]:
         item.get("platformName"): item.get("version")
         for item in manifest.get("platforms", [])
     }
-    if platforms != {"ios": "17.0"}:
-        failures.append(f"expected only iOS 17.0, found {platforms!r}")
+    if platforms != {"ios": "18.0"}:
+        failures.append(f"expected only iOS 18.0, found {platforms!r}")
 
     products = {item.get("name") for item in manifest.get("products", [])}
     if products != EXPECTED_PRODUCTS:
@@ -85,7 +85,7 @@ def main() -> int:
             print(f"- {failure}", file=sys.stderr)
         return 1
 
-    print("Package contract passed: Swift tools 6.4, Swift 6, iOS 17.0")
+    print("Package contract passed: Swift tools 6.4, Swift 6, iOS 18.0")
     return 0
 
 

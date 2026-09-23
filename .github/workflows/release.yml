@@ -73,30 +73,12 @@ jobs:
           --minimum DaVinciComponents=95 \
           --minimum DaVinciGallery=60
 
-    - name: Install Minimum iOS Simulator Runtime
-      run: |
-        if ! xcrun simctl list runtimes | grep -q 'iOS 17'; then
-          xcodebuild -downloadPlatform iOS -buildVersion 17.5
-        fi
-
-    - name: Create Minimum iOS Simulator
-      id: minimum-simulator
-      env:
-        DAVINCI_IOS_RUNTIME_MAJOR: '17'
-      run: echo "udid=$(bash .github/scripts/create-ios-simulator.sh)" >> "$GITHUB_OUTPUT"
-
-    - name: Run Tests on Minimum iOS Runtime
-      run: |
-        bash .github/scripts/run-minimum-runtime-tests.sh \
-          '${{ steps.minimum-simulator.outputs.udid }}' \
-          .build/MinimumRuntimeResults.xcresult
-      
     - name: Build Package and Previews
       run: |
         xcodebuild build \
           -scheme DaVinci-Package \
           -destination 'generic/platform=iOS Simulator' \
-          IPHONEOS_DEPLOYMENT_TARGET=17.0 \
+          IPHONEOS_DEPLOYMENT_TARGET=18.0 \
           ENABLE_PREVIEWS=YES \
           -derivedDataPath .build
 
@@ -118,7 +100,6 @@ jobs:
       if: always()
       run: |
         bash .github/scripts/delete-ios-simulator.sh '${{ steps.simulator.outputs.udid }}'
-        bash .github/scripts/delete-ios-simulator.sh '${{ steps.minimum-simulator.outputs.udid }}'
 
     - name: Create Release
       uses: softprops/action-gh-release@v3
