@@ -10,10 +10,11 @@ except where a release documents an explicit pre-adoption exception.
 
 <!-- Reserved for compatible adjustments after 2.0.0. -->
 
-## [2.0.0] - 2026-09-18
+## [2.0.0-rc.1] - 2026-09-23
 
-> **Stable release.** DaVinci 2.0 is the supported post-1.4 API line; 1.4.x
-> remains available as the long-term-support branch.
+> **Release candidate.** DaVinci 2.0 is the supported post-1.4 API line; 1.4.x
+> remains available as the long-term-support branch. This candidate carries the
+> complete 2.0.0 content; the stable tag follows after approval.
 
 ### Added
 - Three-step title typography, label roles, attributed text, surface styles,
