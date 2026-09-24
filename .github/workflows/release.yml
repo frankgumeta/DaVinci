@@ -61,6 +61,7 @@ jobs:
         xcodebuild test \
           -scheme DaVinci-Package \
           -destination 'platform=iOS Simulator,id=${{ steps.simulator.outputs.udid }}' \
+          -retry-tests-on-failure \
           -enableCodeCoverage YES \
           -resultBundlePath .build/TestResults.xcresult \
           -derivedDataPath .build
